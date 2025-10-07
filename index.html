@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/mobile.css">
     <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/landing.css">
     
     <!-- PWA Manifest -->
     <link rel="manifest" href="manifest.json">
@@ -36,6 +37,99 @@
             <div class="pixel-loader"></div>
             <p class="loading-text">Loading Tamagotchi...</p>
         </div>
+    </div>
+
+    <!-- Landing Page -->
+    <div id="landing-page" class="landing-page">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <div class="hero-logo">🐾</div>
+                <h1 class="hero-title">SOLANA TAMAGOTCHI</h1>
+                <p class="hero-subtitle">The Ultimate Blockchain Pet Game on Solana! Play, Earn & Collect NFT Pets 🚀</p>
+                <div class="hero-buttons">
+                    <button id="landing-connect-btn" class="btn-connect">CONNECT WALLET</button>
+                    <button onclick="document.getElementById('features-section').scrollIntoView({behavior:'smooth'})" class="btn-secondary">Learn More</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features-section" class="features-section">
+            <h2 class="section-title">🎮 GAME FEATURES</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <span class="feature-icon">🐾</span>
+                    <h3 class="feature-title">5 Pet Types</h3>
+                    <p class="feature-desc">Choose from Cat, Dog, Dragon, Fox, or Bear with unique traits</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">⭐</span>
+                    <h3 class="feature-title">Evolution System</h3>
+                    <p class="feature-desc">Level up and evolve your pet through 5 epic stages</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">💰</span>
+                    <h3 class="feature-title">Play & Earn</h3>
+                    <p class="feature-desc">Earn TAMA tokens by playing and caring for your pet</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">🏆</span>
+                    <h3 class="feature-title">Achievements</h3>
+                    <p class="feature-desc">Unlock 15+ achievements and earn rewards</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">🖱️</span>
+                    <h3 class="feature-title">Click to Earn</h3>
+                    <p class="feature-desc">Click your pet to gain XP and unlock bonuses</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">👥</span>
+                    <h3 class="feature-title">Leaderboard</h3>
+                    <p class="feature-desc">Compete globally and climb the ranks</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pet Showcase -->
+        <section class="pets-section">
+            <h2 class="section-title">🎨 CHOOSE YOUR PET</h2>
+            <div class="pets-grid">
+                <div class="pet-preview" title="Cat">😺</div>
+                <div class="pet-preview" title="Dog">🐶</div>
+                <div class="pet-preview" title="Dragon">🐉</div>
+                <div class="pet-preview" title="Fox">🦊</div>
+                <div class="pet-preview" title="Bear">🐻</div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="stats-section">
+            <h2 class="section-title">📊 LIVE STATS</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number" id="landing-players">0</div>
+                    <div class="stat-label">Players Online</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">5</div>
+                    <div class="stat-label">Pet Types</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">15+</div>
+                    <div class="stat-label">Achievements</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">0.1</div>
+                    <div class="stat-label">SOL to Start</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="landing-footer">
+            <p class="footer-text">Made with ❤️ on Solana | Powered by Phantom Wallet</p>
+        </footer>
     </div>
 
     <!-- Main Container -->

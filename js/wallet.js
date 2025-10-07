@@ -114,6 +114,11 @@ const WalletManager = {
                 Database.updatePlayerStatus(this.publicKey.toString(), 'connect');
             }
             
+            // Show game interface
+            if (window.Game) {
+                Game.showGame();
+            }
+            
             // Start auto-refresh balance
             this.startBalanceRefresh();
             
@@ -137,6 +142,11 @@ const WalletManager = {
         
         // Stop balance refresh
         this.stopBalanceRefresh();
+        
+        // Show landing page
+        if (window.Game) {
+            Game.showLanding();
+        }
         
         // Don't reset game state - keep pet loaded
         // if (window.Game) {

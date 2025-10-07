@@ -60,18 +60,55 @@ const Game = {
         // Setup event listeners
         this.setupEventListeners();
         
-        // Hide loading screen
+        // Show landing or game
         setTimeout(() => {
             document.getElementById('loading-screen').classList.add('fade-out');
-            document.getElementById('app').classList.remove('hidden');
+            if (WalletManager.isConnected()) {
+                this.showGame();
+            } else {
+                this.showLanding();
+            }
         }, 1000);
+        
+        // Update landing stats
+        this.updateLandingStats();
         
         // Check for referral code
         this.checkReferralCode();
     },
     
+    // Show landing page
+    showLanding() {
+        document.getElementById('landing-page').classList.remove('hidden');
+        document.getElementById('app').classList.add('hidden');
+    },
+    
+    // Show game
+    showGame() {
+        document.getElementById('landing-page').classList.add('hidden');
+        document.getElementById('app').classList.remove('hidden');
+    },
+    
+    // Update landing stats
+    async updateLandingStats() {
+        if (window.Database) {
+            const count = await Database.getPlayerCount();
+            const landingCounter = document.getElementById('landing-players');
+            if (landingCounter) {
+                landingCounter.textContent = count;
+            }
+        }
+        // Update every 30 sec
+        setTimeout(() => this.updateLandingStats(), 30000);
+    },
+    
     // Setup event listeners
     setupEventListeners() {
+        // Landing connect button
+        document.getElementById('landing-connect-btn').addEventListener('click', async () => {
+            await WalletManager.connect();
+        });
+        
         // Wallet button
         document.getElementById('wallet-btn').addEventListener('click', async () => {
             if (WalletManager.isConnected()) {
