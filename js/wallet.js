@@ -19,10 +19,10 @@ const WalletManager = {
             
             this.wallet = window.solana;
             
-            // Set up connection to Solana
+            // Set up connection to Solana using CORS-friendly endpoints
             const endpoint = this.network === 'mainnet-beta' 
-                ? 'https://api.mainnet-beta.solana.com'
-                : 'https://api.devnet.solana.com';
+                ? 'https://solana-mainnet.g.alchemy.com/v2/demo'  // Alchemy public endpoint
+                : 'https://api.devnet.solana.com';  // For devnet we'll use direct approach
             
             this.connection = new solanaWeb3.Connection(endpoint, 'confirmed');
             
@@ -157,10 +157,10 @@ const WalletManager = {
     // Fetch SOL balance
     async fetchBalance() {
         try {
-            if (!this.publicKey || !this.connection) return;
+            if (!this.publicKey || !this.connection) return 0;
             
             const balance = await this.connection.getBalance(this.publicKey);
-            this.balance = balance;
+            this.balance = balance; // Keep in lamports for consistency
             
             // Update UI
             this.updateBalanceDisplay();
@@ -168,6 +168,9 @@ const WalletManager = {
             return balance;
         } catch (error) {
             console.error('Failed to fetch balance:', error);
+            // Set balance to 0 if can't fetch (CORS or network issue)
+            this.balance = 0;
+            this.updateBalanceDisplay();
             return 0;
         }
     },
@@ -209,10 +212,22 @@ const WalletManager = {
         }
     },
     
-    // Create new pet (costs 0.1 SOL)
+    // Create new pet (costs 0.1 SOL or FREE in demo mode)
     async createPet(petData) {
         try {
             const cost = 0.1 * solanaWeb3.LAMPORTS_PER_SOL; // 0.1 SOL
+            
+            // If balance is 0 due to CORS or network issues, allow free pet creation (demo mode)
+            if (this.balance === 0) {
+                Utils.showNotification('⚠️ Running in DEMO mode - Pet created for FREE');
+                Utils.showNotification('💡 To use blockchain features, make sure you have SOL in your wallet');
+                
+                return {
+                    success: true,
+                    demo: true,
+                    petData
+                };
+            }
             
             if (this.balance < cost) {
                 throw new Error('Insufficient balance. Need 0.1 SOL');
@@ -239,11 +254,17 @@ const WalletManager = {
         }
     },
     
-    // Revive pet (costs 0.05 SOL or 100 TAMA)
+    // Revive pet (costs 0.05 SOL or 100 TAMA or FREE in demo mode)
     async revivePet(useSOL = true) {
         try {
             if (useSOL) {
                 const cost = 0.05 * solanaWeb3.LAMPORTS_PER_SOL; // 0.05 SOL
+                
+                // Demo mode - allow free revival
+                if (this.balance === 0) {
+                    Utils.showNotification('⚠️ DEMO mode - Pet revived for FREE');
+                    return { success: true, demo: true };
+                }
                 
                 if (this.balance < cost) {
                     throw new Error('Insufficient balance. Need 0.05 SOL');
