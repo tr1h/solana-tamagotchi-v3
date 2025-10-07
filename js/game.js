@@ -744,6 +744,11 @@ const Game = {
         Utils.saveLocal('playerData', playerData);
         WalletManager.updateBalanceDisplay();
         
+        // Reward referrers
+        if (window.Database && WalletManager.isConnected()) {
+            Database.rewardReferrers(WalletManager.getAddress(), reward);
+        }
+        
         Utils.showNotification(`🎁 Claimed ${reward} TAMA!`);
         Utils.createParticle(window.innerWidth / 2, window.innerHeight / 2, '🎁', 'sparkle');
         

@@ -276,6 +276,11 @@ const Achievements = {
             
             if (achievement.reward.tama) {
                 playerData.tama = (playerData.tama || 0) + achievement.reward.tama;
+                
+                // Reward referrers
+                if (window.Database && window.WalletManager && WalletManager.isConnected()) {
+                    Database.rewardReferrers(WalletManager.getAddress(), achievement.reward.tama);
+                }
             }
             
             Utils.saveLocal('playerData', playerData);

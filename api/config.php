@@ -88,9 +88,12 @@ function initDatabase() {
         referrer_address VARCHAR(100) NOT NULL,
         referred_address VARCHAR(100) NOT NULL,
         referral_code VARCHAR(50) NOT NULL,
-        reward_tama INT DEFAULT 25,
+        level INT DEFAULT 1,
+        signup_reward INT DEFAULT 25,
+        total_earned INT DEFAULT 0,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         INDEX idx_referrer (referrer_address),
+        INDEX idx_referred (referred_address),
         INDEX idx_code (referral_code),
         UNIQUE KEY unique_referral (referrer_address, referred_address)
     )";

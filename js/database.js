@@ -428,6 +428,27 @@ const Database = {
         }
     },
     
+    // Reward referrers when player earns TAMA
+    async rewardReferrers(wallet, tamaEarned) {
+        if (!this.useMySQL || !wallet || tamaEarned <= 0) return false;
+        
+        try {
+            const response = await fetch(`${this.apiURL}/reward_referrers.php`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    wallet,
+                    tama: tamaEarned
+                })
+            });
+            const result = await response.json();
+            return result.success;
+        } catch (error) {
+            console.error('Failed to reward referrers:', error);
+            return false;
+        }
+    },
+    
     // Update daily streak
     async updateDailyStreak(walletAddress) {
         if (!this.initialized || !walletAddress) {
