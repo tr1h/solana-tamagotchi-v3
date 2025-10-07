@@ -1,0 +1,1713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solana Tamagotchi - Ultimate Blockchain Pet Game</title>
+  <meta name="description" content="Ultimate blockchain pet game on Solana with NFT integration, evolution system, and multiplayer features">
+  <meta name="theme-color" content="#1982C4">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Solana Tamagotchi">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>😺</text></svg>">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>😺</text></svg>">
+  <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Solana%20Tamagotchi%22,%22short_name%22:%22Tamagotchi%22,%22description%22:%22Ultimate%20blockchain%20pet%20game%20on%20Solana%22,%22start_url%22:%22/%22,%22display%22:%22standalone%22,%22background_color%22:%22%231D3557%22,%22theme_color%22:%22%231982C4%22,%22icons%22:[{%22src%22:%22data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Ctext%20y='.9em'%20font-size='90'%3E%F0%9F%98%BA%3C/text%3E%3C/svg%3E%22,%22sizes%22:%22192x192%22,%22type%22:%22image/svg+xml%22},{%22src%22:%22data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Ctext%20y='.9em'%20font-size='90'%3E%F0%9F%98%BA%3C/text%3E%3C/svg%3E%22,%22sizes%22:%22512x512%22,%22type%22:%22image/svg+xml%22}]}">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+  <!-- Firebase for player database -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <style>
+    :root {
+      --primary: #FFCA3A;
+      --secondary: #8AC926;
+      --accent: #1982C4;
+      --warning: #FF6B35;
+      --danger: #FF595E;
+      --purple: #6A4C93;
+      --dark: #1D3557;
+      --light: #F5F5F5;
+      --success: #4CAF50;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Press Start 2P', monospace;
+      background: linear-gradient(135deg, var(--dark) 0%, #2C3E50 100%);
+      color: var(--light);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Wallet Connect Screen */
+    .wallet-connect-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      text-align: center;
+      background: linear-gradient(135deg, var(--dark) 0%, #2C3E50 100%);
+    }
+
+    .wallet-connect-screen h1 {
+      font-size: 24px;
+      color: var(--primary);
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+    }
+
+    .wallet-connect-screen h2 {
+      font-size: 18px;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+
+    .wallet-connect-screen p {
+      color: var(--light);
+      margin-bottom: 30px;
+      font-size: 12px;
+      max-width: 500px;
+      line-height: 1.5;
+    }
+
+    /* Modern Connect Wallet Button */
+    .connect-wallet-btn {
+      position: relative;
+      width: 320px;
+      height: 80px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      box-shadow: 
+        0 10px 30px rgba(102, 126, 234, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+      margin: 20px auto;
+      display: block;
+    }
+
+    .connect-wallet-btn:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 
+        0 15px 40px rgba(102, 126, 234, 0.6),
+        0 0 0 1px rgba(255, 255, 255, 0.2);
+    }
+
+    .connect-wallet-btn:active {
+      transform: translateY(-1px) scale(0.98);
+    }
+
+    .btn-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      height: 100%;
+      gap: 15px;
+    }
+
+    .btn-icon {
+      font-size: 32px;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    }
+
+    .btn-text {
+      flex: 1;
+      text-align: left;
+    }
+
+    .btn-title {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 12px;
+      color: white;
+      margin-bottom: 4px;
+      text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
+      letter-spacing: 1px;
+    }
+
+    .btn-subtitle {
+      font-family: 'Press Start 2P', monospace;
+      font-size: 8px;
+      color: rgba(255, 255, 255, 0.8);
+      text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
+      letter-spacing: 0.5px;
+    }
+
+    .btn-glow {
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      transition: left 0.6s ease;
+    }
+
+    .connect-wallet-btn:hover .btn-glow {
+      left: 100%;
+    }
+
+    /* Game Container */
+    .game-container {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      padding: 20px;
+      gap: 20px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* Navigation Tabs */
+    .main-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .tab-btn {
+      padding: 12px 20px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid var(--accent);
+      border-radius: 10px;
+      color: var(--light);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .tab-btn:hover {
+      background: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: var(--dark);
+      box-shadow: 0 5px 15px rgba(255, 202, 58, 0.4);
+    }
+
+    /* Game Layout */
+    .game-layout {
+      display: flex;
+      gap: 30px;
+      flex: 1;
+    }
+
+    .left-panel {
+      flex: 1;
+      max-width: 450px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      padding: 20px;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .right-panel {
+      flex: 1;
+      max-width: 450px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      padding: 20px;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Tamagotchi Device */
+    .tamagotchi {
+      width: 280px;
+      height: 400px;
+      background: linear-gradient(145deg, #FFCA3A, #FFB300);
+      border-radius: 25px;
+      padding: 20px;
+      box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.3),
+        inset 0 2px 4px rgba(255, 255, 255, 0.3);
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .tamagotchi::before {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+      border-radius: 1px;
+    }
+
+    .screen {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #8AC926, #7CB342);
+      border-radius: 15px;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .screen::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .pet {
+      font-size: 80px;
+      margin-bottom: 10px;
+      filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+      animation: bounce 2s infinite;
+    }
+
+    .pet-info {
+      text-align: center;
+      color: var(--dark);
+    }
+
+    .pet-name {
+      font-size: 12px;
+      font-weight: bold;
+      margin-bottom: 5px;
+      text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
+    }
+
+    .pet-level {
+      font-size: 10px;
+      opacity: 0.8;
+    }
+
+    /* Status Bars */
+    .status-bars {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      backdrop-filter: blur(5px);
+    }
+
+    .bar {
+      display: flex;
+      align-items: center;
+      margin: 8px 0;
+      font-size: 10px;
+      min-height: 20px;
+      justify-content: space-between;
+    }
+
+    .bar-label {
+      width: 80px;
+      font-weight: bold;
+      text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+    }
+
+    .bar-value {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .bar-percentage {
+      min-width: 35px;
+      text-align: right;
+      font-size: 10px;
+      font-weight: bold;
+      text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+    }
+
+    .bar-progress {
+      flex: 1;
+      height: 16px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 8px;
+      transition: width 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .bar-fill.hunger { background: linear-gradient(90deg, #FF6B35, #FF8E53); }
+    .bar-fill.energy { background: linear-gradient(90deg, #4ECDC4, #44A08D); }
+    .bar-fill.happy { background: linear-gradient(90deg, #FFCA3A, #FFB300); }
+    .bar-fill.health { background: linear-gradient(90deg, #8AC926, #7CB342); }
+
+    /* Action Buttons */
+    .action-buttons {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      padding: 15px;
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 15px;
+      backdrop-filter: blur(5px);
+    }
+
+    .btn {
+      padding: 15px;
+      background: linear-gradient(135deg, var(--accent), #1565C0);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn.feed { background: linear-gradient(135deg, #FF6B35, #E55A2B); }
+    .btn.play { background: linear-gradient(135deg, #8AC926, #7CB342); }
+    .btn.rest { background: linear-gradient(135deg, #4ECDC4, #44A08D); }
+    .btn.heal { background: linear-gradient(135deg, #FF595E, #E53E3E); }
+
+    /* Panels */
+    .panel {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    }
+
+    .panel h3 {
+      color: var(--primary);
+      margin-bottom: 15px;
+      font-size: 14px;
+      text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.5);
+    }
+
+    /* Wallet Info */
+    .wallet-info {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .wallet-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      font-size: 10px;
+    }
+
+    .wallet-label {
+      color: var(--light);
+      opacity: 0.8;
+    }
+
+    .wallet-value {
+      color: var(--primary);
+      font-weight: bold;
+    }
+
+    /* Leaderboard */
+    .leaderboard-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      font-size: 10px;
+    }
+
+    .leaderboard-rank {
+      color: var(--primary);
+      font-weight: bold;
+      min-width: 20px;
+    }
+
+    .leaderboard-name {
+      color: var(--light);
+      flex: 1;
+      margin: 0 10px;
+    }
+
+    .leaderboard-xp {
+      color: var(--secondary);
+      font-weight: bold;
+    }
+
+    /* Notifications */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 20px;
+      border-radius: 10px;
+      color: white;
+      font-size: 12px;
+      z-index: 1000;
+      transform: translateX(400px);
+      transition: transform 0.3s ease;
+      max-width: 300px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .notification.show {
+      transform: translateX(0);
+    }
+
+    .notification.success { background: var(--success); }
+    .notification.error { background: var(--danger); }
+    .notification.info { background: var(--accent); }
+    .notification.warning { background: var(--warning); }
+
+    /* Animations */
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-10px); }
+      60% { transform: translateY(-5px); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes sparkle {
+      0%, 100% { opacity: 0; transform: scale(0); }
+      50% { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes levelUp {
+      0% { transform: scale(1) rotate(0deg); }
+      50% { transform: scale(1.2) rotate(180deg); }
+      100% { transform: scale(1) rotate(360deg); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .game-layout {
+        flex-direction: column;
+      }
+
+      .left-panel, .right-panel {
+        max-width: 100%;
+      }
+
+      .tamagotchi {
+        width: 250px;
+        height: 350px;
+      }
+
+      .pet {
+        font-size: 60px;
+      }
+
+      .connect-wallet-btn {
+        width: 280px;
+        height: 70px;
+      }
+
+      .btn-title {
+        font-size: 10px;
+      }
+
+      .btn-subtitle {
+        font-size: 7px;
+      }
+
+      .btn-icon {
+        font-size: 28px;
+      }
+
+      .main-tabs {
+        gap: 5px;
+      }
+
+      .tab-btn {
+        padding: 8px 12px;
+        font-size: 8px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .tamagotchi {
+        width: 220px;
+        height: 320px;
+      }
+
+      .pet {
+        font-size: 50px;
+      }
+
+      .connect-wallet-btn {
+        width: 260px;
+        height: 60px;
+      }
+
+      .btn-title {
+        font-size: 9px;
+      }
+
+      .btn-subtitle {
+        font-size: 6px;
+      }
+
+      .btn-icon {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Wallet Connect Screen -->
+  <div class="wallet-connect-screen" id="wallet-connect-screen">
+    <h1>🎮 SOLANA TAMAGOTCHI</h1>
+    <h2>🎮 Welcome to Solana Tamagotchi!</h2>
+    
+    <button class="connect-wallet-btn" id="connect-wallet-main">
+      <div class="btn-content">
+        <div class="btn-icon">👻</div>
+        <div class="btn-text">
+          <div class="btn-title">CONNECT WALLET</div>
+          <div class="btn-subtitle">Start Your Tamagotchi Journey</div>
+        </div>
+      </div>
+      <div class="btn-glow"></div>
+    </button>
+    
+    <p>
+      Connect your Phantom wallet to start your NFT pet adventure!<br>
+      Each wallet gets one unique pet with special traits and abilities.
+    </p>
+  </div>
+
+  <!-- Game Interface -->
+  <div class="game-container hidden" id="game-container">
+    <!-- Navigation Tabs -->
+    <div class="main-tabs" id="main-tabs">
+      <button class="tab-btn active" data-tab="game">🎮 GAME</button>
+      <button class="tab-btn" data-tab="wallet">💰 WALLET</button>
+      <button class="tab-btn" data-tab="achievements">🏆 ACHIEVEMENTS</button>
+      <button class="tab-btn" data-tab="leaderboard">📊 LEADERBOARD</button>
+      <button class="tab-btn" data-tab="referrals">👥 REFERRALS</button>
+    </div>
+
+    <!-- Game Tab -->
+    <div class="tab-content active" id="game-tab">
+      <div class="game-layout">
+        <!-- Left Panel - Tamagotchi -->
+        <div class="left-panel">
+          <div class="tamagotchi">
+            <div class="screen">
+              <div class="pet" id="pet">😺</div>
+              <div class="pet-info">
+                <div class="pet-name" id="pet-name">SOLANA CAT</div>
+                <div class="pet-level" id="pet-level">Level 1</div>
+              </div>
+              <div class="status-bars">
+                <div class="bar">
+                  <div class="bar-label">HUNGER</div>
+                  <div class="bar-value">
+                    <div class="bar-percentage" id="hunger-percent">80%</div>
+                    <div class="bar-progress">
+                      <div class="bar-fill hunger" id="hunger-bar" style="width: 80%"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="bar">
+                  <div class="bar-label">ENERGY</div>
+                  <div class="bar-value">
+                    <div class="bar-percentage" id="energy-percent">60%</div>
+                    <div class="bar-progress">
+                      <div class="bar-fill energy" id="energy-bar" style="width: 60%"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="bar">
+                  <div class="bar-label">HAPPY</div>
+                  <div class="bar-value">
+                    <div class="bar-percentage" id="happy-percent">70%</div>
+                    <div class="bar-progress">
+                      <div class="bar-fill happy" id="happy-bar" style="width: 70%"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="bar">
+                  <div class="bar-label">HEALTH</div>
+                  <div class="bar-value">
+                    <div class="bar-percentage" id="health-percent">100%</div>
+                    <div class="bar-progress">
+                      <div class="bar-fill health" id="health-bar" style="width: 100%"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="action-buttons">
+            <button class="btn feed" id="feed-btn">🍎 FEED</button>
+            <button class="btn play" id="play-btn">🎮 PLAY</button>
+            <button class="btn rest" id="rest-btn">😴 REST</button>
+            <button class="btn heal" id="heal-btn">💊 HEAL</button>
+          </div>
+        </div>
+
+        <!-- Right Panel - Info -->
+        <div class="right-panel">
+          <div class="panel">
+            <h3>💰 WALLET STATUS</h3>
+            <div class="wallet-info" id="wallet-info">
+              <div class="wallet-item">
+                <span class="wallet-label">Network:</span>
+                <span class="wallet-value" id="wallet-network">Devnet</span>
+              </div>
+              <div class="wallet-item">
+                <span class="wallet-label">Balance:</span>
+                <span class="wallet-value" id="wallet-balance">0.0000 SOL</span>
+              </div>
+              <div class="wallet-item">
+                <span class="wallet-label">TAMA:</span>
+                <span class="wallet-value" id="tama-balance">100</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>📊 PET STATS</h3>
+            <div class="wallet-info">
+              <div class="wallet-item">
+                <span class="wallet-label">Type:</span>
+                <span class="wallet-value" id="pet-type">Cat</span>
+              </div>
+              <div class="wallet-item">
+                <span class="wallet-label">Rarity:</span>
+                <span class="wallet-value" id="pet-rarity">Common</span>
+              </div>
+              <div class="wallet-item">
+                <span class="wallet-label">XP:</span>
+                <span class="wallet-value" id="pet-xp">0</span>
+              </div>
+              <div class="wallet-item">
+                <span class="wallet-label">Total Clicks:</span>
+                <span class="wallet-value" id="total-clicks">0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wallet Tab -->
+    <div class="tab-content" id="wallet-tab">
+      <div class="panel">
+        <h3>💰 WALLET INFORMATION</h3>
+        <div class="wallet-info">
+          <div class="wallet-item">
+            <span class="wallet-label">Address:</span>
+            <span class="wallet-value" id="wallet-address">Not connected</span>
+          </div>
+          <div class="wallet-item">
+            <span class="wallet-label">Network:</span>
+            <span class="wallet-value" id="wallet-network-info">Devnet</span>
+          </div>
+          <div class="wallet-item">
+            <span class="wallet-label">SOL Balance:</span>
+            <span class="wallet-value" id="wallet-balance-info">0.0000</span>
+          </div>
+          <div class="wallet-item">
+            <span class="wallet-label">TAMA Tokens:</span>
+            <span class="wallet-value" id="tama-balance-info">100</span>
+          </div>
+        </div>
+        <button class="btn" id="disconnect-wallet-btn" style="margin-top: 15px; width: 100%;">
+          🔌 DISCONNECT WALLET
+        </button>
+      </div>
+    </div>
+
+    <!-- Achievements Tab -->
+    <div class="tab-content" id="achievements-tab">
+      <div class="panel">
+        <h3>🏆 ACHIEVEMENTS</h3>
+        <div id="achievements-list">
+          <!-- Achievements will be populated here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Leaderboard Tab -->
+    <div class="tab-content" id="leaderboard-tab">
+      <div class="panel">
+        <h3>📊 GLOBAL LEADERBOARD</h3>
+        <div id="leaderboard-list">
+          <!-- Leaderboard will be populated here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Referrals Tab -->
+    <div class="tab-content" id="referrals-tab">
+      <div class="panel">
+        <h3>👥 REFERRAL PROGRAM</h3>
+        <div class="wallet-info">
+          <div class="wallet-item">
+            <span class="wallet-label">Your Code:</span>
+            <span class="wallet-value" id="referral-code">Loading...</span>
+          </div>
+          <div class="wallet-item">
+            <span class="wallet-label">Referrals:</span>
+            <span class="wallet-value" id="referral-count">0</span>
+          </div>
+          <div class="wallet-item">
+            <span class="wallet-label">Total Bonuses:</span>
+            <span class="wallet-value" id="referral-bonuses">0 TAMA</span>
+          </div>
+        </div>
+        <div style="margin-top: 15px;">
+          <p style="font-size: 10px; margin-bottom: 10px;">
+            Share your referral link to earn 50 XP + 25 TAMA for each friend who joins!
+          </p>
+          <button class="btn" id="copy-referral-btn" style="width: 100%;">
+            📋 COPY REFERRAL LINK
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== FIREBASE CONFIGURATION =====
+    const firebaseConfig = {
+      apiKey: "demo-key",
+      authDomain: "solana-tamagotchi-demo.firebaseapp.com",
+      projectId: "solana-tamagotchi-demo",
+      storageBucket: "solana-tamagotchi-demo.appspot.com",
+      messagingSenderId: "123456789",
+      appId: "1:123456789:web:abcdef123456"
+    };
+
+    let db = null;
+    let playersCollection = null;
+
+    // Initialize Firebase
+    function initializeFirebase() {
+      try {
+        if (typeof firebase !== 'undefined') {
+          firebase.initializeApp(firebaseConfig);
+          db = firebase.firestore();
+          playersCollection = db.collection('players');
+          console.log('✅ Firebase initialized for player database');
+          return true;
+        }
+      } catch (error) {
+        console.log('⚠️ Firebase not available, using localStorage only');
+      }
+      return false;
+    }
+
+    // ===== PLAYER DATABASE FUNCTIONS =====
+    async function savePlayerData() {
+      if (!gameState.wallet.connected || !gameState.wallet.publicKey) return;
+
+      const playerData = {
+        walletAddress: gameState.wallet.publicKey,
+        pet: gameState.pet,
+        wallet: gameState.wallet,
+        achievements: gameState.achievements,
+        referrals: gameState.referrals,
+        lastUpdated: new Date(),
+        totalXP: gameState.pet.xp || 0,
+        level: gameState.pet.level || 1
+      };
+
+      // Save to localStorage as backup
+      localStorage.setItem('tamagotchi_player_data', JSON.stringify(playerData));
+
+      // Save to Firebase if available
+      if (playersCollection) {
+        try {
+          await playersCollection.doc(gameState.wallet.publicKey).set(playerData);
+          console.log('✅ Player data saved to Firebase');
+        } catch (error) {
+          console.log('⚠️ Firebase save failed, using localStorage only');
+        }
+      }
+    }
+
+    async function loadPlayerData() {
+      if (!gameState.wallet.connected || !gameState.wallet.publicKey) return;
+
+      // Try to load from Firebase first
+      if (playersCollection) {
+        try {
+          const doc = await playersCollection.doc(gameState.wallet.publicKey).get();
+          if (doc.exists) {
+            const data = doc.data();
+            gameState.pet = data.pet || gameState.pet;
+            gameState.achievements = data.achievements || gameState.achievements;
+            gameState.referrals = data.referrals || gameState.referrals;
+            console.log('✅ Player data loaded from Firebase');
+            return;
+          }
+        } catch (error) {
+          console.log('⚠️ Firebase load failed, trying localStorage');
+        }
+      }
+
+      // Fallback to localStorage
+      const savedData = localStorage.getItem('tamagotchi_player_data');
+      if (savedData) {
+        try {
+          const data = JSON.parse(savedData);
+          if (data.walletAddress === gameState.wallet.publicKey) {
+            gameState.pet = data.pet || gameState.pet;
+            gameState.achievements = data.achievements || gameState.achievements;
+            gameState.referrals = data.referrals || gameState.referrals;
+            console.log('✅ Player data loaded from localStorage');
+          }
+        } catch (error) {
+          console.log('⚠️ Error loading player data');
+        }
+      }
+    }
+
+    async function getLeaderboard() {
+      if (!playersCollection) {
+        // Fallback to local leaderboard
+        return getLocalLeaderboard();
+      }
+
+      try {
+        const snapshot = await playersCollection
+          .orderBy('totalXP', 'desc')
+          .limit(10)
+          .get();
+
+        const leaderboard = [];
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          leaderboard.push({
+            wallet: data.walletAddress,
+            name: data.pet.name,
+            level: data.level,
+            xp: data.totalXP,
+            type: data.pet.type
+          });
+        });
+
+        return leaderboard;
+      } catch (error) {
+        console.log('⚠️ Firebase leaderboard failed, using local');
+        return getLocalLeaderboard();
+      }
+    }
+
+    function getLocalLeaderboard() {
+      // Create local leaderboard from localStorage
+      const leaderboard = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('tamagotchi_player_data')) {
+          try {
+            const data = JSON.parse(localStorage.getItem(key));
+            leaderboard.push({
+              wallet: data.walletAddress,
+              name: data.pet.name,
+              level: data.level,
+              xp: data.totalXP,
+              type: data.pet.type
+            });
+          } catch (error) {
+            // Skip invalid data
+          }
+        }
+      }
+      return leaderboard.sort((a, b) => b.xp - a.xp).slice(0, 10);
+    }
+
+    // ===== GAME STATE =====
+    let gameState = {
+      soundEnabled: false,
+      pet: {
+        name: "SOLANA CAT",
+        type: "cat",
+        hunger: 80,
+        energy: 60,
+        happy: 70,
+        health: 100,
+        isAlive: true,
+        level: 1,
+        xp: 0,
+        totalClicks: 0,
+        rarity: "common",
+        traits: {
+          color: "orange",
+          pattern: "solid",
+          size: "medium",
+          personality: "playful",
+          special: "none"
+        }
+      },
+      wallet: {
+        connected: false,
+        publicKey: null,
+        network: 'devnet',
+        balance: 0
+      },
+      achievements: {
+        unlocked: [],
+        progress: {
+          clicker: 0,
+          feeder: 0,
+          player: 0,
+          healer: 0,
+          survivor: 0,
+          evolution: 0
+        }
+      },
+      referrals: {
+        code: null,
+        referrer: null,
+        referred: [],
+        bonuses: []
+      },
+      leaderboard: [
+        { name: "DONK", type: "cat", level: 5, totalClicks: 1250 },
+        { name: "SOLANA CAT", type: "cat", level: 3, totalClicks: 780 }
+      ],
+      globalLeaderboard: []
+    };
+
+    // ===== DOM ELEMENTS =====
+    const elements = {
+      pet: document.getElementById('pet'),
+      petName: document.getElementById('pet-name'),
+      petLevel: document.getElementById('pet-level'),
+      petType: document.getElementById('pet-type'),
+      petRarity: document.getElementById('pet-rarity'),
+      petXp: document.getElementById('pet-xp'),
+      totalClicks: document.getElementById('total-clicks'),
+      hungerBar: document.getElementById('hunger-bar'),
+      energyBar: document.getElementById('energy-bar'),
+      happyBar: document.getElementById('happy-bar'),
+      healthBar: document.getElementById('health-bar'),
+      hungerPercent: document.getElementById('hunger-percent'),
+      energyPercent: document.getElementById('energy-percent'),
+      happyPercent: document.getElementById('happy-percent'),
+      healthPercent: document.getElementById('health-percent'),
+      walletNetwork: document.getElementById('wallet-network'),
+      walletBalance: document.getElementById('wallet-balance'),
+      tamaBalance: document.getElementById('tama-balance'),
+      walletAddress: document.getElementById('wallet-address'),
+      walletNetworkInfo: document.getElementById('wallet-network-info'),
+      walletBalanceInfo: document.getElementById('wallet-balance-info'),
+      tamaBalanceInfo: document.getElementById('tama-balance-info'),
+      referralCode: document.getElementById('referral-code'),
+      referralCount: document.getElementById('referral-count'),
+      referralBonuses: document.getElementById('referral-bonuses')
+    };
+
+    // ===== PET CARE FUNCTIONS =====
+    function feedPet() {
+      if (!gameState.pet.isAlive) {
+        showNotification("Your pet is dead! Revive it first.", "error");
+        return;
+      }
+
+      if (gameState.pet.energy < 10) {
+        showNotification("Not enough energy to feed!", "warning");
+        return;
+      }
+
+      gameState.pet.hunger = Math.min(100, gameState.pet.hunger + 25);
+      gameState.pet.energy = Math.max(0, gameState.pet.energy - 10);
+      gameState.pet.happy = Math.min(100, gameState.pet.happy + 5);
+
+      addXP(15, "feeding");
+      updatePetDisplay();
+      showNotification("🍎 Fed your pet! +15 XP", "success");
+    }
+
+    function playWithPet() {
+      if (!gameState.pet.isAlive) {
+        showNotification("Your pet is dead! Revive it first.", "error");
+        return;
+      }
+
+      if (gameState.pet.energy < 15) {
+        showNotification("Not enough energy to play!", "warning");
+        return;
+      }
+
+      gameState.pet.happy = Math.min(100, gameState.pet.happy + 30);
+      gameState.pet.energy = Math.max(0, gameState.pet.energy - 15);
+      gameState.pet.hunger = Math.max(0, gameState.pet.hunger - 5);
+
+      addXP(20, "playing");
+      updatePetDisplay();
+      showNotification("🎮 Played with your pet! +20 XP", "success");
+    }
+
+    function restPet() {
+      if (!gameState.pet.isAlive) {
+        showNotification("Your pet is dead! Revive it first.", "error");
+        return;
+      }
+
+      gameState.pet.energy = Math.min(100, gameState.pet.energy + 40);
+      gameState.pet.hunger = Math.max(0, gameState.pet.hunger - 10);
+
+      addXP(10, "resting");
+      updatePetDisplay();
+      showNotification("😴 Your pet is resting! +10 XP", "success");
+    }
+
+    function healPet() {
+      if (!gameState.pet.isAlive) {
+        showNotification("Your pet is dead! Revive it first.", "error");
+        return;
+      }
+
+      if (gameState.pet.health >= 100) {
+        showNotification("Your pet is already healthy!", "info");
+        return;
+      }
+
+      gameState.pet.health = Math.min(100, gameState.pet.health + 50);
+      gameState.pet.happy = Math.min(100, gameState.pet.happy + 10);
+
+      addXP(25, "healing");
+      updatePetDisplay();
+      showNotification("💊 Healed your pet! +25 XP", "success");
+    }
+
+    function addXP(amount, source = "action") {
+      gameState.pet.xp += amount;
+      gameState.pet.totalClicks += amount;
+      
+      // Update achievement progress
+      if (source === "clicking") gameState.achievements.progress.clicker += amount;
+      else if (source === "feeding") gameState.achievements.progress.feeder += amount;
+      else if (source === "playing") gameState.achievements.progress.player += amount;
+      else if (source === "healing") gameState.achievements.progress.healer += amount;
+
+      // Save player data to database
+      savePlayerData();
+      
+      checkLevelUp();
+      checkAchievements();
+      updateLeaderboard();
+    }
+
+    function checkLevelUp() {
+      const xpNeeded = gameState.pet.level * 100;
+      if (gameState.pet.xp >= xpNeeded) {
+        gameState.pet.level++;
+        gameState.pet.xp -= xpNeeded;
+        
+        // Restore some stats on level up
+        gameState.pet.health = Math.min(100, gameState.pet.health + 20);
+        gameState.pet.energy = Math.min(100, gameState.pet.energy + 20);
+        
+        showNotification(`🎉 Level Up! Now level ${gameState.pet.level}!`, "success");
+        updatePetDisplay();
+      }
+    }
+
+    function checkAchievements() {
+      const achievements = [
+        { id: "first_click", name: "First Click", desc: "Click your pet for the first time", condition: () => gameState.pet.totalClicks >= 1, reward: { xp: 50, tama: 25 } },
+        { id: "level_5", name: "Level 5", desc: "Reach level 5", condition: () => gameState.pet.level >= 5, reward: { xp: 200, tama: 100 } },
+        { id: "level_10", name: "Level 10", desc: "Reach level 10", condition: () => gameState.pet.level >= 10, reward: { xp: 500, tama: 250 } },
+        { id: "perfect_care", name: "Perfect Care", desc: "Keep all stats above 80%", condition: () => gameState.pet.hunger >= 80 && gameState.pet.energy >= 80 && gameState.pet.happy >= 80 && gameState.pet.health >= 80, reward: { xp: 300, tama: 150 } },
+        { id: "clicker_100", name: "Clicker", desc: "Click 100 times", condition: () => gameState.achievements.progress.clicker >= 100, reward: { xp: 150, tama: 75 } },
+        { id: "feeder_50", name: "Feeder", desc: "Feed 50 times", condition: () => gameState.achievements.progress.feeder >= 50, reward: { xp: 200, tama: 100 } },
+        { id: "player_30", name: "Player", desc: "Play 30 times", condition: () => gameState.achievements.progress.player >= 30, reward: { xp: 180, tama: 90 } },
+        { id: "healer_20", name: "Healer", desc: "Heal 20 times", condition: () => gameState.achievements.progress.healer >= 20, reward: { xp: 250, tama: 125 } }
+      ];
+
+      achievements.forEach(achievement => {
+        if (!gameState.achievements.unlocked.includes(achievement.id) && achievement.condition()) {
+          gameState.achievements.unlocked.push(achievement.id);
+          gameState.pet.xp += achievement.reward.xp;
+          gameState.wallet.tama = (gameState.wallet.tama || 100) + achievement.reward.tama;
+          showNotification(`🏆 Achievement Unlocked: ${achievement.name}! +${achievement.reward.xp} XP, +${achievement.reward.tama} TAMA`, "success");
+        }
+      });
+    }
+
+    // ===== WALLET INTEGRATION =====
+    async function connectWallet() {
+      try {
+        // Check if Phantom is installed
+        if (window.solana && window.solana.isPhantom) {
+          showNotification("🔗 Connecting to Phantom Wallet...", "info");
+          
+          // Request connection with specific permissions
+          const resp = await window.solana.connect({ onlyIfTrusted: false });
+          const publicKey = resp.publicKey.toString();
+          
+          // Get wallet balance and network info
+          let balance = 0;
+          let network = 'Unknown';
+          try {
+            // Try devnet first (more reliable for testing)
+            const devnetConnection = new solanaWeb3.Connection('https://api.devnet.solana.com');
+            const devnetBalance = await devnetConnection.getBalance(resp.publicKey);
+            
+            // Try mainnet (may have rate limits)
+            let mainnetBalance = 0;
+            try {
+              const mainnetConnection = new solanaWeb3.Connection('https://api.mainnet-beta.solana.com');
+              mainnetBalance = await mainnetConnection.getBalance(resp.publicKey);
+            } catch (mainnetError) {
+              console.log("Mainnet API unavailable, using devnet:", mainnetError.message);
+            }
+            
+            // Use the network with higher balance (more likely to be the active one)
+            if (mainnetBalance > devnetBalance) {
+              balance = mainnetBalance / solanaWeb3.LAMPORTS_PER_SOL;
+              network = 'mainnet';
+            } else {
+              balance = devnetBalance / solanaWeb3.LAMPORTS_PER_SOL;
+              network = 'devnet';
+            }
+            
+            // Update game state
+            gameState.wallet.balance = balance;
+            gameState.wallet.network = network;
+            
+            // Update display
+            updateWalletDisplay();
+            
+            showNotification(`✅ Balance updated: ${balance.toFixed(4)} SOL (${network === 'devnet' ? 'Devnet' : 'Mainnet'})`, "success");
+          } catch (balanceError) {
+            console.error("Error fetching balance:", balanceError);
+            showNotification("⚠️ Connected but couldn't fetch balance", "warning");
+          }
+          
+          // Update game state
+          gameState.wallet.connected = true;
+          gameState.wallet.publicKey = publicKey;
+          
+          // Save connection state
+          localStorage.setItem('wallet_connected', 'true');
+          localStorage.setItem('wallet_publicKey', publicKey);
+          localStorage.setItem('wallet_network', gameState.wallet.network);
+          localStorage.setItem('wallet_balance', gameState.wallet.balance.toString());
+          
+          // Show game interface
+          checkWalletConnectionStatus();
+          
+          // Load player data from database
+          await loadPlayerData();
+          
+          // Check if this is a new pet or existing one
+          const existingPet = gameState.pet.name !== "SOLANA CAT" || gameState.pet.totalClicks > 0;
+          
+          if (existingPet) {
+            // Wallet already has a pet - load it
+            showNotification("✅ Wallet connected! Loading your pet...", "success");
+            
+            // Load existing pet
+            loadGame();
+            
+            // Update all displays
+            updatePetDisplay();
+            updateWalletDisplay();
+            updateAchievementsDisplay();
+            updateReferralDisplay();
+          } else {
+            // New wallet - create first pet
+            showNotification("🎉 Welcome! Creating your first pet...", "success");
+            generateNewPet();
+          }
+          
+        } else {
+          showNotification("❌ Phantom Wallet not found! Please install it first.", "error");
+        }
+      } catch (error) {
+        console.error("Wallet connection error:", error);
+        showNotification("❌ Failed to connect wallet. Please try again.", "error");
+      }
+    }
+
+    function disconnectWallet() {
+      gameState.wallet.connected = false;
+      gameState.wallet.publicKey = null;
+      gameState.wallet.balance = 0;
+      
+      // Clear saved connection state
+      localStorage.removeItem('wallet_connected');
+      localStorage.removeItem('wallet_publicKey');
+      localStorage.removeItem('wallet_network');
+      localStorage.removeItem('wallet_balance');
+      
+      // Return to connect screen
+      checkWalletConnectionStatus();
+      
+      showNotification("🔌 Wallet disconnected", "info");
+    }
+
+    function updateWalletDisplay() {
+      if (gameState.wallet.connected) {
+        elements.walletNetwork.textContent = gameState.wallet.network === 'devnet' ? 'Devnet' : 'Mainnet';
+        elements.walletBalance.textContent = `${gameState.wallet.balance.toFixed(4)} SOL`;
+        elements.walletAddress.textContent = gameState.wallet.publicKey ? `${gameState.wallet.publicKey.slice(0, 8)}...${gameState.wallet.publicKey.slice(-8)}` : 'Not connected';
+        elements.walletNetworkInfo.textContent = gameState.wallet.network === 'devnet' ? 'Devnet' : 'Mainnet';
+        elements.walletBalanceInfo.textContent = `${gameState.wallet.balance.toFixed(4)} SOL`;
+        elements.tamaBalance.textContent = gameState.wallet.tama || 100;
+        elements.tamaBalanceInfo.textContent = gameState.wallet.tama || 100;
+      } else {
+        elements.walletNetwork.textContent = 'Not connected';
+        elements.walletBalance.textContent = '0.0000 SOL';
+        elements.walletAddress.textContent = 'Not connected';
+        elements.walletNetworkInfo.textContent = 'Not connected';
+        elements.walletBalanceInfo.textContent = '0.0000 SOL';
+        elements.tamaBalance.textContent = '0';
+        elements.tamaBalanceInfo.textContent = '0';
+      }
+    }
+
+    // ===== PET GENERATION =====
+    function generateNewPet() {
+      const petTypes = ['cat', 'dog', 'dragon', 'fox', 'bear'];
+      const petEmojis = {
+        cat: ['😺', '😸', '😹', '😻', '😼', '😽', '🙀', '😿', '😾'],
+        dog: ['🐕', '🐶', '🐕‍🦺', '🐩', '🐺', '🦊', '🐕‍🦺'],
+        dragon: ['🐉', '🐲', '🦕', '🦖'],
+        fox: ['🦊', '🦝'],
+        bear: ['🐻', '🐻‍❄️', '🐨', '🐼']
+      };
+      
+      const rarities = ['common', 'rare', 'epic', 'legendary'];
+      const colors = ['orange', 'brown', 'green', 'red', 'blue', 'purple', 'pink', 'yellow'];
+      const patterns = ['solid', 'striped', 'spotted', 'gradient', 'rainbow'];
+      const sizes = ['small', 'medium', 'large'];
+      const personalities = ['playful', 'calm', 'energetic', 'lazy', 'mysterious'];
+      const specials = ['fire', 'ice', 'electric', 'magic', 'none'];
+      
+      // Generate random pet
+      const type = petTypes[Math.floor(Math.random() * petTypes.length)];
+      const rarity = rarities[Math.floor(Math.random() * rarities.length)];
+      const emoji = petEmojis[type][Math.floor(Math.random() * petEmojis[type].length)];
+      
+      // Update pet data
+      gameState.pet.name = `${type.toUpperCase()} ${Math.floor(Math.random() * 1000)}`;
+      gameState.pet.type = type;
+      gameState.pet.rarity = rarity;
+      gameState.pet.traits = {
+        color: colors[Math.floor(Math.random() * colors.length)],
+        pattern: patterns[Math.floor(Math.random() * patterns.length)],
+        size: sizes[Math.floor(Math.random() * sizes.length)],
+        personality: personalities[Math.floor(Math.random() * personalities.length)],
+        special: specials[Math.floor(Math.random() * specials.length)]
+      };
+      
+      // Set pet emoji
+      elements.pet.textContent = emoji;
+      
+      // Update display
+      updatePetDisplay();
+      
+      showNotification(`🎉 New ${rarity} ${type} created!`, "success");
+    }
+
+    // ===== UI UPDATES =====
+    function updatePetDisplay() {
+      elements.petName.textContent = gameState.pet.name;
+      elements.petLevel.textContent = `Level ${gameState.pet.level}`;
+      elements.petType.textContent = gameState.pet.type.charAt(0).toUpperCase() + gameState.pet.type.slice(1);
+      elements.petRarity.textContent = gameState.pet.rarity.charAt(0).toUpperCase() + gameState.pet.rarity.slice(1);
+      elements.petXp.textContent = gameState.pet.xp;
+      elements.totalClicks.textContent = gameState.pet.totalClicks;
+      
+      // Update status bars
+      elements.hungerBar.style.width = `${gameState.pet.hunger}%`;
+      elements.energyBar.style.width = `${gameState.pet.energy}%`;
+      elements.happyBar.style.width = `${gameState.pet.happy}%`;
+      elements.healthBar.style.width = `${gameState.pet.health}%`;
+      
+      elements.hungerPercent.textContent = `${gameState.pet.hunger}%`;
+      elements.energyPercent.textContent = `${gameState.pet.energy}%`;
+      elements.happyPercent.textContent = `${gameState.pet.happy}%`;
+      elements.healthPercent.textContent = `${gameState.pet.health}%`;
+    }
+
+    function updateAchievementsDisplay() {
+      const achievementsList = document.getElementById('achievements-list');
+      achievementsList.innerHTML = '';
+      
+      const achievements = [
+        { id: "first_click", name: "First Click", desc: "Click your pet for the first time", condition: () => gameState.pet.totalClicks >= 1 },
+        { id: "level_5", name: "Level 5", desc: "Reach level 5", condition: () => gameState.pet.level >= 5 },
+        { id: "level_10", name: "Level 10", desc: "Reach level 10", condition: () => gameState.pet.level >= 10 },
+        { id: "perfect_care", name: "Perfect Care", desc: "Keep all stats above 80%", condition: () => gameState.pet.hunger >= 80 && gameState.pet.energy >= 80 && gameState.pet.happy >= 80 && gameState.pet.health >= 80 },
+        { id: "clicker_100", name: "Clicker", desc: "Click 100 times", condition: () => gameState.achievements.progress.clicker >= 100 },
+        { id: "feeder_50", name: "Feeder", desc: "Feed 50 times", condition: () => gameState.achievements.progress.feeder >= 50 },
+        { id: "player_30", name: "Player", desc: "Play 30 times", condition: () => gameState.achievements.progress.player >= 30 },
+        { id: "healer_20", name: "Healer", desc: "Heal 20 times", condition: () => gameState.achievements.progress.healer >= 20 }
+      ];
+      
+      achievements.forEach(achievement => {
+        const isUnlocked = gameState.achievements.unlocked.includes(achievement.id);
+        const isCompleted = achievement.condition();
+        
+        const achievementDiv = document.createElement('div');
+        achievementDiv.className = 'wallet-item';
+        achievementDiv.style.opacity = isUnlocked ? '1' : '0.5';
+        
+        achievementDiv.innerHTML = `
+          <span class="wallet-label">${isUnlocked ? '🏆' : '🔒'} ${achievement.name}</span>
+          <span class="wallet-value">${isUnlocked ? 'UNLOCKED' : 'LOCKED'}</span>
+        `;
+        
+        achievementsList.appendChild(achievementDiv);
+      });
+    }
+
+    async function updateLeaderboard() {
+      // Update local leaderboard
+      const userIndex = gameState.leaderboard.findIndex(u => u.name === gameState.pet.name);
+      
+      if (userIndex === -1) {
+        gameState.leaderboard.push({
+          name: gameState.pet.name,
+          type: gameState.pet.type,
+          level: gameState.pet.level,
+          totalClicks: gameState.pet.totalClicks
+        });
+      } else {
+        gameState.leaderboard[userIndex] = {
+          name: gameState.pet.name,
+          type: gameState.pet.type,
+          level: gameState.pet.level,
+          totalClicks: gameState.pet.totalClicks
+        };
+      }
+
+      gameState.leaderboard.sort((a, b) => b.totalClicks - a.totalClicks);
+
+      // Update global leaderboard from database
+      try {
+        const globalLeaderboard = await getLeaderboard();
+        gameState.globalLeaderboard = globalLeaderboard;
+        updateLeaderboardDisplay();
+      } catch (error) {
+        console.log('⚠️ Failed to update global leaderboard');
+      }
+    }
+
+    function updateLeaderboardDisplay() {
+      const leaderboardList = document.getElementById('leaderboard-list');
+      leaderboardList.innerHTML = '';
+      
+      const displayLeaderboard = gameState.globalLeaderboard.length > 0 ? gameState.globalLeaderboard : gameState.leaderboard;
+      
+      displayLeaderboard.slice(0, 10).forEach((player, index) => {
+        const leaderboardDiv = document.createElement('div');
+        leaderboardDiv.className = 'leaderboard-item';
+        
+        leaderboardDiv.innerHTML = `
+          <span class="leaderboard-rank">#${index + 1}</span>
+          <span class="leaderboard-name">${player.name}</span>
+          <span class="leaderboard-xp">${player.xp || player.totalClicks} XP</span>
+        `;
+        
+        leaderboardList.appendChild(leaderboardDiv);
+      });
+    }
+
+    function updateReferralDisplay() {
+      if (gameState.wallet.connected && gameState.wallet.publicKey) {
+        // Generate referral code from wallet address
+        const referralCode = gameState.wallet.publicKey.slice(0, 8).toUpperCase();
+        gameState.referrals.code = referralCode;
+        
+        elements.referralCode.textContent = referralCode;
+        elements.referralCount.textContent = gameState.referrals.referred.length;
+        elements.referralBonuses.textContent = `${gameState.referrals.bonuses.reduce((sum, bonus) => sum + bonus.amount, 0)} TAMA`;
+      }
+    }
+
+    // ===== WALLET CONNECTION STATUS =====
+    function checkWalletConnectionStatus() {
+      const walletConnectScreen = document.getElementById('wallet-connect-screen');
+      const gameContainer = document.getElementById('game-container');
+      const mainTabs = document.getElementById('main-tabs');
+      
+      if (gameState.wallet.connected && gameState.wallet.publicKey) {
+        walletConnectScreen.classList.add('hidden');
+        gameContainer.classList.remove('hidden');
+        mainTabs.classList.remove('hidden');
+      } else {
+        walletConnectScreen.classList.remove('hidden');
+        gameContainer.classList.add('hidden');
+        mainTabs.classList.add('hidden');
+      }
+    }
+
+    // ===== TAB NAVIGATION =====
+    function setupTabNavigation() {
+      const tabBtns = document.querySelectorAll('.tab-btn');
+      const tabContents = document.querySelectorAll('.tab-content');
+      
+      tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const targetTab = btn.getAttribute('data-tab');
+          
+          // Remove active class from all tabs
+          tabBtns.forEach(b => b.classList.remove('active'));
+          tabContents.forEach(c => c.classList.remove('active'));
+          
+          // Add active class to clicked tab
+          btn.classList.add('active');
+          document.getElementById(`${targetTab}-tab`).classList.add('active');
+        });
+      });
+    }
+
+    // ===== NOTIFICATIONS =====
+    function showNotification(message, type = 'info') {
+      const notification = document.createElement('div');
+      notification.className = `notification ${type}`;
+      notification.textContent = message;
+      
+      document.body.appendChild(notification);
+      
+      // Show notification
+      setTimeout(() => notification.classList.add('show'), 100);
+      
+      // Hide notification after 3 seconds
+      setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => document.body.removeChild(notification), 300);
+      }, 3000);
+    }
+
+    // ===== EVENT LISTENERS =====
+    function setupEventListeners() {
+      // Pet click
+      elements.pet.addEventListener('click', function(e) {
+        if (!gameState.wallet.connected || !gameState.wallet.publicKey) {
+          showNotification("Please connect your wallet first!", "error");
+          return;
+        }
+        
+        if (!gameState.pet.isAlive) return;
+        
+        addXP(1, "clicking");
+        
+        // Visual effect
+        const petRect = elements.pet.getBoundingClientRect();
+        const effect = document.createElement('div');
+        effect.className = 'pet-click-effect';
+        effect.textContent = '+1';
+        effect.style.position = 'fixed';
+        effect.style.left = (petRect.left + petRect.width / 2) + 'px';
+        effect.style.top = (petRect.top - 20) + 'px';
+        effect.style.color = 'var(--primary)';
+        effect.style.fontSize = '16px';
+        effect.style.fontWeight = 'bold';
+        effect.style.pointerEvents = 'none';
+        effect.style.zIndex = '1000';
+        effect.style.animation = 'fadeInUp 1s ease-out forwards';
+        document.body.appendChild(effect);
+        
+        setTimeout(() => document.body.removeChild(effect), 1000);
+      });
+
+      // Action buttons
+      document.getElementById('feed-btn').addEventListener('click', feedPet);
+      document.getElementById('play-btn').addEventListener('click', playWithPet);
+      document.getElementById('rest-btn').addEventListener('click', restPet);
+      document.getElementById('heal-btn').addEventListener('click', healPet);
+
+      // Wallet buttons
+      document.getElementById('connect-wallet-main').addEventListener('click', connectWallet);
+      document.getElementById('disconnect-wallet-btn').addEventListener('click', disconnectWallet);
+
+      // Referral button
+      document.getElementById('copy-referral-btn').addEventListener('click', () => {
+        if (gameState.referrals.code) {
+          const referralLink = `${window.location.origin}${window.location.pathname}?ref=${gameState.referrals.code}`;
+          navigator.clipboard.writeText(referralLink).then(() => {
+            showNotification("📋 Referral link copied to clipboard!", "success");
+          });
+        }
+      });
+    }
+
+    // ===== GAME LOOP =====
+    function gameLoop() {
+      // Decrease pet stats over time
+      if (gameState.pet.isAlive) {
+        gameState.pet.hunger = Math.max(0, gameState.pet.hunger - 0.1);
+        gameState.pet.energy = Math.max(0, gameState.pet.energy - 0.05);
+        gameState.pet.happy = Math.max(0, gameState.pet.happy - 0.08);
+        
+        // Check if pet dies
+        if (gameState.pet.hunger <= 0 || gameState.pet.health <= 0) {
+          gameState.pet.isAlive = false;
+          gameState.pet.health = 0;
+          showNotification("💀 Your pet has died! Use HEAL to revive it.", "error");
+        }
+        
+        updatePetDisplay();
+      }
+    }
+
+    // ===== INITIALIZATION =====
+    function init() {
+      // Initialize Firebase for player database
+      initializeFirebase();
+      
+      setupEventListeners();
+      setupTabNavigation();
+      
+      // Restore wallet connection state from localStorage
+      const savedConnected = localStorage.getItem('wallet_connected');
+      const savedPublicKey = localStorage.getItem('wallet_publicKey');
+      const savedNetwork = localStorage.getItem('wallet_network');
+      const savedBalance = localStorage.getItem('wallet_balance');
+      
+      if (savedConnected === 'true' && savedPublicKey) {
+        gameState.wallet.connected = true;
+        gameState.wallet.publicKey = savedPublicKey;
+        gameState.wallet.network = savedNetwork || 'devnet';
+        gameState.wallet.balance = parseFloat(savedBalance) || 0;
+        console.log('🔄 Restored wallet connection from localStorage');
+      }
+      
+      // Check wallet connection status FIRST
+      checkWalletConnectionStatus();
+      
+      // Only load game if wallet is connected
+      if (gameState.wallet.connected && gameState.wallet.publicKey) {
+        // Load player data
+        loadPlayerData().then(() => {
+          updatePetDisplay();
+          updateWalletDisplay();
+          updateAchievementsDisplay();
+          updateReferralDisplay();
+          updateLeaderboard();
+        });
+      }
+      
+      // Start game loop
+      setInterval(gameLoop, 1000);
+      
+      // Auto-save every 30 seconds
+      setInterval(() => {
+        if (gameState.wallet.connected) {
+          savePlayerData();
+        }
+      }, 30000);
+      
+      console.log('🎮 Solana Tamagotchi initialized!');
+    }
+
+    // Start the game
+    init();
+  </script>
+</body>
+</html>
