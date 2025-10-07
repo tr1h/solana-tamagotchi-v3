@@ -81,12 +81,30 @@ const Game = {
     showLanding() {
         document.getElementById('landing-page').classList.remove('hidden');
         document.getElementById('app').classList.add('hidden');
+        
+        // Hide network indicator on landing
+        const networkStatus = document.getElementById('network-status');
+        if (networkStatus && networkStatus.parentElement) {
+            networkStatus.parentElement.style.display = 'none';
+        }
     },
     
     // Show game
     showGame() {
+        // Only show if wallet connected
+        if (!WalletManager.isConnected()) {
+            this.showLanding();
+            return;
+        }
+        
         document.getElementById('landing-page').classList.add('hidden');
         document.getElementById('app').classList.remove('hidden');
+        
+        // Show network indicator
+        const networkStatus = document.getElementById('network-status');
+        if (networkStatus && networkStatus.parentElement) {
+            networkStatus.parentElement.style.display = 'block';
+        }
     },
     
     // Update landing stats
