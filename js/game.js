@@ -871,6 +871,20 @@ const Game = {
         }
         
         if (this.pet) {
+            // Check time since last update
+            const timeSinceUpdate = Date.now() - (this.pet.lastUpdate || Date.now());
+            const minutesPassed = Math.floor(timeSinceUpdate / 60000);
+            
+            // Apply gradual stat decrease (but don't kill pet on load)
+            if (minutesPassed > 0 && !this.pet.isDead) {
+                this.pet.stats.hunger = Math.max(20, this.pet.stats.hunger - (minutesPassed * 2));
+                this.pet.stats.energy = Math.max(20, this.pet.stats.energy - minutesPassed);
+                this.pet.stats.happy = Math.max(20, this.pet.stats.happy - minutesPassed);
+                this.pet.stats.health = Math.max(30, this.pet.stats.health - Math.floor(minutesPassed / 5));
+                this.pet.lastUpdate = Date.now();
+                this.savePetData();
+            }
+            
             this.updatePetDisplay();
             if (!this.pet.isDead) {
                 this.startGameLoop();
