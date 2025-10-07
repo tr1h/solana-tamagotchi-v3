@@ -5,6 +5,8 @@
 const Database = {
     db: null,
     initialized: false,
+    useMySQL: true, // Toggle between MySQL and Firebase
+    apiURL: 'http://localhost/solana-tamagotchi/api', // Change to your API URL
     
     // Firebase configuration (REPLACE WITH YOUR CONFIG)
     firebaseConfig: {
@@ -189,6 +191,17 @@ const Database = {
     
     // Get leaderboard
     async getLeaderboard(limit = 10) {
+        if (this.useMySQL) {
+            try {
+                const response = await fetch(`${this.apiURL}/leaderboard.php?limit=${limit}`);
+                const result = await response.json();
+                return result.success ? result.data : [];
+            } catch (error) {
+                console.error('Failed to get leaderboard:', error);
+                return [];
+            }
+        }
+        
         if (!this.initialized) {
             return [];
         }
@@ -217,8 +230,45 @@ const Database = {
         }
     },
     
-    // Get player count
+    // Update leaderboard (MySQL)
+    async updateLeaderboard(wallet, petData) {
+        if (!this.useMySQL) return false;
+        
+        try {
+            const response = await fetch(`${this.apiURL}/leaderboard.php`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    wallet,
+                    petName: petData.name,
+                    level: petData.level,
+                    xp: petData.xp,
+                    tama: Utils.loadLocal('playerData')?.tama || 0,
+                    petType: petData.type,
+                    rarity: petData.rarity
+                })
+            });
+            const result = await response.json();
+            return result.success;
+        } catch (error) {
+            console.error('Failed to update leaderboard:', error);
+            return false;
+        }
+    },
+    
+    // Get player count (online players)
     async getPlayerCount() {
+        if (this.useMySQL) {
+            try {
+                const response = await fetch(`${this.apiURL}/players.php`);
+                const result = await response.json();
+                return result.success ? result.data.online : 0;
+            } catch (error) {
+                console.error('Failed to get player count:', error);
+                return 0;
+            }
+        }
+        
         if (!this.initialized) {
             return 0;
         }
@@ -230,6 +280,65 @@ const Database = {
         } catch (error) {
             console.error('Failed to get player count:', error);
             return 0;
+        }
+    },
+    
+    // Update player online status (MySQL)
+    async updatePlayerStatus(wallet, action = 'ping') {
+        if (!this.useMySQL) return false;
+        
+        try {
+            const response = await fetch(`${this.apiURL}/players.php`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ wallet, action })
+            });
+            const result = await response.json();
+            
+            if (result.success && result.data.online !== undefined) {
+                // Update online counter in UI
+                const playerCountEl = document.getElementById('player-count');
+                if (playerCountEl) {
+                    playerCountEl.textContent = `${result.data.online} player${result.data.online !== 1 ? 's' : ''}`;
+                }
+            }
+            
+            return result.success;
+        } catch (error) {
+            console.error('Failed to update player status:', error);
+            return false;
+        }
+    },
+    
+    // Check admin status
+    async checkAdmin(wallet) {
+        if (!this.useMySQL) return false;
+        
+        try {
+            const response = await fetch(`${this.apiURL}/admin.php?action=check`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ wallet })
+            });
+            const result = await response.json();
+            return result.success ? result.data.isAdmin : false;
+        } catch (error) {
+            console.error('Failed to check admin:', error);
+            return false;
+        }
+    },
+    
+    // Get admin stats
+    async getAdminStats(wallet) {
+        if (!this.useMySQL) return null;
+        
+        try {
+            const response = await fetch(`${this.apiURL}/admin.php?action=stats&wallet=${encodeURIComponent(wallet)}`);
+            const result = await response.json();
+            return result.success ? result.data : null;
+        } catch (error) {
+            console.error('Failed to get admin stats:', error);
+            return null;
         }
     },
     

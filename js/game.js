@@ -81,6 +81,10 @@ const Game = {
             }
         });
         
+        // Pet click for XP
+        this.canvas.addEventListener('click', (e) => this.clickPet(e));
+        this.canvas.style.cursor = 'pointer';
+        
         // Pet actions
         document.getElementById('feed-btn').addEventListener('click', () => this.feed());
         document.getElementById('play-btn').addEventListener('click', () => this.play());
@@ -209,6 +213,49 @@ const Game = {
         if (rand < 10) return 'epic'; // 9%
         if (rand < 30) return 'rare'; // 20%
         return 'common'; // 70%
+    },
+    
+    // Click pet for XP
+    clickPet(e) {
+        if (!this.pet || this.pet.isDead) {
+            Utils.showNotification('❌ No active pet');
+            return;
+        }
+        
+        // Get click position
+        const rect = this.canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        // Add XP for clicking
+        this.addXP(1);
+        
+        // Random happy reaction
+        if (Math.random() > 0.7) {
+            this.pet.stats.happy = Math.min(100, this.pet.stats.happy + 2);
+        }
+        
+        // Update clicks counter
+        const playerData = Utils.loadLocal('playerData') || { petClicks: 0 };
+        playerData.petClicks = (playerData.petClicks || 0) + 1;
+        Utils.saveLocal('playerData', playerData);
+        
+        // Visual feedback
+        Utils.createParticle(rect.left + x, rect.top + y, '+1 XP', 'sparkle');
+        this.animatePet('happy');
+        
+        // Sound effect (if available)
+        Utils.playSound('click');
+        
+        // Check click achievements
+        if (window.Achievements) {
+            if (playerData.petClicks === 1) Achievements.unlock('first_click');
+            if (playerData.petClicks === 10) Achievements.unlock('click_master');
+            if (playerData.petClicks === 100) Achievements.unlock('click_legend');
+        }
+        
+        this.updatePetDisplay();
+        this.savePetData();
     },
     
     // Feed pet
@@ -341,6 +388,11 @@ const Game = {
         this.pet.stats.happy = Math.min(100, this.pet.stats.happy + 10);
         
         Utils.showNotification(`🎉 Level Up! Now level ${this.pet.level}`);
+        
+        // Update leaderboard
+        if (window.Database && WalletManager.isConnected()) {
+            Database.updateLeaderboard(WalletManager.getAddress(), this.pet);
+        }
         
         // Check for evolution
         if (this.pet.level % 10 === 0 && this.pet.evolution < 5) {
@@ -614,6 +666,19 @@ const Game = {
             if (!this.pet.isDead) {
                 this.startGameLoop();
             }
+        }
+    },
+    
+    // Auto-load pet on wallet connect
+    autoLoadPet() {
+        const savedPet = Utils.loadLocal('petData');
+        if (savedPet && WalletManager.isConnected()) {
+            this.pet = savedPet;
+            this.updatePetDisplay();
+            if (!this.pet.isDead) {
+                this.startGameLoop();
+            }
+            Utils.showNotification('🐾 Pet loaded successfully!');
         }
     },
     

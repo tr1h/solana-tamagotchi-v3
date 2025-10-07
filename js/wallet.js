@@ -104,6 +104,16 @@ const WalletManager = {
                 await Database.loadPlayerData(this.publicKey.toString());
             }
             
+            // Auto-load pet if exists
+            if (window.Game) {
+                Game.autoLoadPet();
+            }
+            
+            // Update online status
+            if (window.Database) {
+                Database.updatePlayerStatus(this.publicKey.toString(), 'connect');
+            }
+            
             // Start auto-refresh balance
             this.startBalanceRefresh();
             
@@ -114,6 +124,11 @@ const WalletManager = {
     
     // Handle disconnect
     handleDisconnect() {
+        // Update online status before disconnect
+        if (this.publicKey && window.Database) {
+            Database.updatePlayerStatus(this.publicKey.toString(), 'disconnect');
+        }
+        
         this.publicKey = null;
         this.balance = 0;
         
@@ -123,10 +138,10 @@ const WalletManager = {
         // Stop balance refresh
         this.stopBalanceRefresh();
         
-        // Reset game state
-        if (window.Game) {
-            Game.reset();
-        }
+        // Don't reset game state - keep pet loaded
+        // if (window.Game) {
+        //     Game.reset();
+        // }
     },
     
     // Fetch SOL balance

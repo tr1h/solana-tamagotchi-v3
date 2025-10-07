@@ -4,6 +4,39 @@
 
 const Achievements = {
     achievements: {
+        first_click: {
+            id: 'first_click',
+            name: 'First Click',
+            description: 'Click your pet for the first time',
+            icon: '👆',
+            reward: { xp: 10, tama: 5 },
+            unlocked: false,
+            condition: () => true
+        },
+        click_master: {
+            id: 'click_master',
+            name: 'Click Master',
+            description: 'Click your pet 10 times',
+            icon: '👆',
+            reward: { xp: 50, tama: 25 },
+            unlocked: false,
+            condition: () => {
+                const playerData = Utils.loadLocal('playerData');
+                return playerData && (playerData.petClicks || 0) >= 10;
+            }
+        },
+        click_legend: {
+            id: 'click_legend',
+            name: 'Click Legend',
+            description: 'Click your pet 100 times',
+            icon: '👑',
+            reward: { xp: 200, tama: 100 },
+            unlocked: false,
+            condition: () => {
+                const playerData = Utils.loadLocal('playerData');
+                return playerData && (playerData.petClicks || 0) >= 100;
+            }
+        },
         first_pet: {
             id: 'first_pet',
             name: 'First Pet',
