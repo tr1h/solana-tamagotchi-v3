@@ -50,6 +50,7 @@ function initDatabase() {
         tama INT DEFAULT 0,
         pet_type VARCHAR(50),
         pet_rarity VARCHAR(50),
+        pet_data TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         INDEX idx_xp (xp),

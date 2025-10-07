@@ -854,21 +854,29 @@ const Game = {
     },
     
     // Auto-load pet on wallet connect
-    autoLoadPet() {
-        const savedPet = Utils.loadLocal('petData');
-        if (savedPet && WalletManager.isConnected()) {
-            this.pet = savedPet;
+    async autoLoadPet() {
+        if (!WalletManager.isConnected()) return;
+        
+        // Load from MySQL first
+        if (window.Database && Database.useMySQL) {
+            const dbPet = await Database.loadPlayerData(WalletManager.getAddress());
+            if (dbPet && dbPet.pet) {
+                this.pet = dbPet.pet;
+                Utils.saveLocal('petData', this.pet);
+            }
+        }
+        
+        // Fallback to localStorage
+        if (!this.pet) {
+            this.pet = Utils.loadLocal('petData');
+        }
+        
+        if (this.pet) {
             this.updatePetDisplay();
             if (!this.pet.isDead) {
                 this.startGameLoop();
             }
-            
-            // Update leaderboard with current pet data
-            if (window.Database) {
-                Database.updateLeaderboard(WalletManager.getAddress(), this.pet);
-            }
-            
-            Utils.showNotification('🐾 Pet loaded successfully!');
+            Utils.showNotification('🐾 Pet loaded!');
         }
     },
     

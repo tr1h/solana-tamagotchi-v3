@@ -104,21 +104,26 @@ const Database = {
     
     // Save pet data
     async savePetData(walletAddress, petData) {
-        if (!this.initialized || !walletAddress) {
-            return Utils.saveLocal('petData', petData);
-        }
+        if (!walletAddress) return Utils.saveLocal('petData', petData);
         
         try {
-            await this.db.collection('players').doc(walletAddress).collection('pets').doc(petData.id).set({
-                ...petData,
-                lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            
-            // Update player stats
-            await this.db.collection('players').doc(walletAddress).update({
-                currentPet: petData.id,
-                currentLevel: petData.level,
-                currentXP: petData.xp
+            if (this.useMySQL) {
+                await fetch(`${this.apiURL}/pet.php`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ wallet: walletAddress, pet: petData })
+                });
+            } else if (this.initialized) {
+                await this.db.collection('players').doc(walletAddress).collection('pets').doc(petData.id).set({
+                    ...petData,
+                    lastUpdate: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                // Update player stats
+                await this.db.collection('players').doc(walletAddress).update({
+                    currentPet: petData.id,
+                    currentLevel: petData.level,
+                    currentXP: petData.xp
             });
             
             return true;
