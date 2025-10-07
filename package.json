@@ -1,7 +1,7 @@
 {
-  "name": "solana-tamagotchi",
-  "version": "1.0.0",
-  "description": "Blockchain-based virtual pet game on Solana with NFT pets and Play-to-Earn mechanics",
+  "name": "solana-tamagotchi-v3",
+  "version": "3.0.0",
+  "description": "Ultimate Solana pet game with 5 types, evolution & achievements - V3 Ultimate Edition",
   "main": "index.html",
   "scripts": {
     "start": "python -m http.server 8000",
@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yourusername/solana-tamagotchi.git"
+    "url": "git+https://github.com/tr1h/solana-tamagotchi-v3.git"
   },
   "keywords": [
     "solana",
@@ -34,9 +34,9 @@
   "author": "Your Name",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/yourusername/solana-tamagotchi/issues"
+    "url": "https://github.com/tr1h/solana-tamagotchi-v3/issues"
   },
-  "homepage": "https://yourusername.github.io/solana-tamagotchi",
+  "homepage": "https://tr1h.github.io/solana-tamagotchi-v3",
   "devDependencies": {
     "http-server": "^14.1.1"
   },
