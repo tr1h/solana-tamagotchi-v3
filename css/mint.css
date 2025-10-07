@@ -301,6 +301,28 @@ body {
     cursor: not-allowed;
 }
 
+.btn-airdrop {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 12px;
+    padding: 15px;
+    background: linear-gradient(135deg, #1982C4, #155A8A);
+    border: 3px solid #1982C4;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.btn-airdrop:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(25, 130, 196, 0.4);
+}
+
+.btn-airdrop.hidden {
+    display: none;
+}
+
 .rarity-info h4 {
     font-size: 12px;
     margin: 0 0 15px 0;

@@ -31,6 +31,7 @@ const MintPage = {
         // Event listeners
         document.getElementById('connect-wallet').addEventListener('click', () => this.connectWallet());
         document.getElementById('mint-btn').addEventListener('click', () => this.mintNFT());
+        document.getElementById('airdrop-btn').addEventListener('click', () => this.requestAirdrop());
         
         // Load mint stats
         await this.loadMintStats();
@@ -67,6 +68,36 @@ const MintPage = {
         const mintBtn = document.getElementById('mint-btn');
         mintBtn.disabled = false;
         mintBtn.querySelector('.btn-text').textContent = `MINT NOW - ${this.getCurrentPrice()} SOL`;
+        
+        // Show airdrop button (devnet only)
+        document.getElementById('airdrop-btn').classList.remove('hidden');
+    },
+    
+    async requestAirdrop() {
+        try {
+            const airdropBtn = document.getElementById('airdrop-btn');
+            airdropBtn.textContent = '⏳ Requesting...';
+            airdropBtn.disabled = true;
+            
+            const signature = await this.connection.requestAirdrop(
+                this.publicKey,
+                solanaWeb3.LAMPORTS_PER_SOL
+            );
+            
+            await this.connection.confirmTransaction(signature, 'confirmed');
+            
+            alert('✅ Received 1 SOL! You can now mint your NFT!');
+            
+            airdropBtn.textContent = '💰 Get 1 SOL (Devnet)';
+            airdropBtn.disabled = false;
+        } catch (error) {
+            console.error('Airdrop failed:', error);
+            alert('❌ Airdrop failed. Try again or use: solana airdrop 1');
+            
+            const airdropBtn = document.getElementById('airdrop-btn');
+            airdropBtn.textContent = '💰 Get 1 SOL (Devnet)';
+            airdropBtn.disabled = false;
+        }
     },
     
     async loadMintStats() {
@@ -115,9 +146,29 @@ const MintPage = {
         mintBtn.querySelector('.btn-text').textContent = 'MINTING...';
         
         try {
-            // Get current price
+            // Check balance first
+            const balance = await this.connection.getBalance(this.publicKey);
             const price = this.getCurrentPrice();
             const lamports = price * solanaWeb3.LAMPORTS_PER_SOL;
+            
+            // If insufficient balance, try demo mode (free mint)
+            if (balance < lamports) {
+                if (!confirm(`Insufficient balance (${(balance / solanaWeb3.LAMPORTS_PER_SOL).toFixed(2)} SOL).\n\nMint for FREE in DEMO mode?`)) {
+                    mintBtn.disabled = false;
+                    mintBtn.querySelector('.btn-text').textContent = `MINT NOW - ${this.getCurrentPrice()} SOL`;
+                    return;
+                }
+                
+                // Demo mode - free mint
+                const nft = this.generateNFT();
+                this.saveNFTData(nft);
+                this.showSuccessModal(nft);
+                this.currentMinted++;
+                await this.loadMintStats();
+                
+                alert('🎉 FREE DEMO MINT! Get devnet SOL: solana airdrop 1');
+                return;
+            }
             
             // Treasury wallet (replace with yours)
             const treasuryWallet = 'GXvKWk8VierD1H6VXzQz7GxZBMZUxXKqvmHkBRGdPump';
