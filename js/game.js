@@ -248,7 +248,6 @@ const Game = {
         
         // Pet management
         document.getElementById('evolve-pet-btn').addEventListener('click', () => this.evolvePet());
-        document.getElementById('revive-pet-btn').addEventListener('click', () => this.revivePet());
         
         // Modal controls
         document.querySelectorAll('.modal-close').forEach(btn => {
@@ -390,7 +389,7 @@ const Game = {
     
     // Click pet for XP
     clickPet(e) {
-        if (!this.pet || this.pet.isDead) {
+        if (!this.pet) {
             Utils.showNotification('❌ No active pet');
             return;
         }
@@ -433,7 +432,7 @@ const Game = {
     
     // Feed pet
     feed() {
-        if (!this.pet || this.pet.isDead) {
+        if (!this.pet) {
             Utils.showNotification('❌ No active pet');
             return;
         }
@@ -457,7 +456,7 @@ const Game = {
     
     // Play with pet
     play() {
-        if (!this.pet || this.pet.isDead) {
+        if (!this.pet) {
             Utils.showNotification('❌ No active pet');
             return;
         }
@@ -482,7 +481,7 @@ const Game = {
     
     // Pet sleep
     sleep() {
-        if (!this.pet || this.pet.isDead) {
+        if (!this.pet) {
             Utils.showNotification('❌ No active pet');
             return;
         }
@@ -506,7 +505,7 @@ const Game = {
     
     // Heal pet
     async heal() {
-        if (!this.pet || this.pet.isDead) {
+        if (!this.pet) {
             Utils.showNotification('❌ No active pet');
             return;
         }
@@ -620,25 +619,6 @@ const Game = {
         this.savePetData();
     },
     
-    // Revive pet
-    async revivePet() {
-        if (!this.pet || !this.pet.isDead) return;
-        
-        const result = await WalletManager.revivePet(true);
-        
-        if (result.success) {
-            this.pet.isDead = false;
-            this.pet.stats = { ...this.petTypes[this.pet.type].baseStats };
-            this.pet.stats.health = 50;
-            
-            this.updatePetDisplay();
-            this.savePetData();
-            this.startGameLoop();
-            
-            document.getElementById('revive-pet-btn').classList.add('hidden');
-        }
-    },
-    
     // Update pet display
     updatePetDisplay() {
         if (!this.pet) return;
@@ -705,10 +685,13 @@ const Game = {
         
         const emoji = Utils.getPetEmoji(this.pet.type, this.pet.evolution);
         
-        if (this.pet.isDead) {
-            this.ctx.globalAlpha = 0.3;
-            this.ctx.fillText('💀', 75, 75);
+        if (this.pet.isCritical) {
+            // Critical state - dim and add warning
+            this.ctx.globalAlpha = 0.5;
+            this.ctx.fillText(emoji, 75, 75);
             this.ctx.globalAlpha = 1;
+            this.ctx.font = '24px Arial';
+            this.ctx.fillText('🆘', 75, 120);
         } else {
             this.ctx.fillText(emoji, 75, 75);
         }
@@ -744,7 +727,7 @@ const Game = {
     
     // Update pet stats over time
     updatePetStats() {
-        if (!this.pet || this.pet.isDead) return;
+        if (!this.pet) return;
         
         // Decrease stats over time
         this.pet.stats.hunger = Math.max(0, this.pet.stats.hunger - 2);
@@ -753,12 +736,15 @@ const Game = {
         
         // Check if pet should lose health
         if (this.pet.stats.hunger < 20 || this.pet.stats.happy < 20) {
-            this.pet.stats.health = Math.max(0, this.pet.stats.health - 5);
+            this.pet.stats.health = Math.max(5, this.pet.stats.health - 5); // Min 5% health
         }
         
-        // Check if pet died
-        if (this.pet.stats.health <= 0) {
-            this.petDied();
+        // Check if pet is critical
+        if (this.pet.stats.health <= 10 && !this.pet.isCritical) {
+            this.petCritical();
+        } else if (this.pet.stats.health > 30 && this.pet.isCritical) {
+            this.pet.isCritical = false;
+            Utils.showNotification('💚 Pet recovered from critical state!');
         }
         
         this.pet.lastUpdate = Date.now();
@@ -766,13 +752,12 @@ const Game = {
         this.savePetData();
     },
     
-    // Pet died
-    petDied() {
-        this.pet.isDead = true;
-        this.stopGameLoop();
+    // Pet critical state
+    petCritical() {
+        this.pet.isCritical = true;
         
-        Utils.showNotification('💀 Your pet has died! Revive it to continue.');
-        document.getElementById('revive-pet-btn').classList.remove('hidden');
+        Utils.showNotification('🆘 CRITICAL! Your pet needs immediate care!');
+        Utils.createParticle(window.innerWidth / 2, window.innerHeight / 2, '🆘', 'critical');
         
         this.drawPet();
     },
@@ -845,10 +830,7 @@ const Game = {
         
         if (this.pet) {
             this.updatePetDisplay();
-            
-            if (!this.pet.isDead) {
-                this.startGameLoop();
-            }
+            this.startGameLoop();
         }
     },
     
@@ -875,8 +857,8 @@ const Game = {
             const timeSinceUpdate = Date.now() - (this.pet.lastUpdate || Date.now());
             const minutesPassed = Math.floor(timeSinceUpdate / 60000);
             
-            // Apply gradual stat decrease (but don't kill pet on load)
-            if (minutesPassed > 0 && !this.pet.isDead) {
+            // Apply gradual stat decrease (but keep minimum values)
+            if (minutesPassed > 0) {
                 this.pet.stats.hunger = Math.max(20, this.pet.stats.hunger - (minutesPassed * 2));
                 this.pet.stats.energy = Math.max(20, this.pet.stats.energy - minutesPassed);
                 this.pet.stats.happy = Math.max(20, this.pet.stats.happy - minutesPassed);
@@ -886,9 +868,7 @@ const Game = {
             }
             
             this.updatePetDisplay();
-            if (!this.pet.isDead) {
-                this.startGameLoop();
-            }
+            this.startGameLoop();
             Utils.showNotification('🐾 Pet loaded!');
         }
     },
