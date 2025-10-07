@@ -235,6 +235,9 @@ const Database = {
         if (!this.useMySQL) return false;
         
         try {
+            // Calculate total XP (current level XP + accumulated)
+            const totalXP = petData.xp + this.calculateTotalXP(petData.level);
+            
             const response = await fetch(`${this.apiURL}/leaderboard.php`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -242,7 +245,7 @@ const Database = {
                     wallet,
                     petName: petData.name,
                     level: petData.level,
-                    xp: petData.xp,
+                    xp: totalXP, // Send total XP, not current level XP
                     tama: Utils.loadLocal('playerData')?.tama || 0,
                     petType: petData.type,
                     rarity: petData.rarity
@@ -254,6 +257,15 @@ const Database = {
             console.error('Failed to update leaderboard:', error);
             return false;
         }
+    },
+    
+    // Calculate total XP for all previous levels
+    calculateTotalXP(currentLevel) {
+        let total = 0;
+        for (let i = 1; i < currentLevel; i++) {
+            total += Utils.getXPForLevel(i);
+        }
+        return total;
     },
     
     // Get player count (online players)

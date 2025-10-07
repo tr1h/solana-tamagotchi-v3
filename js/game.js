@@ -220,6 +220,11 @@ const Game = {
             this.updatePetDisplay();
             this.startGameLoop();
             
+            // Update leaderboard with new pet
+            if (window.Database && WalletManager.isConnected()) {
+                Database.updateLeaderboard(WalletManager.getAddress(), this.pet);
+            }
+            
             // Close modal
             document.getElementById('create-pet-modal').classList.add('hidden');
             
@@ -426,6 +431,11 @@ const Game = {
         
         if (this.pet.xp >= xpNeeded) {
             this.levelUp();
+        } else {
+            // Update leaderboard even without level up
+            if (window.Database && WalletManager.isConnected()) {
+                Database.updateLeaderboard(WalletManager.getAddress(), this.pet);
+            }
         }
         
         this.updateXPBar();
@@ -733,6 +743,12 @@ const Game = {
             if (!this.pet.isDead) {
                 this.startGameLoop();
             }
+            
+            // Update leaderboard with current pet data
+            if (window.Database) {
+                Database.updateLeaderboard(WalletManager.getAddress(), this.pet);
+            }
+            
             Utils.showNotification('🐾 Pet loaded successfully!');
         }
     },
