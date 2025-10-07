@@ -179,8 +179,8 @@ def announce_command(message):
     else:
         bot.reply_to(message, "❌ Access denied. Admin only.", parse_mode='Markdown')
 
-# Echo all other messages
-@bot.message_handler(func=lambda message: True)
+# Handle unknown commands in private chat only
+@bot.message_handler(func=lambda message: message.chat.type == 'private')
 def echo_message(message):
     bot.reply_to(message, "Use /help to see available commands! 🚀")
 
