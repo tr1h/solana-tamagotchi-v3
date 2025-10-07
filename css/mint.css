@@ -1,0 +1,602 @@
+/* ============================================
+   MINT PAGE STYLES
+   ============================================ */
+
+body {
+    margin: 0;
+    font-family: 'Press Start 2P', cursive;
+    background: linear-gradient(135deg, #1D3557 0%, #457B9D 100%);
+    min-height: 100vh;
+    color: #F1FAEE;
+}
+
+.mint-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header */
+.mint-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 0;
+    border-bottom: 3px solid #FFCA3A;
+    margin-bottom: 50px;
+}
+
+.mint-logo {
+    font-size: 20px;
+    color: #FFCA3A;
+    margin: 0;
+    text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.3);
+}
+
+.btn-wallet {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 12px;
+    padding: 15px 30px;
+    background: linear-gradient(135deg, #8AC926, #6A994E);
+    border: 3px solid #8AC926;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-wallet:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(138, 201, 38, 0.4);
+}
+
+/* Main Grid */
+.mint-main {
+    margin-bottom: 80px;
+}
+
+.mint-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    align-items: start;
+}
+
+/* Preview Section */
+.mint-preview {
+    text-align: center;
+}
+
+.mint-preview h2 {
+    font-size: 24px;
+    color: #FFCA3A;
+    margin-bottom: 30px;
+}
+
+.nft-showcase {
+    background: rgba(255, 255, 255, 0.1);
+    border: 3px solid #FFCA3A;
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 30px;
+}
+
+.nft-card {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    padding: 20px;
+}
+
+.nft-image {
+    width: 250px;
+    height: 250px;
+    margin: 0 auto 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+.pet-emoji {
+    font-size: 120px;
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.5));
+}
+
+.rarity-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #1D3557;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.nft-info h3 {
+    font-size: 18px;
+    margin: 0 0 10px 0;
+}
+
+.nft-info p {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+}
+
+.pet-types {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pet-type-icon {
+    font-size: 40px;
+    opacity: 0.6;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.pet-type-icon:hover {
+    opacity: 1;
+    transform: scale(1.2);
+}
+
+/* Mint Info Section */
+.mint-info {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.phase-banner {
+    background: linear-gradient(135deg, #FF595E, #FF8C42);
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 12px;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+}
+
+.price-card {
+    background: rgba(255, 255, 255, 0.1);
+    border: 3px solid #8AC926;
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+}
+
+.price-main {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.price-label {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.price-value {
+    font-size: 36px;
+    color: #8AC926;
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+}
+
+.price-usd {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.mint-stats {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-value {
+    font-size: 32px;
+    color: #FFCA3A;
+}
+
+.stat-label {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.stat-divider {
+    font-size: 32px;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 20px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    overflow: hidden;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #8AC926, #6A994E);
+    transition: width 0.5s ease;
+}
+
+.benefits-box {
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    padding: 25px;
+}
+
+.benefits-box h3 {
+    font-size: 14px;
+    margin: 0 0 20px 0;
+    color: #FFCA3A;
+}
+
+.benefits-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.benefits-list li {
+    font-size: 11px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    line-height: 1.5;
+}
+
+.benefits-list li:last-child {
+    border-bottom: none;
+}
+
+.btn-mint {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 16px;
+    padding: 25px;
+    background: linear-gradient(135deg, #FFCA3A, #FF8C42);
+    border: 4px solid #FFCA3A;
+    border-radius: 15px;
+    color: #1D3557;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+    width: 100%;
+}
+
+.btn-mint:hover:not(:disabled) {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(255, 202, 58, 0.5);
+}
+
+.btn-mint:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.rarity-info h4 {
+    font-size: 12px;
+    margin: 0 0 15px 0;
+}
+
+.rarity-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.rarity-bar {
+    display: grid;
+    grid-template-columns: 100px 1fr 50px;
+    align-items: center;
+    gap: 10px;
+    font-size: 10px;
+}
+
+.bar {
+    height: 12px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    transition: width 0.5s ease;
+}
+
+.bar-fill.common { background: #8AC926; }
+.bar-fill.rare { background: #1982C4; }
+.bar-fill.epic { background: #6A4C93; }
+.bar-fill.legendary { background: #FF8C42; }
+
+/* Phases Section */
+.phases-section {
+    margin-bottom: 80px;
+}
+
+.phases-section h2 {
+    text-align: center;
+    font-size: 28px;
+    color: #FFCA3A;
+    margin-bottom: 40px;
+}
+
+.phases-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+}
+
+.phase-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    padding: 25px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.phase-card.active {
+    border-color: #FFCA3A;
+    background: rgba(255, 202, 58, 0.1);
+}
+
+.phase-card:hover {
+    transform: translateY(-5px);
+    border-color: #8AC926;
+}
+
+.phase-badge {
+    display: inline-block;
+    background: #1D3557;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 10px;
+    margin-bottom: 15px;
+}
+
+.phase-card h3 {
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+.phase-price {
+    font-size: 24px;
+    color: #8AC926;
+    margin: 15px 0;
+}
+
+.phase-supply {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 10px 0;
+}
+
+.phase-bonus {
+    font-size: 10px;
+    color: #FFCA3A;
+}
+
+/* FAQ Section */
+.faq-section {
+    margin-bottom: 80px;
+}
+
+.faq-section h2 {
+    text-align: center;
+    font-size: 28px;
+    color: #FFCA3A;
+    margin-bottom: 40px;
+}
+
+.faq-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+}
+
+.faq-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    padding: 25px;
+}
+
+.faq-item h3 {
+    font-size: 14px;
+    color: #FFCA3A;
+    margin: 0 0 15px 0;
+}
+
+.faq-item p {
+    font-size: 11px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0;
+}
+
+/* Footer */
+.mint-footer {
+    text-align: center;
+    padding: 40px 0;
+    border-top: 3px solid rgba(255, 255, 255, 0.2);
+}
+
+.mint-footer p {
+    font-size: 11px;
+    margin: 0 0 20px 0;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.footer-links {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+}
+
+.footer-links a {
+    font-size: 11px;
+    color: #8AC926;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: #FFCA3A;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background: linear-gradient(135deg, #1D3557, #457B9D);
+    border: 4px solid #FFCA3A;
+    border-radius: 20px;
+    padding: 50px;
+    text-align: center;
+    max-width: 500px;
+    animation: modalSlideIn 0.5s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-content h2 {
+    font-size: 24px;
+    color: #FFCA3A;
+    margin: 0 0 30px 0;
+}
+
+.minted-nft {
+    margin: 30px 0;
+}
+
+.minted-pet {
+    font-size: 100px;
+    display: block;
+    animation: celebrate 1s ease infinite;
+}
+
+@keyframes celebrate {
+    0%, 100% { transform: rotate(-10deg); }
+    50% { transform: rotate(10deg); }
+}
+
+.minted-rarity {
+    font-size: 18px;
+    color: #8AC926;
+    margin-top: 20px;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.btn-play,
+.btn-close {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 12px;
+    padding: 15px 30px;
+    border: 3px solid;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    flex: 1;
+}
+
+.btn-play {
+    background: #8AC926;
+    border-color: #8AC926;
+    color: white;
+}
+
+.btn-close {
+    background: transparent;
+    border-color: #FFCA3A;
+    color: #FFCA3A;
+}
+
+.btn-play:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(138, 201, 38, 0.4);
+}
+
+.btn-close:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(255, 202, 58, 0.4);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .mint-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .phases-grid,
+    .faq-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .mint-logo {
+        font-size: 14px;
+    }
+
+    .btn-wallet {
+        font-size: 10px;
+        padding: 12px 20px;
+    }
+}
+

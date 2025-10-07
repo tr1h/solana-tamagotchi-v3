@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mint NFT Pet - Solana Tamagotchi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/mint.css">
+    <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+</head>
+<body>
+    <div class="mint-container">
+        <!-- Header -->
+        <header class="mint-header">
+            <h1 class="mint-logo">🐾 SOLANA TAMAGOTCHI</h1>
+            <button id="connect-wallet" class="btn-wallet">Connect Wallet</button>
+        </header>
+
+        <!-- Main Mint Section -->
+        <section class="mint-main">
+            <div class="mint-grid">
+                <!-- Left: Preview -->
+                <div class="mint-preview">
+                    <h2>YOUR NFT PET</h2>
+                    <div class="nft-showcase">
+                        <div class="nft-card">
+                            <div class="nft-image" id="pet-preview">
+                                <span class="pet-emoji">❓</span>
+                                <div class="rarity-badge" id="rarity-badge">MYSTERY</div>
+                            </div>
+                            <div class="nft-info">
+                                <h3 id="pet-name">Your Pet</h3>
+                                <p id="pet-type">5 Types Available</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="pet-types">
+                        <span class="pet-type-icon">🐱</span>
+                        <span class="pet-type-icon">🐶</span>
+                        <span class="pet-type-icon">🐉</span>
+                        <span class="pet-type-icon">🦊</span>
+                        <span class="pet-type-icon">🐻</span>
+                    </div>
+                </div>
+
+                <!-- Right: Mint Info -->
+                <div class="mint-info">
+                    <div class="phase-banner" id="phase-banner">
+                        🔥 EARLY BIRD PHASE - LIMITED TIME!
+                    </div>
+
+                    <div class="price-card">
+                        <div class="price-main">
+                            <span class="price-label">MINT PRICE</span>
+                            <span class="price-value" id="mint-price">0.3 SOL</span>
+                        </div>
+                        <div class="price-usd" id="price-usd">≈ $45 USD</div>
+                    </div>
+
+                    <div class="mint-stats">
+                        <div class="stat-item">
+                            <span class="stat-value" id="minted-count">0</span>
+                            <span class="stat-label">Minted</span>
+                        </div>
+                        <div class="stat-divider">/</div>
+                        <div class="stat-item">
+                            <span class="stat-value">100</span>
+                            <span class="stat-label">Early Bird</span>
+                        </div>
+                    </div>
+
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="mint-progress" style="width: 0%"></div>
+                    </div>
+
+                    <div class="benefits-box">
+                        <h3>🎁 WHAT YOU GET:</h3>
+                        <ul class="benefits-list">
+                            <li>✅ Unique NFT Pet (tradeable)</li>
+                            <li>✅ <strong>500 TAMA</strong> tokens bonus</li>
+                            <li>✅ Play-to-Earn access</li>
+                            <li>✅ Referral rewards (passive income)</li>
+                            <li>✅ Random rarity (Common → Legendary)</li>
+                            <li>✅ Future airdrops eligibility</li>
+                        </ul>
+                    </div>
+
+                    <button id="mint-btn" class="btn-mint" disabled>
+                        <span class="btn-text">CONNECT WALLET TO MINT</span>
+                    </button>
+
+                    <div class="rarity-info">
+                        <h4>📊 RARITY DISTRIBUTION:</h4>
+                        <div class="rarity-bars">
+                            <div class="rarity-bar">
+                                <span class="rarity-name">💚 COMMON</span>
+                                <div class="bar"><div class="bar-fill common" style="width: 70%"></div></div>
+                                <span class="rarity-chance">70%</span>
+                            </div>
+                            <div class="rarity-bar">
+                                <span class="rarity-name">💙 RARE</span>
+                                <div class="bar"><div class="bar-fill rare" style="width: 20%"></div></div>
+                                <span class="rarity-chance">20%</span>
+                            </div>
+                            <div class="rarity-bar">
+                                <span class="rarity-name">💜 EPIC</span>
+                                <div class="bar"><div class="bar-fill epic" style="width: 8%"></div></div>
+                                <span class="rarity-chance">8%</span>
+                            </div>
+                            <div class="rarity-bar">
+                                <span class="rarity-name">🧡 LEGENDARY</span>
+                                <div class="bar"><div class="bar-fill legendary" style="width: 2%"></div></div>
+                                <span class="rarity-chance">2%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing Phases -->
+        <section class="phases-section">
+            <h2>📈 PRICING PHASES</h2>
+            <div class="phases-grid">
+                <div class="phase-card active">
+                    <div class="phase-badge">PHASE 1</div>
+                    <h3>Early Bird</h3>
+                    <p class="phase-price">0.3 SOL</p>
+                    <p class="phase-supply">0-100 NFTs</p>
+                    <p class="phase-bonus">🎁 +100 TAMA bonus</p>
+                </div>
+                <div class="phase-card">
+                    <div class="phase-badge">PHASE 2</div>
+                    <h3>Public Mint</h3>
+                    <p class="phase-price">0.5 SOL</p>
+                    <p class="phase-supply">101-500 NFTs</p>
+                    <p class="phase-bonus">🎁 +500 TAMA</p>
+                </div>
+                <div class="phase-card">
+                    <div class="phase-badge">PHASE 3</div>
+                    <h3>Late Mint</h3>
+                    <p class="phase-price">0.8 SOL</p>
+                    <p class="phase-supply">501-1000 NFTs</p>
+                    <p class="phase-bonus">🎁 +500 TAMA</p>
+                </div>
+                <div class="phase-card">
+                    <div class="phase-badge">PHASE 4</div>
+                    <h3>Final Sale</h3>
+                    <p class="phase-price">1.0 SOL</p>
+                    <p class="phase-supply">1001+ NFTs</p>
+                    <p class="phase-bonus">🎁 +500 TAMA</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ -->
+        <section class="faq-section">
+            <h2>❓ FAQ</h2>
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <h3>What's the total supply?</h3>
+                    <p>There's no hard cap, but price increases with each phase to create scarcity.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>Can I sell my NFT?</h3>
+                    <p>Yes! NFTs are fully tradeable on any Solana marketplace. 5% royalty on secondary sales.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>What's TAMA token?</h3>
+                    <p>In-game currency for upgrades, evolution, and trading. Earnable through gameplay!</p>
+                </div>
+                <div class="faq-item">
+                    <h3>How do I earn more?</h3>
+                    <p>Play-to-Earn, referrals, achievements, daily rewards, and staking!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="mint-footer">
+            <p>Built on Solana ⚡ | Powered by Metaplex 🎨</p>
+            <div class="footer-links">
+                <a href="index.html">Play Game</a>
+                <a href="#">Docs</a>
+                <a href="#">Twitter</a>
+                <a href="#">Discord</a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="success-modal" class="modal hidden">
+        <div class="modal-content success">
+            <h2>🎉 MINT SUCCESSFUL!</h2>
+            <div class="minted-nft">
+                <span class="minted-pet" id="minted-pet">🐱</span>
+                <p class="minted-rarity" id="minted-rarity">RARE</p>
+            </div>
+            <p>Your NFT has been minted!</p>
+            <div class="modal-buttons">
+                <button onclick="window.location.href='index.html'" class="btn-play">Play Now</button>
+                <button onclick="closeModal()" class="btn-close">View on Explorer</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/mint.js"></script>
+</body>
+</html>
+
