@@ -324,7 +324,7 @@ const WalletManager = {
             const referralInput = document.getElementById('referral-input');
             const copyBtn = document.getElementById('copy-referral-btn');
             const referralCode = Utils.generateReferralCode(this.publicKey.toString());
-            referralInput.value = `${window.location.origin}?ref=${referralCode}`;
+            referralInput.value = `${window.location.href.split('?')[0]}?ref=${referralCode}`;
             copyBtn.disabled = false;
         } else {
             walletBtn.classList.remove('connected');
