@@ -216,8 +216,8 @@ const MintPage = {
     },
     
     generateNFT() {
-        const types = ['cat', 'dog', 'dragon', 'fox', 'bear'];
-        const emojis = ['🐱', '🐶', '🐉', '🦊', '🐻'];
+        const types = ['cat', 'dog', 'dragon', 'fox', 'bear', 'rabbit', 'panda', 'lion', 'unicorn', 'wolf'];
+        const emojis = ['🐱', '🐶', '🐉', '🦊', '🐻', '🐰', '🐼', '🦁', '🦄', '🐺'];
         const rarities = ['common', 'rare', 'epic', 'legendary'];
         
         // Random rarity based on chances
@@ -265,13 +265,15 @@ const MintPage = {
     },
     
     animatePreview() {
-        const pets = ['🐱', '🐶', '🐉', '🦊', '🐻'];
+        const pets = ['🐱', '🐶', '🐉', '🦊', '🐻', '🐰', '🐼', '🦁', '🦄', '🐺'];
         const rarities = ['COMMON', 'RARE', 'EPIC', 'LEGENDARY'];
         const colors = [
             'linear-gradient(135deg, #8AC926, #6A994E)',
             'linear-gradient(135deg, #1982C4, #155A8A)',
             'linear-gradient(135deg, #6A4C93, #4A3068)',
-            'linear-gradient(135deg, #FF8C42, #E07A3E)'
+            'linear-gradient(135deg, #FF8C42, #E07A3E)',
+            'linear-gradient(135deg, #FFCA3A, #FF8C42)',
+            'linear-gradient(135deg, #FF595E, #FF8C42)'
         ];
         
         let index = 0;

@@ -35,6 +35,59 @@ const Game = {
             name: 'Bear', 
             emoji: '🐻',
             baseStats: { hunger: 90, energy: 80, happy: 85, health: 100 }
+        },
+        rabbit: {
+            name: 'Rabbit',
+            emoji: '🐰',
+            baseStats: { hunger: 70, energy: 95, happy: 88, health: 100 }
+        },
+        panda: {
+            name: 'Panda',
+            emoji: '🐼',
+            baseStats: { hunger: 85, energy: 75, happy: 92, health: 100 }
+        },
+        lion: {
+            name: 'Lion',
+            emoji: '🦁',
+            baseStats: { hunger: 88, energy: 85, happy: 80, health: 100 }
+        },
+        unicorn: {
+            name: 'Unicorn',
+            emoji: '🦄',
+            baseStats: { hunger: 65, energy: 90, happy: 95, health: 100 }
+        },
+        wolf: {
+            name: 'Wolf',
+            emoji: '🐺',
+            baseStats: { hunger: 82, energy: 92, happy: 78, health: 100 }
+        }
+    },
+    
+    // Evolution forms for each type
+    evolutions: {
+        1: { suffix: 'Baby', emoji: '🥚' },
+        5: { suffix: '', emoji: '' },
+        10: { suffix: 'Alpha', prefix: '⭐' },
+        20: { suffix: 'Master', prefix: '💫' },
+        30: { suffix: 'Legendary', prefix: '👑' }
+    },
+    
+    // Traits system
+    backgrounds: ['🌅', '🌲', '🌊', '🌌', '⛰️'],
+    accessories: ['👑', '😎', '🧣', '🎩', '🪽'],
+    effects: ['🔥', '❄️', '⚡', '🌈', '✨'],
+    
+    // Seasonal/Limited pets
+    seasonalPets: {
+        christmas: {
+            reindeer: { name: 'Reindeer', emoji: '🦌', season: 'winter' },
+            snowman: { name: 'Snowman', emoji: '⛄', season: 'winter' },
+            elf: { name: 'Elf', emoji: '🧝', season: 'winter' }
+        },
+        halloween: {
+            ghost: { name: 'Ghost', emoji: '👻', season: 'fall' },
+            vampire: { name: 'Vampire', emoji: '🧛', season: 'fall' },
+            witchcat: { name: 'Witch Cat', emoji: '🐈‍⬛', season: 'fall' }
         }
     },
     
@@ -311,7 +364,11 @@ const Game = {
                 pattern: Utils.randomChoice(this.patterns),
                 size: Utils.randomChoice(this.sizes),
                 personality: Utils.randomChoice(this.personalities),
-                special: rarity === 'legendary' ? Utils.randomChoice(this.specialAbilities.slice(1)) : 'none'
+                special: rarity === 'legendary' ? Utils.randomChoice(this.specialAbilities.slice(1)) : 'none',
+                // New traits
+                background: Utils.randomChoice(this.backgrounds),
+                accessory: rarity === 'common' ? 'none' : Utils.randomChoice(this.accessories),
+                effect: rarity === 'legendary' || rarity === 'epic' ? Utils.randomChoice(this.effects) : 'none'
             },
             stats: { ...this.petTypes[type].baseStats },
             level: 1,
