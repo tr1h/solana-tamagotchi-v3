@@ -1,0 +1,75 @@
+# ============================================
+# GITIGNORE - Solana Tamagotchi
+# ============================================
+
+# Environment Variables
+.env
+.env.local
+.env.production
+
+# API Keys & Secrets
+config/secrets.js
+firebase-config.json
+*.key
+*.pem
+
+# Node Modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build Outputs
+dist/
+build/
+.cache/
+
+# Firebase
+.firebase/
+.firebaserc
+firebase-debug.log
+
+# IDE & Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS Files
+Thumbs.db
+desktop.ini
+
+# Logs
+logs/
+*.log
+
+# Temporary Files
+tmp/
+temp/
+*.tmp
+
+# Testing
+coverage/
+.nyc_output/
+
+# Deployment
+.netlify/
+.vercel/
+
+# PWA Cache
+sw.js.map
+workbox-*.js
+
+# Local Storage Backups
+backup/
+*.backup
+
+# Analytics
+.analytics/
+
+# Custom
+notes.txt
+TODO.md
+

@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#1D3557">
+    <meta name="description" content="Solana Tamagotchi - Блокчейн игра на Solana с NFT питомцами и Play-to-Earn механикой">
+    
+    <title>Solana Tamagotchi - Play & Earn</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/mobile.css">
+    <link rel="stylesheet" href="css/animations.css">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Solana Web3.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="pixel-loader"></div>
+            <p class="loading-text">Loading Tamagotchi...</p>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div id="app" class="app-container hidden">
+        
+        <!-- Header -->
+        <header class="game-header">
+            <div class="header-content">
+                <h1 class="game-title">🐾 SOLANA TAMAGOTCHI</h1>
+                <div class="wallet-info">
+                    <button id="wallet-btn" class="wallet-button">
+                        <span class="wallet-icon">👛</span>
+                        <span class="wallet-text">Connect Wallet</span>
+                    </button>
+                    <div id="balance-display" class="balance-display hidden">
+                        <span class="balance-sol">0 SOL</span>
+                        <span class="balance-tama">0 TAMA</span>
+                    </div>
+                </div>
+            </div>
+            <div class="network-indicator">
+                <span id="network-status" class="network-status">Disconnected</span>
+            </div>
+        </header>
+
+        <!-- Main Game Area -->
+        <main class="game-main">
+            
+            <!-- Left Panel - Tamagotchi Device -->
+            <section class="tamagotchi-device">
+                <div class="device-shell">
+                    <div class="device-screen">
+                        <!-- Pet Display -->
+                        <div id="pet-display" class="pet-display">
+                            <canvas id="pet-canvas" class="pet-canvas"></canvas>
+                            <div id="pet-info" class="pet-info">
+                                <h2 id="pet-name" class="pet-name">No Pet</h2>
+                                <p id="pet-type" class="pet-type">Select or create a pet</p>
+                                <div id="pet-level" class="pet-level">Level 1</div>
+                            </div>
+                        </div>
+
+                        <!-- Stats Display -->
+                        <div class="stats-display">
+                            <div class="stat-bar">
+                                <span class="stat-icon">🍔</span>
+                                <div class="stat-bar-bg">
+                                    <div id="hunger-bar" class="stat-bar-fill hunger" style="width: 100%"></div>
+                                </div>
+                                <span id="hunger-value" class="stat-value">100</span>
+                            </div>
+                            <div class="stat-bar">
+                                <span class="stat-icon">⚡</span>
+                                <div class="stat-bar-bg">
+                                    <div id="energy-bar" class="stat-bar-fill energy" style="width: 100%"></div>
+                                </div>
+                                <span id="energy-value" class="stat-value">100</span>
+                            </div>
+                            <div class="stat-bar">
+                                <span class="stat-icon">😊</span>
+                                <div class="stat-bar-bg">
+                                    <div id="happy-bar" class="stat-bar-fill happy" style="width: 100%"></div>
+                                </div>
+                                <span id="happy-value" class="stat-value">100</span>
+                            </div>
+                            <div class="stat-bar">
+                                <span class="stat-icon">❤️</span>
+                                <div class="stat-bar-bg">
+                                    <div id="health-bar" class="stat-bar-fill health" style="width: 100%"></div>
+                                </div>
+                                <span id="health-value" class="stat-value">100</span>
+                            </div>
+                        </div>
+
+                        <!-- XP Bar -->
+                        <div class="xp-display">
+                            <div class="xp-bar-bg">
+                                <div id="xp-bar" class="xp-bar-fill" style="width: 0%"></div>
+                            </div>
+                            <span id="xp-text" class="xp-text">0 / 100 XP</span>
+                        </div>
+                    </div>
+
+                    <!-- Device Buttons -->
+                    <div class="device-buttons">
+                        <button id="feed-btn" class="device-btn" title="Feed">
+                            <span class="btn-icon">🍔</span>
+                        </button>
+                        <button id="play-btn" class="device-btn" title="Play">
+                            <span class="btn-icon">🎮</span>
+                        </button>
+                        <button id="sleep-btn" class="device-btn" title="Sleep">
+                            <span class="btn-icon">😴</span>
+                        </button>
+                        <button id="heal-btn" class="device-btn" title="Heal">
+                            <span class="btn-icon">💊</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Panel - Controls & Info -->
+            <section class="game-controls">
+                
+                <!-- Pet Management -->
+                <div class="control-panel">
+                    <h3 class="panel-title">🐾 Pet Management</h3>
+                    <div class="button-group">
+                        <button id="create-pet-btn" class="action-btn primary">
+                            <span>Create New Pet</span>
+                            <small>0.1 SOL</small>
+                        </button>
+                        <button id="evolve-pet-btn" class="action-btn secondary" disabled>
+                            <span>Evolve Pet</span>
+                            <small>50 TAMA</small>
+                        </button>
+                        <button id="revive-pet-btn" class="action-btn danger hidden">
+                            <span>Revive Pet</span>
+                            <small>0.05 SOL</small>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Achievements -->
+                <div class="control-panel">
+                    <h3 class="panel-title">🏆 Achievements</h3>
+                    <div id="achievements-list" class="achievements-list">
+                        <div class="achievement locked">
+                            <span class="achievement-icon">🥇</span>
+                            <div class="achievement-info">
+                                <p class="achievement-name">First Pet</p>
+                                <p class="achievement-desc">Create your first pet</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Leaderboard -->
+                <div class="control-panel">
+                    <h3 class="panel-title">👑 Leaderboard</h3>
+                    <div id="leaderboard-list" class="leaderboard-list">
+                        <p class="empty-state">Connect wallet to view leaderboard</p>
+                    </div>
+                </div>
+
+                <!-- Referral System -->
+                <div class="control-panel">
+                    <h3 class="panel-title">👥 Referral Program</h3>
+                    <div class="referral-info">
+                        <div class="referral-code">
+                            <input type="text" id="referral-input" class="referral-input" readonly placeholder="Connect wallet">
+                            <button id="copy-referral-btn" class="copy-btn" disabled>Copy</button>
+                        </div>
+                        <div class="referral-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Referrals:</span>
+                                <span id="referral-count" class="stat-value-text">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Earned:</span>
+                                <span id="referral-earned" class="stat-value-text">0 TAMA</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Daily Rewards -->
+                <div class="control-panel">
+                    <h3 class="panel-title">🎁 Daily Rewards</h3>
+                    <button id="claim-daily-btn" class="action-btn reward" disabled>
+                        <span>Claim Daily Reward</span>
+                        <small id="daily-timer">Connect wallet</small>
+                    </button>
+                </div>
+
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="game-footer">
+            <div class="footer-content">
+                <div class="social-links">
+                    <a href="#" class="social-link" title="Twitter">🐦</a>
+                    <a href="#" class="social-link" title="Discord">💬</a>
+                    <a href="#" class="social-link" title="Telegram">📱</a>
+                </div>
+                <p class="footer-text">
+                    Made with ❤️ on Solana | 
+                    <span id="player-count">0 players</span> online
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modal: Create Pet -->
+    <div id="create-pet-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🐾 Create Your Pet</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="pet-types">
+                    <button class="pet-type-btn" data-type="cat">
+                        <span class="pet-emoji">🐱</span>
+                        <span>Cat</span>
+                    </button>
+                    <button class="pet-type-btn" data-type="dog">
+                        <span class="pet-emoji">🐶</span>
+                        <span>Dog</span>
+                    </button>
+                    <button class="pet-type-btn" data-type="dragon">
+                        <span class="pet-emoji">🐉</span>
+                        <span>Dragon</span>
+                    </button>
+                    <button class="pet-type-btn" data-type="fox">
+                        <span class="pet-emoji">🦊</span>
+                        <span>Fox</span>
+                    </button>
+                    <button class="pet-type-btn" data-type="bear">
+                        <span class="pet-emoji">🐻</span>
+                        <span>Bear</span>
+                    </button>
+                </div>
+                <div class="pet-name-input">
+                    <input type="text" id="pet-name-input" placeholder="Enter pet name" maxlength="20">
+                </div>
+                <button id="confirm-create-pet" class="action-btn primary" disabled>
+                    Create Pet (0.1 SOL)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Evolution -->
+    <div id="evolution-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>✨ Pet Evolution!</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body evolution-content">
+                <div class="evolution-animation">
+                    <div class="old-pet">
+                        <span id="old-pet-emoji" class="pet-emoji-large">🐱</span>
+                        <p>Level <span id="old-level">1</span></p>
+                    </div>
+                    <div class="evolution-arrow">→</div>
+                    <div class="new-pet">
+                        <span id="new-pet-emoji" class="pet-emoji-large">😺</span>
+                        <p>Level <span id="new-level">2</span></p>
+                    </div>
+                </div>
+                <p class="evolution-text">Your pet is ready to evolve!</p>
+                <button id="confirm-evolution" class="action-btn primary">
+                    Evolve (50 TAMA)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="notification" class="notification hidden">
+        <span id="notification-text"></span>
+    </div>
+
+    <!-- Particles Container -->
+    <div id="particles-container" class="particles-container"></div>
+
+    <!-- Scripts -->
+    <script src="js/utils.js"></script>
+    <script src="js/wallet.js"></script>
+    <script src="js/database.js"></script>
+    <script src="js/achievements.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/game.js"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker registered'))
+                    .catch(err => console.log('Service Worker registration failed'));
+            });
+        }
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,378 @@
+/* ============================================
+   MOBILE & RESPONSIVE STYLES
+   ============================================ */
+
+/* === TABLET (768px and below) === */
+@media (max-width: 768px) {
+    .game-main {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+        padding: var(--spacing-lg);
+    }
+
+    .device-shell {
+        max-width: 100%;
+    }
+
+    .header-content {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .game-title {
+        text-align: center;
+        margin-bottom: var(--spacing-md);
+    }
+
+    .wallet-info {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .wallet-button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .balance-display {
+        width: 100%;
+        justify-content: space-around;
+    }
+
+    .game-controls {
+        max-height: none;
+    }
+
+    .leaderboard-list {
+        max-height: 200px;
+    }
+
+    .achievements-list {
+        max-height: 150px;
+    }
+}
+
+/* === MOBILE (480px and below) === */
+@media (max-width: 480px) {
+    :root {
+        font-size: 14px;
+    }
+
+    .game-header {
+        padding: var(--spacing-sm);
+    }
+
+    .game-title {
+        font-size: 0.7rem;
+    }
+
+    .wallet-button {
+        font-size: 0.55rem;
+        padding: var(--spacing-sm);
+    }
+
+    .balance-display {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+
+    .balance-sol,
+    .balance-tama {
+        font-size: 0.55rem;
+        padding: var(--spacing-xs) var(--spacing-sm);
+    }
+
+    .device-shell {
+        padding: var(--spacing-md);
+    }
+
+    .device-screen {
+        padding: var(--spacing-md);
+        min-height: 350px;
+    }
+
+    .pet-canvas {
+        width: 120px;
+        height: 120px;
+    }
+
+    .pet-name {
+        font-size: 0.8rem;
+    }
+
+    .pet-type {
+        font-size: 0.7rem;
+    }
+
+    .device-buttons {
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--spacing-sm);
+    }
+
+    .device-btn {
+        width: 50px;
+        height: 50px;
+    }
+
+    .btn-icon {
+        font-size: 1.2rem;
+    }
+
+    .control-panel {
+        padding: var(--spacing-md);
+    }
+
+    .panel-title {
+        font-size: 0.75rem;
+    }
+
+    .action-btn {
+        font-size: 0.6rem;
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+
+    .action-btn small {
+        font-size: 0.45rem;
+    }
+
+    .achievement {
+        padding: var(--spacing-sm);
+    }
+
+    .achievement-icon {
+        font-size: 1.5rem;
+    }
+
+    .achievement-name {
+        font-size: 0.6rem;
+    }
+
+    .achievement-desc {
+        font-size: 0.65rem;
+    }
+
+    .leaderboard-item {
+        padding: var(--spacing-sm);
+    }
+
+    .leaderboard-rank {
+        font-size: 0.7rem;
+        min-width: 30px;
+    }
+
+    .leaderboard-name {
+        font-size: 0.7rem;
+    }
+
+    .leaderboard-score {
+        font-size: 0.55rem;
+    }
+
+    .referral-input {
+        font-size: 0.7rem;
+        padding: var(--spacing-sm);
+    }
+
+    .copy-btn {
+        font-size: 0.55rem;
+        padding: var(--spacing-sm);
+    }
+
+    .stat-value-text {
+        font-size: 0.7rem;
+    }
+
+    .modal-content {
+        max-width: 95%;
+        margin: var(--spacing-md);
+    }
+
+    .modal-header h2 {
+        font-size: 0.8rem;
+    }
+
+    .pet-types {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-sm);
+    }
+
+    .pet-type-btn {
+        padding: var(--spacing-md);
+    }
+
+    .pet-emoji {
+        font-size: 2rem;
+    }
+
+    .pet-type-btn span:last-child {
+        font-size: 0.6rem;
+    }
+
+    .pet-emoji-large {
+        font-size: 3rem;
+    }
+
+    .evolution-animation {
+        gap: var(--spacing-md);
+    }
+
+    .evolution-arrow {
+        font-size: 1.5rem;
+    }
+
+    .social-links {
+        gap: var(--spacing-md);
+    }
+
+    .social-link {
+        font-size: 1.2rem;
+    }
+
+    .footer-text {
+        font-size: 0.7rem;
+    }
+}
+
+/* === EXTRA SMALL MOBILE (360px and below) === */
+@media (max-width: 360px) {
+    .game-title {
+        font-size: 0.6rem;
+    }
+
+    .device-buttons {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .device-btn {
+        width: 45px;
+        height: 45px;
+    }
+
+    .pet-types {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* === LANDSCAPE MODE === */
+@media (max-height: 600px) and (orientation: landscape) {
+    .game-main {
+        grid-template-columns: 1fr 1fr;
+        padding: var(--spacing-md);
+    }
+
+    .device-screen {
+        min-height: 300px;
+    }
+
+    .pet-canvas {
+        width: 100px;
+        height: 100px;
+    }
+
+    .game-controls {
+        max-height: calc(100vh - 150px);
+    }
+
+    .control-panel {
+        padding: var(--spacing-sm);
+    }
+
+    .achievements-list,
+    .leaderboard-list {
+        max-height: 120px;
+    }
+}
+
+/* === TOUCH DEVICE IMPROVEMENTS === */
+@media (hover: none) and (pointer: coarse) {
+    /* Larger touch targets */
+    .device-btn,
+    .action-btn,
+    .wallet-button,
+    .copy-btn {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    /* Remove hover effects */
+    .device-btn:hover,
+    .action-btn:hover,
+    .wallet-button:hover {
+        transform: none;
+    }
+
+    /* Add active states */
+    .device-btn:active {
+        background: var(--primary-yellow);
+        transform: scale(0.95);
+    }
+
+    .action-btn:active:not(:disabled) {
+        transform: scale(0.98);
+    }
+
+    .wallet-button:active {
+        transform: scale(0.98);
+    }
+}
+
+/* === REDUCED MOTION === */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* === HIGH CONTRAST MODE === */
+@media (prefers-contrast: high) {
+    :root {
+        --border-color: #FFFFFF;
+    }
+
+    .device-shell {
+        border-width: 6px;
+    }
+
+    .control-panel,
+    .modal-content {
+        border-width: 4px;
+    }
+
+    .stat-bar-bg,
+    .xp-bar-bg {
+        border-width: 3px;
+    }
+}
+
+/* === DARK MODE (if system prefers) === */
+@media (prefers-color-scheme: dark) {
+    /* Already dark by default, but can add adjustments */
+    .device-screen {
+        background: #8DC483;
+    }
+}
+
+/* === PRINT STYLES === */
+@media print {
+    .game-header,
+    .game-footer,
+    .device-buttons,
+    .game-controls,
+    .modal,
+    .notification {
+        display: none !important;
+    }
+
+    .app-container {
+        background: white;
+    }
+
+    .tamagotchi-device {
+        break-inside: avoid;
+    }
+}
+
