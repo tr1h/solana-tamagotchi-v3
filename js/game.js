@@ -60,27 +60,73 @@ const Game = {
         // Setup event listeners
         this.setupEventListeners();
         
-        // Show landing or game
+        // Check for referral code FIRST
+        this.checkReferralCode();
+        
+        // Show appropriate page
         setTimeout(() => {
             document.getElementById('loading-screen').classList.add('fade-out');
-            if (WalletManager.isConnected()) {
-                this.showGame();
+            
+            // Check if has valid access (referral code or already registered)
+            if (this.hasAccess()) {
+                if (WalletManager.isConnected()) {
+                    this.showGame();
+                } else {
+                    this.showLanding();
+                }
             } else {
-                this.showLanding();
+                // Show invite-only page
+                this.showInviteOnly();
             }
         }, 1000);
         
         // Update landing stats
         this.updateLandingStats();
+    },
+    
+    // Check if user has access
+    hasAccess() {
+        // Check if has referral code in URL or localStorage
+        const urlParams = new URLSearchParams(window.location.search);
+        const refFromURL = urlParams.get('ref');
+        const refFromStorage = Utils.loadLocal('referralCode');
+        const hasPlayed = Utils.loadLocal('hasAccess'); // Flag for users who already created a pet
         
-        // Check for referral code
-        this.checkReferralCode();
+        return refFromURL || refFromStorage || hasPlayed;
+    },
+    
+    // Show invite-only page
+    showInviteOnly() {
+        document.getElementById('invite-only-page').classList.remove('hidden');
+        document.getElementById('landing-page').classList.add('hidden');
+        document.getElementById('app').classList.add('hidden');
+        
+        // Update invite stats
+        this.updateInviteStats();
+    },
+    
+    // Update invite page stats
+    async updateInviteStats() {
+        if (window.Database) {
+            const count = await Database.getPlayerCount();
+            const invitePlayers = document.getElementById('invite-players');
+            const invitePets = document.getElementById('invite-pets');
+            
+            if (invitePlayers) {
+                invitePlayers.textContent = count;
+            }
+            if (invitePets) {
+                // Assuming each player has at least 1 pet
+                invitePets.textContent = count;
+            }
+        }
     },
     
     // Show landing page
     showLanding() {
         document.getElementById('landing-page').classList.remove('hidden');
         document.getElementById('app').classList.add('hidden');
+        document.getElementById('invite-only-page').classList.add('hidden');
         
         // Hide network indicator on landing
         const networkStatus = document.getElementById('network-status');
@@ -98,6 +144,7 @@ const Game = {
         }
         
         document.getElementById('landing-page').classList.add('hidden');
+        document.getElementById('invite-only-page').classList.add('hidden');
         document.getElementById('app').classList.remove('hidden');
         
         // Show network indicator
@@ -219,6 +266,9 @@ const Game = {
             this.savePetData();
             this.updatePetDisplay();
             this.startGameLoop();
+            
+            // Grant permanent access (user created a pet)
+            Utils.saveLocal('hasAccess', true);
             
             // Update leaderboard with new pet
             if (window.Database && WalletManager.isConnected()) {
@@ -767,7 +817,28 @@ const Game = {
         
         if (ref) {
             Utils.saveLocal('referralCode', ref);
+            Utils.saveLocal('hasAccess', true); // Grant access immediately with ref code
             Utils.showNotification('🎁 Referral bonus applied!');
+        }
+        
+        // Check for founder access (for first user to create ref links)
+        const founderKey = urlParams.get('founder');
+        if (founderKey === 'tamagotchi2024') {
+            Utils.saveLocal('hasAccess', true);
+            Utils.showNotification('👑 Founder access granted!');
+        }
+        
+        // Show founder button with special key combination
+        if (urlParams.get('secret') === 'founder') {
+            const founderBtn = document.getElementById('founder-access-btn');
+            if (founderBtn) {
+                founderBtn.style.display = 'block';
+                founderBtn.addEventListener('click', () => {
+                    Utils.saveLocal('hasAccess', true);
+                    Utils.showNotification('👑 Founder access granted!');
+                    location.reload();
+                });
+            }
         }
     },
     
