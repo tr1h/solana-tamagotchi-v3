@@ -355,36 +355,76 @@ const Database = {
     },
     
     // Add referral
-    async addReferral(referrerAddress, newPlayerAddress) {
-        if (!this.initialized || !referrerAddress) {
+    async addReferral(referralCode, newPlayerAddress) {
+        if (!referralCode || !newPlayerAddress) {
             return false;
         }
         
         try {
-            // Add to referrer's referrals
-            await this.db.collection('players').doc(referrerAddress).update({
-                referrals: firebase.firestore.FieldValue.increment(1),
-                referralEarnings: firebase.firestore.FieldValue.increment(25) // 25 TAMA bonus
-            });
-            
-            // Update referrer's local data
-            const playerData = Utils.loadLocal('playerData') || {};
-            playerData.referrals = (playerData.referrals || 0) + 1;
-            playerData.tama = (playerData.tama || 0) + 25;
-            Utils.saveLocal('playerData', playerData);
-            
-            // Save referral record
-            await this.db.collection('referrals').add({
-                referrer: referrerAddress,
-                referred: newPlayerAddress,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                rewardClaimed: true
-            });
-            
-            return true;
+            if (this.useMySQL) {
+                // MySQL API
+                const response = await fetch(`${this.apiURL}/referrals.php`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        referralCode,
+                        newPlayerWallet: newPlayerAddress
+                    })
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    Utils.showNotification(`🎁 Referrer earned ${result.data.reward} TAMA!`);
+                    return true;
+                }
+                return false;
+            } else {
+                // Firebase
+                const referrerAddress = atob(referralCode); // Decode base64
+                
+                // Add to referrer's referrals
+                await this.db.collection('players').doc(referrerAddress).update({
+                    referrals: firebase.firestore.FieldValue.increment(1),
+                    referralEarnings: firebase.firestore.FieldValue.increment(25)
+                });
+                
+                // Update referrer's local data
+                const playerData = Utils.loadLocal('playerData') || {};
+                playerData.referrals = (playerData.referrals || 0) + 1;
+                playerData.tama = (playerData.tama || 0) + 25;
+                Utils.saveLocal('playerData', playerData);
+                
+                // Save referral record
+                await this.db.collection('referrals').add({
+                    referrer: referrerAddress,
+                    referred: newPlayerAddress,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    rewardClaimed: true
+                });
+                
+                return true;
+            }
         } catch (error) {
             console.error('Failed to add referral:', error);
             return false;
+        }
+    },
+    
+    // Get referral stats (MySQL)
+    async getReferralStats(wallet) {
+        if (!this.useMySQL || !wallet) return null;
+        
+        try {
+            const response = await fetch(`${this.apiURL}/referrals.php?wallet=${wallet}`);
+            const result = await response.json();
+            
+            if (result.success) {
+                return result.data;
+            }
+            return null;
+        } catch (error) {
+            console.error('Failed to get referral stats:', error);
+            return null;
         }
     },
     

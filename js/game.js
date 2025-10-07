@@ -223,6 +223,13 @@ const Game = {
             // Update leaderboard with new pet
             if (window.Database && WalletManager.isConnected()) {
                 Database.updateLeaderboard(WalletManager.getAddress(), this.pet);
+                
+                // Process referral code if exists
+                const referralCode = Utils.loadLocal('referralCode');
+                if (referralCode) {
+                    Database.addReferral(referralCode, WalletManager.getAddress());
+                    Utils.deleteLocal('referralCode'); // Remove after use
+                }
             }
             
             // Close modal

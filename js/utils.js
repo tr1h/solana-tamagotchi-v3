@@ -194,10 +194,10 @@ const Utils = {
         return { valid: true };
     },
 
-    // Generate referral code
+    // Generate referral code (base64 encoded wallet)
     generateReferralCode(walletAddress) {
         if (!walletAddress) return '';
-        return walletAddress.slice(0, 8).toUpperCase();
+        return btoa(walletAddress); // Base64 encode
     },
 
     // Check if connected

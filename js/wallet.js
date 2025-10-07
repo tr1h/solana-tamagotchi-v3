@@ -102,6 +102,12 @@ const WalletManager = {
             // Load player data
             if (window.Database) {
                 await Database.loadPlayerData(this.publicKey.toString());
+                
+                // Load referral stats
+                const referralStats = await Database.getReferralStats(this.publicKey.toString());
+                if (referralStats && window.UI) {
+                    UI.updateReferralStats(referralStats.referralCount, referralStats.totalEarnings);
+                }
             }
             
             // Auto-load pet if exists

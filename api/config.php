@@ -82,6 +82,20 @@ function initDatabase() {
     )";
     $conn->query($sql);
     
+    // Create referrals table
+    $sql = "CREATE TABLE IF NOT EXISTS referrals (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        referrer_address VARCHAR(100) NOT NULL,
+        referred_address VARCHAR(100) NOT NULL,
+        referral_code VARCHAR(50) NOT NULL,
+        reward_tama INT DEFAULT 25,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        INDEX idx_referrer (referrer_address),
+        INDEX idx_code (referral_code),
+        UNIQUE KEY unique_referral (referrer_address, referred_address)
+    )";
+    $conn->query($sql);
+    
     $conn->close();
 }
 
