@@ -124,7 +124,8 @@ const Database = {
                     currentPet: petData.id,
                     currentLevel: petData.level,
                     currentXP: petData.xp
-            });
+                });
+            }
             
             return true;
         } catch (error) {

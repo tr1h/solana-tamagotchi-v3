@@ -247,7 +247,6 @@ const Game = {
         document.getElementById('heal-btn').addEventListener('click', () => this.heal());
         
         // Pet management
-        document.getElementById('create-pet-btn').addEventListener('click', () => this.showCreatePetModal());
         document.getElementById('evolve-pet-btn').addEventListener('click', () => this.evolvePet());
         document.getElementById('revive-pet-btn').addEventListener('click', () => this.revivePet());
         
