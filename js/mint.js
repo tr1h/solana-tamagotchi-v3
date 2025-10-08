@@ -12,8 +12,10 @@ const MintPage = {
         { max: 100, price: 0.3, tamaBonus: 600 },
         { max: 500, price: 0.5, tamaBonus: 500 },
         { max: 1000, price: 0.8, tamaBonus: 500 },
-        { max: 99999, price: 1.0, tamaBonus: 500 }
+        { max: 10000, price: 1.0, tamaBonus: 500 }  // MAX 10,000 NFTs total
     ],
+    
+    maxSupply: 10000,  // Total NFT limit
     
     currentMinted: 0,
     
@@ -171,6 +173,12 @@ const MintPage = {
     async mintNFT() {
         if (!this.publicKey) {
             alert('Please connect wallet first!');
+            return;
+        }
+        
+        // Check if sold out
+        if (this.currentMinted >= this.maxSupply) {
+            alert('🔥 SOLD OUT! All NFTs have been minted!');
             return;
         }
         
