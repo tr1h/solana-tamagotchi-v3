@@ -19,14 +19,16 @@ CHANNEL_ID = 'solana_tamagotchi_v3_bot'
 # Admin IDs (add your Telegram ID)
 ADMIN_IDS = [7401131043]
 
-# MySQL connection
+# MySQL connection config
+db_config = {
+    'host': 'localhost',
+    'user': 'root',
+    'password': '',
+    'database': 'solana_tamagotchi'
+}
+
 def get_db():
-    return mysql.connector.connect(
-        host='localhost',
-        user='root',
-        password='',
-        database='solana_tamagotchi'
-    )
+    return mysql.connector.connect(**db_config)
 
 # Anti-spam tracking
 user_messages = defaultdict(list)
