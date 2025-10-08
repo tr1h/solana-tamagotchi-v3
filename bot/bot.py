@@ -165,7 +165,7 @@ def send_welcome(message):
 # Private commands (personal data)
 @bot.message_handler(commands=['stats'], func=lambda message: message.chat.type == 'private')
 def send_stats(message):
-    stats = get_game_stats()
+    stats = get_stats()
     text = f"""
 📊 *Your Personal Stats:*
 
@@ -246,7 +246,7 @@ def send_leaderboard(message):
 
 @bot.message_handler(commands=['info'], func=lambda message: message.chat.type in ['group', 'supergroup'])
 def send_info(message):
-    stats = get_game_stats()
+    stats = get_stats()
     text = f"""
 🎮 *Solana Tamagotchi Info:*
 
