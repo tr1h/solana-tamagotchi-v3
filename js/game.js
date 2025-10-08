@@ -108,11 +108,15 @@ const Game = {
         this.canvas.height = 150;
         
         // Initialize Database first
-        if (window.Database && window.Database.init) {
+        console.log('🔍 Checking Database:', window.Database);
+        console.log('🔍 Database.init:', window.Database ? window.Database.init : 'Database not found');
+        
+        if (window.Database && typeof window.Database.init === 'function') {
             await window.Database.init();
-            console.log('Database initialized successfully');
+            console.log('✅ Database initialized successfully');
         } else {
-            console.error('Database not found or init method missing');
+            console.error('❌ Database not found or init method missing');
+            console.log('Available Database methods:', window.Database ? Object.keys(window.Database) : 'none');
         }
         
         // Initialize wallet
