@@ -4,6 +4,7 @@ import mysql.connector
 import time
 import schedule
 import threading
+import base64
 from datetime import datetime, timedelta
 from collections import defaultdict
 
@@ -391,32 +392,6 @@ def send_pets(message):
     stats = get_stats()
     bot.reply_to(message, f"🐾 **Total Pets Created:** {stats['pets']}\n\n✨ Mint yours: /mint", parse_mode='Markdown')
 
-@bot.message_handler(commands=['ref'])
-def send_ref(message):
-    user_id = message.from_user.id
-    username = message.from_user.username or str(user_id)
-    
-    import base64
-    ref_code = base64.b64encode(username.encode()).decode()
-    ref_link = f"{GAME_URL}?ref={ref_code}"
-    
-    ref_text = f"""
-🎁 **Your Referral Link:**
-
-`{ref_link}`
-
-**Rewards:**
-👥 Level 1: 25 TAMA per signup
-👥 Level 2: 12 TAMA per signup
-💰 Activity rewards: 10% + 5%
-
-Share with friends and earn! 🚀
-    """
-    
-    keyboard = types.InlineKeyboardMarkup()
-    keyboard.add(types.InlineKeyboardButton("📋 Copy Link", url=ref_link))
-    
-    bot.reply_to(message, ref_text, parse_mode='Markdown', reply_markup=keyboard)
 
 @bot.message_handler(commands=['stats'])
 def send_user_stats(message):
