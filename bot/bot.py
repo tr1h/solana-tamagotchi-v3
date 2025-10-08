@@ -812,6 +812,11 @@ To start playing and tracking your stats:
     
     elif call.data == "leaderboard":
         try:
+            # Debug: Check all data in leaderboard table
+            debug_response = supabase.table('leaderboard').select('*').execute()
+            print(f"DEBUG: Found {len(debug_response.data)} players in database")
+            print(f"DEBUG: Data: {debug_response.data}")
+            
             # Get top players by TAMA from Supabase
             tama_response = supabase.table('leaderboard').select('pet_name, tama, level, pet_type').order('tama', desc=True).limit(5).execute()
             
