@@ -1,5 +1,5 @@
 services:
-  - type: worker
+  - type: web
     name: solana-tamagotchi-bot
     runtime: python
     region: frankfurt
