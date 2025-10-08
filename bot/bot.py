@@ -183,8 +183,7 @@ def announce_command(message):
 @bot.message_handler(content_types=['new_chat_members'])
 def welcome_new_member(message):
     for new_member in message.new_chat_members:
-        welcome_text = f"""
-🐾 Welcome to Solana Tamagotchi Community, {new_member.first_name}!
+        welcome_text = f"""🐾 Welcome to Solana Tamagotchi Community, {new_member.first_name}!
 
 Share your pets, ask questions, help others!
 
@@ -192,9 +191,8 @@ Share your pets, ask questions, help others!
 📢 News: @solana_tamagotchi
 🤖 Bot: @solana_tamagotchi_bot
 
-Use /help to see bot commands! 🚀
-        """
-        bot.send_message(message.chat.id, welcome_text, parse_mode='Markdown')
+Use /help to see bot commands! 🚀"""
+        bot.send_message(message.chat.id, welcome_text)
 
 # Handle unknown commands in private chat only
 @bot.message_handler(func=lambda message: message.chat.type == 'private')
