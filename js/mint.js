@@ -21,9 +21,11 @@ const MintPage = {
         // Initialize Database first
         if (window.Database && window.Database.init) {
             await window.Database.init();
-            console.log('Database initialized successfully in mint page');
-        } else {
-            console.error('Database not found or init method missing in mint page');
+            
+            // Load mint stats
+            const totalMinted = await window.Database.getMintStats();
+            this.currentMinted = totalMinted;
+            this.updateMintProgress();
         }
         
         // Setup wallet
@@ -141,6 +143,24 @@ const MintPage = {
             }
         }
         return this.phases.length - 1;
+    },
+    
+    updateMintProgress() {
+        const phaseIndex = this.getCurrentPhase();
+        const phase = this.phases[phaseIndex];
+        const prevMax = phaseIndex > 0 ? this.phases[phaseIndex - 1].max : 0;
+        const progress = this.currentMinted - prevMax;
+        const total = phase.max - prevMax;
+        const percentage = (progress / total) * 100;
+        
+        // Update UI elements if they exist
+        const progressBar = document.querySelector('.progress-fill');
+        const mintedText = document.querySelector('.minted-count');
+        const priceText = document.querySelector('.current-price');
+        
+        if (progressBar) progressBar.style.width = `${percentage}%`;
+        if (mintedText) mintedText.textContent = `${this.currentMinted} / ${phase.max} Minted`;
+        if (priceText) priceText.textContent = `${phase.price} SOL`;
     },
     
     async mintNFT() {

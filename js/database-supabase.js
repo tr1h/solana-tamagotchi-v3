@@ -266,6 +266,21 @@ const Database = {
         }
     },
     
+    // Get mint stats
+    async getMintStats() {
+        try {
+            const { data, error } = await this.supabase
+                .from('leaderboard')
+                .select('id', { count: 'exact', head: true });
+            
+            if (error) throw error;
+            return data || 0;
+        } catch (error) {
+            console.error('Failed to get mint stats:', error);
+            return 0;
+        }
+    },
+    
     // Stub for compatibility
     async updatePlayerStatus() { return true; },
     async rewardReferrers() { return true; }
