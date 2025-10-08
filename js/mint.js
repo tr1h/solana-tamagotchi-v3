@@ -374,6 +374,17 @@ const MintPage = {
                     throw error;
                 }
                 console.log('✅ Pet saved to Supabase successfully!', data);
+                
+                // Record the mint in nft_mints table
+                if (window.Database && window.Database.recordMint) {
+                    await window.Database.recordMint(
+                        this.publicKey.toString(),
+                        petData,
+                        this.currentPrice,
+                        this.currentPhase
+                    );
+                    console.log('✅ Mint recorded in nft_mints table');
+                }
             } else {
                 console.error('❌ Database not initialized or Supabase not found');
                 console.log('Database object:', window.Database);
