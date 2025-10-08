@@ -13,7 +13,7 @@ TOKEN = '8278463878:AAH590EtqekSpfoE_uJwaNQ-qKACFyt8eaw'
 bot = telebot.TeleBot(TOKEN)
 
 # URLs
-GAME_URL = 'https://tr1h.github.io/solana-tamagotchi-v3/'
+GAME_URL = 'https://tr1h.github.io/solana-tamagotchi-v3/mint.html'  # Start with mint page
 MINT_URL = 'https://tr1h.github.io/solana-tamagotchi-v3/mint.html'
 CHANNEL_ID = 'solana_tamagotchi_v3_bot'
 
