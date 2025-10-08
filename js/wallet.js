@@ -96,6 +96,11 @@ const WalletManager = {
             // Update UI
             this.updateWalletUI(true);
             
+            // Auto-link Telegram if params present
+            if (window.TelegramIntegration) {
+                await TelegramIntegration.linkWalletToTelegram(this.publicKey.toString());
+            }
+            
             // Fetch balance
             await this.fetchBalance();
             

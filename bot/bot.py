@@ -191,13 +191,23 @@ def send_stats(message):
 @bot.message_handler(commands=['ref', 'referral'], func=lambda message: message.chat.type == 'private')
 def send_referral(message):
     user_id = message.from_user.id
+    username = message.from_user.username or message.from_user.first_name
+    
+    # Create referral code
     referral_code = base64.b64encode(str(user_id).encode()).decode()
-    referral_link = f"{GAME_URL}?ref={referral_code}"
+    
+    # Create game link with Telegram params for auto-linking
+    game_link = f"{GAME_URL}?ref={referral_code}&tg_id={user_id}&tg_username={username}"
     
     text = f"""
-🔗 *Your Personal Referral Link:*
+🔗 *Your Personal Game Link:*
 
-`{referral_link}`
+`{game_link}`
+
+✨ *This link will:*
+• Automatically link your Telegram to your wallet
+• Track your referrals
+• Give you bonus rewards
 
 💰 *Earn rewards:*
 • 25 TAMA for each friend who joins
@@ -208,7 +218,10 @@ def send_referral(message):
     """
     
     keyboard = types.InlineKeyboardMarkup()
-    keyboard.add(types.InlineKeyboardButton("📤 Share Link", url=f"https://t.me/share/url?url={referral_link}&text=🎮 Join me in Solana Tamagotchi! Earn TAMA tokens by playing!"))
+    keyboard.row(
+        types.InlineKeyboardButton("🎮 Play Game", url=game_link),
+        types.InlineKeyboardButton("📤 Share Link", url=f"https://t.me/share/url?url={game_link}&text=🎮 Join me in Solana Tamagotchi! Earn TAMA tokens!")
+    )
     
     bot.reply_to(message, text, parse_mode='Markdown', reply_markup=keyboard)
 
