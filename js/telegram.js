@@ -51,7 +51,7 @@ const TelegramIntegration = {
         }
 
         try {
-            const response = await fetch('https://tr1h.github.io/solana-tamagotchi-v3/api/link_telegram.php', {
+            const response = await fetch('https://nitric-ara-unsuperlative.ngrok-free.dev/solana-tamagotchi/api/link_telegram.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -83,7 +83,7 @@ const TelegramIntegration = {
     // Get wallet by Telegram ID
     async getWalletByTelegramId(telegramId) {
         try {
-            const response = await fetch('https://tr1h.github.io/solana-tamagotchi-v3/api/link_telegram.php', {
+            const response = await fetch('https://nitric-ara-unsuperlative.ngrok-free.dev/solana-tamagotchi/api/link_telegram.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -104,7 +104,7 @@ const TelegramIntegration = {
     // Get Telegram ID by wallet
     async getTelegramByWallet(walletAddress) {
         try {
-            const response = await fetch('https://tr1h.github.io/solana-tamagotchi-v3/api/link_telegram.php', {
+            const response = await fetch('https://nitric-ara-unsuperlative.ngrok-free.dev/solana-tamagotchi/api/link_telegram.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
