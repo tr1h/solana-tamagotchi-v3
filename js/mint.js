@@ -118,16 +118,12 @@ const MintPage = {
     },
     
     async loadMintStats() {
-        // TODO: Load from blockchain
-        // For now, simulate
-        this.currentMinted = Math.floor(Math.random() * 50);
+        // Load real mint count from database
+        if (window.Database && window.Database.getMintStats) {
+            this.currentMinted = await window.Database.getMintStats();
+        }
         
-        document.getElementById('minted-count').textContent = this.currentMinted;
-        document.getElementById('mint-progress').style.width = `${(this.currentMinted / 100) * 100}%`;
-        
-        // Update price
-        const currentPrice = this.getCurrentPrice();
-        document.getElementById('mint-price').textContent = `${currentPrice} SOL`;
+        this.updateMintProgress();
         
         // Update USD (rough estimate)
         const solPrice = 150; // $150 per SOL
