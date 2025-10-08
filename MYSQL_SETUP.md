@@ -245,3 +245,6 @@ SELECT * FROM admins;
 
 **Made with ❤️ for Solana Tamagotchi V3**
 
+
+
+

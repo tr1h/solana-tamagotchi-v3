@@ -252,3 +252,6 @@ function openDB() {
 // Log version
 console.log(`Service Worker ${CACHE_NAME} loaded`);
 
+
+
+

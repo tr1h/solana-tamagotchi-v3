@@ -1,0 +1,17 @@
+name: Stop Bot
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Reason for stopping'
+        required: true
+        default: 'Manual stop'
+
+jobs:
+  stop-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Stop Bot
+        run: |
+          echo "Bot stopped: ${{ github.event.inputs.reason }}"
+          # Add any cleanup commands here

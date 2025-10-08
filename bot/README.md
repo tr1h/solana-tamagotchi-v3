@@ -1,57 +1,61 @@
 # 🤖 Solana Tamagotchi Telegram Bot
 
-Official Telegram bot for Solana Tamagotchi game.
+Полнофункциональный бот с модерацией, MySQL и автопостами.
 
-## 🚀 Quick Start
+## 🚀 Быстрый старт
 
-### 1. Install Python
-Download Python 3.8+ from https://python.org
-
-### 2. Install Dependencies
+### 1. Установите зависимости:
 ```bash
 pip install -r requirements.txt
 ```
 
-### 3. Run Bot
+### 2. Настройте админ ID:
+- Узнайте свой Telegram ID у `@userinfobot`
+- Добавьте в `bot.py`: `ADMIN_IDS = [ваш_ID]`
+
+### 3. Запустите:
 ```bash
 python bot.py
 ```
+Или используйте `start_bot.bat`
 
-## 📋 Commands
+## 📋 Команды
 
-### User Commands:
-- `/start` - Welcome message
-- `/help` - List of commands
-- `/game` - Play the game
-- `/mint` - Mint NFT Pet
-- `/price` - Current NFT price
-- `/players` - Total players
-- `/pets` - Total pets created
-- `/ref` - Get referral link
-- `/stats` - Your referral stats
+### Для всех:
+- `/start`, `/help` - Справка
+- `/game` - Ссылка на игру
+- `/mint` - Минт NFT
+- `/price` - Цена NFT
+- `/players` - Количество игроков
+- `/pets` - Количество питомцев
+- `/ref` - Реферальная ссылка
+- `/stats` - Ваша статистика
 
-### Admin Commands:
-- `/update_stats` - Update statistics
-  - Example: `/update_stats players:100 pets:50`
-- `/announce` - Broadcast message
-  - Example: `/announce Game is launching soon!`
+### Для админов:
+- `/mute [минуты]` - Замутить (ответ на сообщение)
+- `/unmute` - Размутить
+- `/ban` - Забанить
+- `/kick` - Кикнуть
+- `/broadcast` - Отправить в канал
 
-## ⚙️ Configuration
+## 🛡️ Автомодерация
 
-Edit `bot.py`:
-- Add your admin Telegram user ID to `admin_ids` list
-- Update `GAME_URL` and `MINT_URL` if needed
+- **Анти-спам:** 5 сообщений/10 сек
+- **Фильтр слов:** Автоматическое удаление
+- **Защита от ссылок:** Блокировка URL
 
-## 📊 Stats File
+## 📊 Функции
 
-Bot stores statistics in `stats.json`:
-```json
-{
-  "players": 0,
-  "pets": 0,
-  "price": "0.3 SOL"
-}
-```
+- **MySQL интеграция** - реальная статистика
+- **Автопосты** - ежедневно в 12:00 в канал
+- **Приветствие** - новых участников группы
+- **Модерация** - автоматическая и ручная
+
+## 📖 Документация
+
+- `SETUP.md` - Пошаговая настройка
+- `ADMIN_GUIDE.md` - Руководство администратора
+- `RULES.txt` - Правила группы
 
 ## 🔧 Troubleshooting
 
@@ -107,4 +111,5 @@ sudo systemctl start tamagotchi-bot
 ## 📝 License
 
 MIT License
+
 

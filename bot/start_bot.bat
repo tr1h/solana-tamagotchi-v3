@@ -10,3 +10,6 @@ python bot.py
 
 pause
 
+
+
+
