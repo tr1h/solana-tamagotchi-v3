@@ -84,10 +84,13 @@ const Database = {
                 return playerData;
             }
             
-            return Utils.loadLocal('playerData');
+            // No data in database - return null (no NFT)
+            console.log('❌ No player data found in database for wallet:', walletAddress);
+            return null;
         } catch (error) {
             console.error('❌ Failed to load player data:', error);
-            return Utils.loadLocal('playerData');
+            // On error, return null to block access
+            return null;
         }
     },
     

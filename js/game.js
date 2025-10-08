@@ -866,12 +866,19 @@ const Game = {
             }
             
             const playerData = await window.Database.loadPlayerData(WalletManager.getAddress());
+            console.log('🔍 Player data from database:', playerData);
             
-            if (playerData && playerData.pet_data) {
+            if (playerData && playerData.pet_data && playerData.pet_data.name) {
                 console.log('✅ NFT ownership confirmed, showing game');
+                console.log('🐾 Pet data:', playerData.pet_data);
                 this.showGame();
             } else {
                 console.log('❌ No NFT found, redirecting to mint');
+                console.log('🔍 Player data check failed:', {
+                    hasPlayerData: !!playerData,
+                    hasPetData: !!(playerData && playerData.pet_data),
+                    hasPetName: !!(playerData && playerData.pet_data && playerData.pet_data.name)
+                });
                 this.showMintRequired();
             }
         } catch (error) {
