@@ -292,6 +292,32 @@ const MintPage = {
         
         localStorage.setItem('currentPet', JSON.stringify(petData));
         localStorage.setItem('hasPetFromMint', 'true');
+        
+        // Save to database
+        this.savePetToDB(petData);
+    },
+    
+    async savePetToDB(petData) {
+        if (!this.publicKey) return;
+        
+        try {
+            await fetch('https://nitric-ara-unsuperlative.ngrok-free.dev/solana-tamagotchi/api/leaderboard.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    wallet_address: this.publicKey.toString(),
+                    pet_name: petData.name,
+                    pet_type: petData.type,
+                    pet_rarity: petData.rarity,
+                    level: petData.level,
+                    xp: petData.xp,
+                    tama: 500, // Bonus from mint
+                    pet_data: JSON.stringify(petData)
+                })
+            });
+        } catch (error) {
+            console.error('Error saving pet to DB:', error);
+        }
     },
     
     animatePreview() {
