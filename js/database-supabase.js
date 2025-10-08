@@ -262,5 +262,6 @@ const Database = {
 };
 
 // Initialize on load
-Database.init();
+// Don't auto-init - let game.js control initialization
+// Database.init();
 
