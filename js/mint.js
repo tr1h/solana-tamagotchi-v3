@@ -124,10 +124,6 @@ const MintPage = {
         }
         
         this.updateMintProgress();
-        
-        // Update USD (rough estimate)
-        const solPrice = 150; // $150 per SOL
-        document.getElementById('price-usd').textContent = `≈ $${(currentPrice * solPrice).toFixed(0)} USD`;
     },
     
     getCurrentPrice() {
