@@ -636,19 +636,87 @@ def handle_callback(call):
                             parse_mode='Markdown', reply_markup=keyboard)
     
     elif call.data == "my_stats":
-        stats = get_game_stats()
-        text = f"""
-📊 *Game Statistics:*
+        telegram_id = str(call.from_user.id)
+        username = call.from_user.username or call.from_user.first_name
+        
+        try:
+            # Get player data from database by telegram_id
+            db = mysql.connector.connect(**db_config)
+            cursor = db.cursor(dictionary=True)
+            
+            # Get player stats
+            cursor.execute("""
+                SELECT wallet_address, pet_name, level, xp, tama, pet_type, pet_rarity 
+                FROM leaderboard 
+                WHERE telegram_id = %s
+            """, (telegram_id,))
+            player = cursor.fetchone()
+            
+            if player:
+                # Get referral stats
+                cursor.execute("""
+                    SELECT COUNT(*) as level1_count, SUM(signup_reward) as level1_earned
+                    FROM referrals 
+                    WHERE referrer_address = %s AND level = 1
+                """, (player['wallet_address'],))
+                ref_l1 = cursor.fetchone()
+                
+                cursor.execute("""
+                    SELECT COUNT(*) as level2_count, SUM(signup_reward) as level2_earned
+                    FROM referrals 
+                    WHERE referrer_address = %s AND level = 2
+                """, (player['wallet_address'],))
+                ref_l2 = cursor.fetchone()
+                
+                total_referrals = (ref_l1['level1_count'] or 0) + (ref_l2['level2_count'] or 0)
+                total_earned = (ref_l1['level1_earned'] or 0) + (ref_l2['level2_earned'] or 0)
+                
+                text = f"""
+📊 *Your Personal Stats:*
 
-👥 Total Players: {stats['players']}
-🐾 Total Pets: {stats['pets']}
-💰 NFT Price: {stats['price']}
+🐾 *Your Pet:*
+• Name: {player['pet_name'] or 'No pet yet'}
+• Type: {player['pet_type'] or 'N/A'}
+• Rarity: {player['pet_rarity'] or 'N/A'}
+• Level: {player['level'] or 1}
+• XP: {player['xp'] or 0}
 
-🎮 *Your Stats:*
-• Referrals: Coming soon!
-• TAMA Earned: Coming soon!
-• Level: Coming soon!
-        """
+💰 *Your Balance:*
+• TAMA Tokens: {player['tama'] or 0}
+
+🔗 *Your Referrals:*
+• Level 1 Direct: {ref_l1['level1_count'] or 0} ({ref_l1['level1_earned'] or 0} TAMA)
+• Level 2 Indirect: {ref_l2['level2_count'] or 0} ({ref_l2['level2_earned'] or 0} TAMA)
+• Total Referrals: {total_referrals}
+• Total Earned: {total_earned} TAMA
+
+👛 *Wallet:*
+• `{player['wallet_address'][:8]}...{player['wallet_address'][-8:]}`
+
+*Keep playing and referring friends to earn more!* 🚀
+                """
+            else:
+                # No wallet linked yet
+                text = f"""
+📊 *Your Personal Stats:*
+
+❌ *No wallet linked yet!*
+
+To start playing and tracking your stats:
+1️⃣ Use /ref to get your personal link
+2️⃣ Connect your Phantom wallet
+3️⃣ Your progress will be automatically saved!
+
+🎮 *Ready to start?*
+                """
+            
+            cursor.close()
+            db.close()
+            
+        except Exception as e:
+            print(f"Error getting stats: {e}")
+            text = "❌ Error getting your stats. Please try again later."
+        
         bot.edit_message_text(text, call.message.chat.id, call.message.message_id, parse_mode='Markdown')
     
     elif call.data == "leaderboard":
