@@ -234,10 +234,11 @@ const MintPage = {
             
             // Record mint in database
             const phaseIndex = this.getCurrentPhase();
+            const currentPrice = this.getCurrentPrice();
             await window.Database.recordMint(
                 this.publicKey.toString(),
                 nft,
-                mintPrice,
+                currentPrice,
                 phaseIndex
             );
             
