@@ -9,19 +9,26 @@ const Database = {
     // Initialize Supabase
     async init() {
         try {
-            if (typeof supabase === 'undefined') {
-                console.error('❌ Supabase library not loaded!');
+            // Check if Supabase library is loaded
+            if (typeof window.supabase === 'undefined') {
+                console.error('❌ Supabase library not loaded! window.supabase is undefined');
                 return false;
             }
             
-            const { createClient } = supabase;
-            this.supabase = createClient(
+            // Use the global supabase.createClient
+            this.supabase = window.supabase.createClient(
                 'https://zfrazyupameidxpjihrh.supabase.co',
                 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpmcmF6eXVwYW1laWR4cGppaHJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5Mzc1NTAsImV4cCI6MjA3NTUxMzU1MH0.1EkMDqCNJoAjcJDh3Dd3yPfus-JpdcwE--z2dhjh7wU'
             );
+            
+            if (!this.supabase) {
+                console.error('❌ Failed to create Supabase client');
+                return false;
+            }
+            
             this.initialized = true;
             console.log('✅ Supabase initialized successfully');
-            console.log('✅ Supabase URL:', 'https://zfrazyupameidxpjihrh.supabase.co');
+            console.log('✅ Supabase client:', this.supabase);
             return true;
         } catch (error) {
             console.error('❌ Failed to initialize Supabase:', error);
