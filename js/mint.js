@@ -377,13 +377,23 @@ const MintPage = {
                 
                 // Record the mint in nft_mints table
                 if (window.Database && window.Database.recordMint) {
+                    console.log('🔍 Recording mint with:', {
+                        wallet: this.publicKey.toString(),
+                        price: this.currentPrice,
+                        phase: this.currentPhase
+                    });
                     await window.Database.recordMint(
                         this.publicKey.toString(),
                         petData,
-                        this.currentPrice,
-                        this.currentPhase
+                        this.currentPrice || 0.1,
+                        this.currentPhase || 1
                     );
                     console.log('✅ Mint recorded in nft_mints table');
+                } else {
+                    console.log('❌ recordMint not available:', {
+                        Database: !!window.Database,
+                        recordMint: !!(window.Database && window.Database.recordMint)
+                    });
                 }
             } else {
                 console.error('❌ Database not initialized or Supabase not found');
