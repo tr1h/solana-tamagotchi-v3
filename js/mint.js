@@ -24,7 +24,12 @@ const MintPage = {
             
             // Load mint stats
             const totalMinted = await window.Database.getMintStats();
-            this.currentMinted = totalMinted;
+            this.currentMinted = totalMinted || 0;
+            console.log(`📊 Total minted: ${this.currentMinted}`);
+            this.updateMintProgress();
+        } else {
+            // Fallback if DB not available
+            this.currentMinted = 0;
             this.updateMintProgress();
         }
         

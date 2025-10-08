@@ -268,12 +268,22 @@ const Database = {
     
     // Get mint stats (total NFTs minted)
     async getMintStats() {
+        if (!this.initialized || !this.supabase) {
+            console.warn('Database not initialized for getMintStats');
+            return 0;
+        }
+        
         try {
             const { count, error } = await this.supabase
                 .from('nft_mints')
                 .select('*', { count: 'exact', head: true });
             
-            if (error) throw error;
+            if (error) {
+                console.error('Supabase error in getMintStats:', error);
+                return 0;
+            }
+            
+            console.log(`✅ Mint stats loaded: ${count} NFTs`);
             return count || 0;
         } catch (error) {
             console.error('Failed to get mint stats:', error);
