@@ -227,6 +227,15 @@ const MintPage = {
             // Save NFT data
             this.saveNFTData(nft);
             
+            // Record mint in database
+            const phaseIndex = this.getCurrentPhase();
+            await window.Database.recordMint(
+                this.publicKey.toString(),
+                nft,
+                mintPrice,
+                phaseIndex
+            );
+            
             // Show success modal
             this.showSuccessModal(nft);
             

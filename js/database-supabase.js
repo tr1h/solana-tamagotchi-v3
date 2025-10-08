@@ -266,18 +266,40 @@ const Database = {
         }
     },
     
-    // Get mint stats
+    // Get mint stats (total NFTs minted)
     async getMintStats() {
         try {
-            const { data, error } = await this.supabase
-                .from('leaderboard')
-                .select('id', { count: 'exact', head: true });
+            const { count, error } = await this.supabase
+                .from('nft_mints')
+                .select('*', { count: 'exact', head: true });
             
             if (error) throw error;
-            return data || 0;
+            return count || 0;
         } catch (error) {
             console.error('Failed to get mint stats:', error);
             return 0;
+        }
+    },
+    
+    // Record NFT mint
+    async recordMint(walletAddress, nftData, price, phase) {
+        try {
+            const { error } = await this.supabase
+                .from('nft_mints')
+                .insert({
+                    wallet_address: walletAddress,
+                    nft_type: nftData.type,
+                    nft_rarity: nftData.rarity,
+                    nft_data: nftData,
+                    mint_price: price,
+                    mint_phase: phase
+                });
+            
+            if (error) throw error;
+            return true;
+        } catch (error) {
+            console.error('Failed to record mint:', error);
+            return false;
         }
     },
     
