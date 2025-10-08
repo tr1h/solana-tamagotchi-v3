@@ -72,18 +72,24 @@ const Database = {
             const { data, error } = await this.supabase
                 .from('leaderboard')
                 .select('*')
-                .eq('wallet_address', walletAddress)
-                .single();
+                .eq('wallet_address', walletAddress);
             
-            if (error && error.code !== 'PGRST116') throw error;
-            
-            if (data) {
-                Utils.saveLocal('playerData', data);
-                return data;
+            if (error) {
+                console.warn('⚠️ Supabase query error:', error);
+                return Utils.loadLocal('playerData');
             }
+            
+            if (data && data.length > 0) {
+                const playerData = data[0];
+                Utils.saveLocal('playerData', playerData);
+                console.log('✅ Loaded player data from Supabase');
+                return playerData;
+            }
+            
+            console.log('ℹ️ No data found for wallet, using local storage');
             return Utils.loadLocal('playerData');
         } catch (error) {
-            console.error('Failed to load player data:', error);
+            console.error('❌ Failed to load player data:', error);
             return Utils.loadLocal('playerData');
         }
     },
