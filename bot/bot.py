@@ -127,8 +127,8 @@ def handle_group_message(message):
             pass
         return
 
-# Commands
-@bot.message_handler(commands=['start', 'help'])
+# Commands - Private chat only
+@bot.message_handler(commands=['start', 'help'], func=lambda message: message.chat.type == 'private')
 def send_welcome(message):
     welcome_text = f"""
 🎮 *Welcome to Solana Tamagotchi!*
@@ -162,17 +162,114 @@ def send_welcome(message):
     
     bot.reply_to(message, welcome_text, parse_mode='Markdown', reply_markup=keyboard)
 
-@bot.message_handler(commands=['game'])
+# Private commands (personal data)
+@bot.message_handler(commands=['stats'], func=lambda message: message.chat.type == 'private')
+def send_stats(message):
+    stats = get_game_stats()
+    text = f"""
+📊 *Your Personal Stats:*
+
+🎮 *Game Statistics:*
+• Total Players: {stats['players']}
+• Total Pets: {stats['pets']}
+• NFT Price: {stats['price']}
+
+🔗 *Your Referrals:*
+• Level 1: Coming soon!
+• Level 2: Coming soon!
+• Total Earned: Coming soon!
+
+🎯 *Your Progress:*
+• Level: Coming soon!
+• TAMA Balance: Coming soon!
+• Achievements: Coming soon!
+
+*Keep playing to unlock more features!* 🚀
+    """
+    bot.reply_to(message, text, parse_mode='Markdown')
+
+@bot.message_handler(commands=['ref', 'referral'], func=lambda message: message.chat.type == 'private')
+def send_referral(message):
+    user_id = message.from_user.id
+    referral_code = base64.b64encode(str(user_id).encode()).decode()
+    referral_link = f"{GAME_URL}?ref={referral_code}"
+    
+    text = f"""
+🔗 *Your Personal Referral Link:*
+
+`{referral_link}`
+
+💰 *Earn rewards:*
+• 25 TAMA for each friend who joins
+• 12 TAMA for Level 2 referrals  
+• 10% of their earnings forever!
+
+📤 *Share with friends and earn!*
+    """
+    
+    keyboard = types.InlineKeyboardMarkup()
+    keyboard.add(types.InlineKeyboardButton("📤 Share Link", url=f"https://t.me/share/url?url={referral_link}&text=🎮 Join me in Solana Tamagotchi! Earn TAMA tokens by playing!"))
+    
+    bot.reply_to(message, text, parse_mode='Markdown', reply_markup=keyboard)
+
+# Group commands (public)
+@bot.message_handler(commands=['game'], func=lambda message: message.chat.type in ['group', 'supergroup'])
 def send_game(message):
     keyboard = types.InlineKeyboardMarkup()
     keyboard.add(types.InlineKeyboardButton("🎮 Play Game", url=GAME_URL))
     bot.reply_to(message, "🐾 Ready to play?", reply_markup=keyboard)
 
-@bot.message_handler(commands=['mint'])
+@bot.message_handler(commands=['mint'], func=lambda message: message.chat.type in ['group', 'supergroup'])
 def send_mint(message):
     keyboard = types.InlineKeyboardMarkup()
     keyboard.add(types.InlineKeyboardButton("🖼️ Mint NFT Pet", url=MINT_URL))
     bot.reply_to(message, "✨ Mint your unique NFT Pet!\n\n💰 Price: 0.3 SOL", reply_markup=keyboard)
+
+@bot.message_handler(commands=['leaderboard', 'top'], func=lambda message: message.chat.type in ['group', 'supergroup'])
+def send_leaderboard(message):
+    text = """
+🏆 *Leaderboard:*
+
+*Top Players by TAMA:*
+1. 🥇 Player1 - 1,250 TAMA
+2. 🥈 Player2 - 980 TAMA  
+3. 🥉 Player3 - 750 TAMA
+
+*Top Players by Level:*
+1. 🥇 Player1 - Level 15
+2. 🥈 Player2 - Level 12
+3. 🥉 Player3 - Level 10
+
+🎮 *Play more to climb the ranks!*
+    """
+    bot.reply_to(message, text, parse_mode='Markdown')
+
+@bot.message_handler(commands=['info'], func=lambda message: message.chat.type in ['group', 'supergroup'])
+def send_info(message):
+    stats = get_game_stats()
+    text = f"""
+🎮 *Solana Tamagotchi Info:*
+
+📊 *Statistics:*
+• Total Players: {stats['players']}
+• Total Pets: {stats['pets']}
+• NFT Price: {stats['price']}
+
+🎯 *How to Play:*
+• Mint NFT pet: [Mint Page]({MINT_URL})
+• Play game: [Game]({GAME_URL})
+• Earn TAMA tokens
+• Refer friends for rewards
+
+🤖 *Bot Commands:*
+• /game - Play the game
+• /mint - Mint NFT pet
+• /leaderboard - Top players
+• /info - This message
+
+*For personal stats, message the bot privately!* 🚀
+    """
+    bot.reply_to(message, text, parse_mode='Markdown')
 
 @bot.message_handler(commands=['price'])
 def send_price(message):
