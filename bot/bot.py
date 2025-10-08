@@ -158,53 +158,42 @@ def send_stats(message):
     username = message.from_user.username or message.from_user.first_name
     
     try:
-        # Get player data from database by telegram_id
-        db = mysql.connector.connect(**db_config)
-        cursor = db.cursor(dictionary=True)
+        # Get player data from Supabase by telegram_id
+        response = supabase.table('leaderboard').select('*').eq('telegram_id', telegram_id).execute()
         
-        # Get player stats
-        cursor.execute("""
-            SELECT wallet_address, pet_name, level, xp, tama, pet_type, pet_rarity 
-            FROM leaderboard 
-            WHERE telegram_id = %s
-        """, (telegram_id,))
-        player = cursor.fetchone()
-        
-        if player:
+        if response.data:
+            player = response.data[0]
+            
             # Get referral stats
-            cursor.execute("""
-                SELECT COUNT(*) as level1_count, SUM(signup_reward) as level1_earned
-                FROM referrals 
-                WHERE referrer_address = %s AND level = 1
-            """, (player['wallet_address'],))
-            ref_l1 = cursor.fetchone()
+            ref_l1_response = supabase.table('referrals').select('*', count='exact').eq('referrer_address', player['wallet_address']).eq('level', 1).execute()
+            ref_l2_response = supabase.table('referrals').select('*', count='exact').eq('referrer_address', player['wallet_address']).eq('level', 2).execute()
             
-            cursor.execute("""
-                SELECT COUNT(*) as level2_count, SUM(signup_reward) as level2_earned
-                FROM referrals 
-                WHERE referrer_address = %s AND level = 2
-            """, (player['wallet_address'],))
-            ref_l2 = cursor.fetchone()
+            level1_count = ref_l1_response.count or 0
+            level2_count = ref_l2_response.count or 0
             
-            total_referrals = (ref_l1['level1_count'] or 0) + (ref_l2['level2_count'] or 0)
-            total_earned = (ref_l1['level1_earned'] or 0) + (ref_l2['level2_earned'] or 0)
+            # Calculate total earned from referrals
+            level1_earned = sum([r.get('signup_reward', 0) for r in ref_l1_response.data]) if ref_l1_response.data else 0
+            level2_earned = sum([r.get('signup_reward', 0) for r in ref_l2_response.data]) if ref_l2_response.data else 0
+            
+            total_referrals = level1_count + level2_count
+            total_earned = level1_earned + level2_earned
             
             text = f"""
 📊 *Your Personal Stats:*
 
 🐾 *Your Pet:*
-• Name: {player['pet_name'] or 'No pet yet'}
-• Type: {player['pet_type'] or 'N/A'}
-• Rarity: {player['pet_rarity'] or 'N/A'}
-• Level: {player['level'] or 1}
-• XP: {player['xp'] or 0}
+• Name: {player.get('pet_name', 'No pet yet')}
+• Type: {player.get('pet_type', 'N/A')}
+• Rarity: {player.get('pet_rarity', 'N/A')}
+• Level: {player.get('level', 1)}
+• XP: {player.get('xp', 0)}
 
 💰 *Your Balance:*
-• TAMA Tokens: {player['tama'] or 0}
+• TAMA Tokens: {player.get('tama', 0)}
 
 🔗 *Your Referrals:*
-• Level 1 Direct: {ref_l1['level1_count'] or 0} ({ref_l1['level1_earned'] or 0} TAMA)
-• Level 2 Indirect: {ref_l2['level2_count'] or 0} ({ref_l2['level2_earned'] or 0} TAMA)
+• Level 1 Direct: {level1_count} ({level1_earned} TAMA)
+• Level 2 Indirect: {level2_count} ({level2_earned} TAMA)
 • Total Referrals: {total_referrals}
 • Total Earned: {total_earned} TAMA
 
@@ -234,12 +223,7 @@ To start playing and tracking your stats:
                 types.InlineKeyboardButton("🎨 Mint NFT", url=MINT_URL)
             )
             bot.reply_to(message, text, parse_mode='Markdown', reply_markup=keyboard)
-            cursor.close()
-            db.close()
             return
-        
-        cursor.close()
-        db.close()
         
         # Add buttons
         keyboard = types.InlineKeyboardMarkup()
@@ -761,53 +745,42 @@ def handle_callback(call):
         username = call.from_user.username or call.from_user.first_name
         
         try:
-            # Get player data from database by telegram_id
-            db = mysql.connector.connect(**db_config)
-            cursor = db.cursor(dictionary=True)
+            # Get player data from Supabase by telegram_id
+            response = supabase.table('leaderboard').select('*').eq('telegram_id', telegram_id).execute()
             
-            # Get player stats
-            cursor.execute("""
-                SELECT wallet_address, pet_name, level, xp, tama, pet_type, pet_rarity 
-                FROM leaderboard 
-                WHERE telegram_id = %s
-            """, (telegram_id,))
-            player = cursor.fetchone()
-            
-            if player:
+            if response.data:
+                player = response.data[0]
+                
                 # Get referral stats
-                cursor.execute("""
-                    SELECT COUNT(*) as level1_count, SUM(signup_reward) as level1_earned
-                    FROM referrals 
-                    WHERE referrer_address = %s AND level = 1
-                """, (player['wallet_address'],))
-                ref_l1 = cursor.fetchone()
+                ref_l1_response = supabase.table('referrals').select('*', count='exact').eq('referrer_address', player['wallet_address']).eq('level', 1).execute()
+                ref_l2_response = supabase.table('referrals').select('*', count='exact').eq('referrer_address', player['wallet_address']).eq('level', 2).execute()
                 
-                cursor.execute("""
-                    SELECT COUNT(*) as level2_count, SUM(signup_reward) as level2_earned
-                    FROM referrals 
-                    WHERE referrer_address = %s AND level = 2
-                """, (player['wallet_address'],))
-                ref_l2 = cursor.fetchone()
+                level1_count = ref_l1_response.count or 0
+                level2_count = ref_l2_response.count or 0
                 
-                total_referrals = (ref_l1['level1_count'] or 0) + (ref_l2['level2_count'] or 0)
-                total_earned = (ref_l1['level1_earned'] or 0) + (ref_l2['level2_earned'] or 0)
+                # Calculate total earned from referrals
+                level1_earned = sum([r.get('signup_reward', 0) for r in ref_l1_response.data]) if ref_l1_response.data else 0
+                level2_earned = sum([r.get('signup_reward', 0) for r in ref_l2_response.data]) if ref_l2_response.data else 0
+                
+                total_referrals = level1_count + level2_count
+                total_earned = level1_earned + level2_earned
                 
                 text = f"""
 📊 *Your Personal Stats:*
 
 🐾 *Your Pet:*
-• Name: {player['pet_name'] or 'No pet yet'}
-• Type: {player['pet_type'] or 'N/A'}
-• Rarity: {player['pet_rarity'] or 'N/A'}
-• Level: {player['level'] or 1}
-• XP: {player['xp'] or 0}
+• Name: {player.get('pet_name', 'No pet yet')}
+• Type: {player.get('pet_type', 'N/A')}
+• Rarity: {player.get('pet_rarity', 'N/A')}
+• Level: {player.get('level', 1)}
+• XP: {player.get('xp', 0)}
 
 💰 *Your Balance:*
-• TAMA Tokens: {player['tama'] or 0}
+• TAMA Tokens: {player.get('tama', 0)}
 
 🔗 *Your Referrals:*
-• Level 1 Direct: {ref_l1['level1_count'] or 0} ({ref_l1['level1_earned'] or 0} TAMA)
-• Level 2 Indirect: {ref_l2['level2_count'] or 0} ({ref_l2['level2_earned'] or 0} TAMA)
+• Level 1 Direct: {level1_count} ({level1_earned} TAMA)
+• Level 2 Indirect: {level2_count} ({level2_earned} TAMA)
 • Total Referrals: {total_referrals}
 • Total Earned: {total_earned} TAMA
 
@@ -830,9 +803,6 @@ To start playing and tracking your stats:
 
 🎮 *Ready to start?*
                 """
-            
-            cursor.close()
-            db.close()
             
         except Exception as e:
             print(f"Error getting stats: {e}")
