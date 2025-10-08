@@ -5,18 +5,10 @@
 const Database = {
     db: null,
     initialized: false,
-    useMySQL: false, // Use localStorage for now (ngrok blocked)
-    apiURL: 'https://nitric-ara-unsuperlative.ngrok-free.dev/solana-tamagotchi/api', // Ngrok API URL
-    
-    // Firebase configuration (REPLACE WITH YOUR CONFIG)
-    firebaseConfig: {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-        projectId: "YOUR_PROJECT_ID",
-        storageBucket: "YOUR_PROJECT_ID.appspot.com",
-        messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-        appId: "YOUR_APP_ID"
-    },
+    useSupabase: true, // Use Supabase instead of MySQL/Firebase
+    supabaseUrl: 'YOUR_SUPABASE_URL', // Replace after setup
+    supabaseKey: 'YOUR_SUPABASE_ANON_KEY', // Replace after setup
+    apiURL: 'https://nitric-ara-unsuperlative.ngrok-free.dev/solana-tamagotchi/api',
     
     // Initialize Firebase
     init() {
