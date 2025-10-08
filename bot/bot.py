@@ -269,6 +269,120 @@ To start playing and tracking your stats:
         print(f"Error getting stats: {e}")
         bot.reply_to(message, "❌ Error getting your stats. Please try again later.")
 
+@bot.message_handler(commands=['link'], func=lambda message: message.chat.type == 'private')
+def link_wallet(message):
+    """Link wallet to Telegram account"""
+    telegram_id = str(message.from_user.id)
+    username = message.from_user.username or message.from_user.first_name
+    
+    # Check if already linked
+    try:
+        db = mysql.connector.connect(**db_config)
+        cursor = db.cursor(dictionary=True)
+        
+        cursor.execute("SELECT wallet_address FROM leaderboard WHERE telegram_id = %s", (telegram_id,))
+        existing = cursor.fetchone()
+        
+        if existing:
+            text = f"""
+✅ *Already Linked!*
+
+👛 *Your Wallet:*
+`{existing['wallet_address'][:8]}...{existing['wallet_address'][-8:]}`
+
+🎮 *To link a different wallet:*
+1. Go to the game
+2. Connect your new wallet
+3. Use /link again
+            """
+        else:
+            text = f"""
+🔗 *Link Your Wallet*
+
+To link your wallet to this Telegram account:
+
+1️⃣ Go to the game: [Play Game]({GAME_URL})
+2️⃣ Connect your Phantom wallet
+3️⃣ Copy your wallet address
+4️⃣ Send it to me with: `/link YOUR_WALLET_ADDRESS`
+
+*Example:* `/link DteCpGbnUjubW7EFUUexiHY8J1cTJmowFhFzK9jt6D2e`
+            """
+        
+        cursor.close()
+        db.close()
+        
+    except Exception as e:
+        print(f"Error in link command: {e}")
+        text = "❌ Error. Please try again later."
+    
+    bot.reply_to(message, text, parse_mode='Markdown')
+
+# Handle wallet address linking
+@bot.message_handler(func=lambda message: message.chat.type == 'private' and message.text and message.text.startswith('/link ') and len(message.text.split()) == 2)
+def handle_wallet_link(message):
+    """Handle wallet address linking"""
+    telegram_id = str(message.from_user.id)
+    username = message.from_user.username or message.from_user.first_name
+    wallet_address = message.text.split()[1]
+    
+    try:
+        db = mysql.connector.connect(**db_config)
+        cursor = db.cursor(dictionary=True)
+        
+        # Check if wallet exists in leaderboard
+        cursor.execute("SELECT * FROM leaderboard WHERE wallet_address = %s", (wallet_address,))
+        wallet_data = cursor.fetchone()
+        
+        if wallet_data:
+            # Update existing record with Telegram info
+            cursor.execute("""
+                UPDATE leaderboard 
+                SET telegram_id = %s, telegram_username = %s 
+                WHERE wallet_address = %s
+            """, (telegram_id, username, wallet_address))
+            
+            db.commit()
+            
+            text = f"""
+✅ *Wallet Linked Successfully!*
+
+👛 *Wallet:* `{wallet_address[:8]}...{wallet_address[-8:]}`
+🐾 *Pet:* {wallet_data['pet_name'] or 'No pet yet'}
+💰 *TAMA:* {wallet_data['tama'] or 0}
+📊 *Level:* {wallet_data['level'] or 1}
+
+🎮 *Now you can:*
+• Use /stats to see your progress
+• Use /ref to get referral links
+• Track your referrals perfectly!
+
+*Your Telegram is now linked to this wallet!* 🚀
+            """
+        else:
+            text = f"""
+❌ *Wallet Not Found*
+
+The wallet address `{wallet_address[:8]}...{wallet_address[-8:]}` is not in our database.
+
+🎮 *To link your wallet:*
+1. Go to the game: [Play Game]({GAME_URL})
+2. Connect your Phantom wallet
+3. Create your first pet
+4. Then use /link with your wallet address
+
+*Make sure you've played the game first!* 🎯
+            """
+        
+        cursor.close()
+        db.close()
+        
+    except Exception as e:
+        print(f"Error linking wallet: {e}")
+        text = "❌ Error linking wallet. Please try again later."
+    
+    bot.reply_to(message, text, parse_mode='Markdown')
+
 @bot.message_handler(commands=['ref', 'referral'], func=lambda message: message.chat.type == 'private')
 def send_referral(message):
     user_id = message.from_user.id
