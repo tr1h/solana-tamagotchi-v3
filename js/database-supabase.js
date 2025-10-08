@@ -261,7 +261,9 @@ const Database = {
     async rewardReferrers() { return true; }
 };
 
-// Initialize on load
+// Export to window for global access
+window.Database = Database;
+
 // Don't auto-init - let game.js control initialization
-// Database.init();
+console.log('✅ Database module loaded');
 
