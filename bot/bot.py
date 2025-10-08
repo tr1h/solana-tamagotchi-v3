@@ -383,6 +383,39 @@ The wallet address `{wallet_address[:8]}...{wallet_address[-8:]}` is not in our 
     
     bot.reply_to(message, text, parse_mode='Markdown')
 
+@bot.message_handler(commands=['save'], func=lambda message: message.chat.type == 'private')
+def save_pet_progress(message):
+    """Save pet progress to database"""
+    # Expecting format: /save WALLET_ADDRESS JSON_DATA
+    parts = message.text.split(maxsplit=2)
+    if len(parts) < 3:
+        bot.reply_to(message, "Usage: /save WALLET_ADDRESS {pet_data_json}")
+        return
+    
+    wallet_address = parts[1]
+    try:
+        pet_data_str = parts[2]
+        
+        db = mysql.connector.connect(**db_config)
+        cursor = db.cursor()
+        
+        # Update pet data
+        cursor.execute("""
+            UPDATE leaderboard 
+            SET pet_data = %s, updated_at = NOW()
+            WHERE wallet_address = %s
+        """, (pet_data_str, wallet_address))
+        
+        db.commit()
+        cursor.close()
+        db.close()
+        
+        bot.reply_to(message, "✅ Pet progress saved!")
+        
+    except Exception as e:
+        print(f"Error saving pet: {e}")
+        bot.reply_to(message, "❌ Error saving pet progress")
+
 @bot.message_handler(commands=['ref', 'referral'], func=lambda message: message.chat.type == 'private')
 def send_referral(message):
     user_id = message.from_user.id
