@@ -66,7 +66,7 @@ const Database = {
     
     // Load player data
     async loadPlayerData(walletAddress) {
-        if (!walletAddress) return Utils.getLocal('playerData');
+        if (!walletAddress) return Utils.loadLocal('playerData');
         
         try {
             const { data, error } = await this.supabase
@@ -81,10 +81,10 @@ const Database = {
                 Utils.saveLocal('playerData', data);
                 return data;
             }
-            return Utils.getLocal('playerData');
+            return Utils.loadLocal('playerData');
         } catch (error) {
             console.error('Failed to load player data:', error);
-            return Utils.getLocal('playerData');
+            return Utils.loadLocal('playerData');
         }
     },
     
