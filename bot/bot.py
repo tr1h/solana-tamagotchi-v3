@@ -811,21 +811,57 @@ To start playing and tracking your stats:
         bot.edit_message_text(text, call.message.chat.id, call.message.message_id, parse_mode='Markdown')
     
     elif call.data == "leaderboard":
-        text = """
-🏆 *Leaderboard:*
+        try:
+            # Get top players by TAMA from Supabase
+            tama_response = supabase.table('leaderboard').select('pet_name, tama, level, pet_type').order('tama', desc=True).limit(5).execute()
+            
+            # Get top players by level from Supabase
+            level_response = supabase.table('leaderboard').select('pet_name, level, tama, pet_type').order('level', desc=True).limit(5).execute()
+            
+            # Build TAMA leaderboard
+            tama_text = ""
+            if tama_response.data:
+                for i, player in enumerate(tama_response.data, 1):
+                    medal = "🥇" if i == 1 else "🥈" if i == 2 else "🥉" if i == 3 else f"{i}."
+                    name = player.get('pet_name', 'Anonymous') or 'Anonymous'
+                    tama = player.get('tama', 0) or 0
+                    pet_type = player.get('pet_type', 'Unknown') or 'Unknown'
+                    tama_text += f"{medal} {name} ({pet_type}) - {tama:,} TAMA\n"
+            else:
+                tama_text = "No players yet!\n"
+            
+            # Build Level leaderboard
+            level_text = ""
+            if level_response.data:
+                for i, player in enumerate(level_response.data, 1):
+                    medal = "🥇" if i == 1 else "🥈" if i == 2 else "🥉" if i == 3 else f"{i}."
+                    name = player.get('pet_name', 'Anonymous') or 'Anonymous'
+                    level = player.get('level', 1) or 1
+                    pet_type = player.get('pet_type', 'Unknown') or 'Unknown'
+                    level_text += f"{medal} {name} ({pet_type}) - Level {level}\n"
+            else:
+                level_text = "No players yet!\n"
+            
+            text = f"""
+🏆 *Live Leaderboard:*
 
 *Top Players by TAMA:*
-1. 🥇 Player1 - 1,250 TAMA
-2. 🥈 Player2 - 980 TAMA  
-3. 🥉 Player3 - 750 TAMA
-
+{tama_text}
 *Top Players by Level:*
-1. 🥇 Player1 - Level 15
-2. 🥈 Player2 - Level 12
-3. 🥉 Player3 - Level 10
-
+{level_text}
 🎮 *Play more to climb the ranks!*
-        """
+            """
+            
+        except Exception as e:
+            print(f"Error getting leaderboard: {e}")
+            text = """
+🏆 *Leaderboard:*
+
+❌ *Error loading leaderboard*
+
+Please try again later!
+            """
+        
         bot.edit_message_text(text, call.message.chat.id, call.message.message_id, parse_mode='Markdown')
     
     elif call.data == "rules":
