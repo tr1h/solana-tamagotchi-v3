@@ -122,7 +122,7 @@ const Game = {
         this.checkReferralCode();
         
         // Show appropriate page
-        setTimeout(() => {
+        setTimeout(async () => {
             document.getElementById('loading-screen').classList.add('fade-out');
             
             if (WalletManager.isConnected()) {

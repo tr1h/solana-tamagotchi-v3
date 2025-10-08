@@ -94,6 +94,11 @@ const Database = {
     // Get leaderboard
     async getLeaderboard(limit = 10) {
         try {
+            if (!this.supabase) {
+                console.error('❌ Supabase not initialized');
+                return [];
+            }
+            
             const { data, error } = await this.supabase
                 .from('leaderboard')
                 .select('*')
