@@ -165,28 +165,106 @@ def send_welcome(message):
 # Private commands (personal data)
 @bot.message_handler(commands=['stats'], func=lambda message: message.chat.type == 'private')
 def send_stats(message):
-    stats = get_stats()
-    text = f"""
+    telegram_id = str(message.from_user.id)
+    username = message.from_user.username or message.from_user.first_name
+    
+    try:
+        # Get player data from database by telegram_id
+        db = mysql.connector.connect(**db_config)
+        cursor = db.cursor(dictionary=True)
+        
+        # Get player stats
+        cursor.execute("""
+            SELECT wallet_address, pet_name, level, xp, tama, pet_type, pet_rarity 
+            FROM leaderboard 
+            WHERE telegram_id = %s
+        """, (telegram_id,))
+        player = cursor.fetchone()
+        
+        if player:
+            # Get referral stats
+            cursor.execute("""
+                SELECT COUNT(*) as level1_count, SUM(signup_reward) as level1_earned
+                FROM referrals 
+                WHERE referrer_address = %s AND level = 1
+            """, (player['wallet_address'],))
+            ref_l1 = cursor.fetchone()
+            
+            cursor.execute("""
+                SELECT COUNT(*) as level2_count, SUM(signup_reward) as level2_earned
+                FROM referrals 
+                WHERE referrer_address = %s AND level = 2
+            """, (player['wallet_address'],))
+            ref_l2 = cursor.fetchone()
+            
+            total_referrals = (ref_l1['level1_count'] or 0) + (ref_l2['level2_count'] or 0)
+            total_earned = (ref_l1['level1_earned'] or 0) + (ref_l2['level2_earned'] or 0)
+            
+            text = f"""
 📊 *Your Personal Stats:*
 
-🎮 *Game Statistics:*
-• Total Players: {stats['players']}
-• Total Pets: {stats['pets']}
-• NFT Price: {stats['price']}
+🐾 *Your Pet:*
+• Name: {player['pet_name'] or 'No pet yet'}
+• Type: {player['pet_type'] or 'N/A'}
+• Rarity: {player['pet_rarity'] or 'N/A'}
+• Level: {player['level'] or 1}
+• XP: {player['xp'] or 0}
+
+💰 *Your Balance:*
+• TAMA Tokens: {player['tama'] or 0}
 
 🔗 *Your Referrals:*
-• Level 1: Coming soon!
-• Level 2: Coming soon!
-• Total Earned: Coming soon!
+• Level 1 Direct: {ref_l1['level1_count'] or 0} ({ref_l1['level1_earned'] or 0} TAMA)
+• Level 2 Indirect: {ref_l2['level2_count'] or 0} ({ref_l2['level2_earned'] or 0} TAMA)
+• Total Referrals: {total_referrals}
+• Total Earned: {total_earned} TAMA
 
-🎯 *Your Progress:*
-• Level: Coming soon!
-• TAMA Balance: Coming soon!
-• Achievements: Coming soon!
+👛 *Wallet:*
+• `{player['wallet_address'][:8]}...{player['wallet_address'][-8:]}`
 
-*Keep playing to unlock more features!* 🚀
-    """
-    bot.reply_to(message, text, parse_mode='Markdown')
+*Keep playing and referring friends to earn more!* 🚀
+            """
+        else:
+            # No wallet linked yet
+            game_link = f"{GAME_URL}?tg_id={telegram_id}&tg_username={username}"
+            text = f"""
+📊 *Your Personal Stats:*
+
+❌ *No wallet linked yet!*
+
+To start playing and tracking your stats:
+1️⃣ Click the button below
+2️⃣ Connect your Phantom wallet
+3️⃣ Your progress will be automatically saved!
+
+🎮 *Ready to start?*
+            """
+            keyboard = types.InlineKeyboardMarkup()
+            keyboard.row(
+                types.InlineKeyboardButton("🎮 Start Playing", url=game_link),
+                types.InlineKeyboardButton("🎨 Mint NFT", url=MINT_URL)
+            )
+            bot.reply_to(message, text, parse_mode='Markdown', reply_markup=keyboard)
+            cursor.close()
+            db.close()
+            return
+        
+        cursor.close()
+        db.close()
+        
+        # Add buttons
+        keyboard = types.InlineKeyboardMarkup()
+        game_link = f"{GAME_URL}?tg_id={telegram_id}&tg_username={username}"
+        keyboard.row(
+            types.InlineKeyboardButton("🎮 Play Game", url=game_link),
+            types.InlineKeyboardButton("🔗 Share Referral", callback_data="get_referral")
+        )
+        
+        bot.reply_to(message, text, parse_mode='Markdown', reply_markup=keyboard)
+        
+    except Exception as e:
+        print(f"Error getting stats: {e}")
+        bot.reply_to(message, "❌ Error getting your stats. Please try again later.")
 
 @bot.message_handler(commands=['ref', 'referral'], func=lambda message: message.chat.type == 'private')
 def send_referral(message):
