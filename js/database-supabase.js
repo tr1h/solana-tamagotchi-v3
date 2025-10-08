@@ -2,7 +2,7 @@
 // SUPABASE DATABASE INTEGRATION
 // ============================================
 
-console.log('🔵 Loading database-supabase.js...');
+// Database module for Supabase integration
 
 const Database = {
     supabase: null,
@@ -29,8 +29,7 @@ const Database = {
             }
             
             this.initialized = true;
-            console.log('✅ Supabase initialized successfully');
-            console.log('✅ Supabase client:', this.supabase);
+            console.log('✅ Supabase ready');
             return true;
         } catch (error) {
             console.error('❌ Failed to initialize Supabase:', error);
@@ -82,11 +81,9 @@ const Database = {
             if (data && data.length > 0) {
                 const playerData = data[0];
                 Utils.saveLocal('playerData', playerData);
-                console.log('✅ Loaded player data from Supabase');
                 return playerData;
             }
             
-            console.log('ℹ️ No data found for wallet, using local storage');
             return Utils.loadLocal('playerData');
         } catch (error) {
             console.error('❌ Failed to load player data:', error);
@@ -124,7 +121,6 @@ const Database = {
         }
         
         try {
-            console.log('💾 Saving to Supabase:', walletAddress, updates);
             const { data, error } = await this.supabase
                 .from('leaderboard')
                 .upsert({
@@ -134,7 +130,6 @@ const Database = {
                 }, { onConflict: 'wallet_address' });
             
             if (error) throw error;
-            console.log('✅ Data saved to Supabase successfully!', data);
             return true;
         } catch (error) {
             console.error('❌ Failed to update player data:', error);
@@ -278,7 +273,4 @@ const Database = {
 
 // Export to window for global access
 window.Database = Database;
-
-// Don't auto-init - let game.js control initialization
-console.log('✅ Database module loaded');
 

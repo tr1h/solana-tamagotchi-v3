@@ -108,15 +108,8 @@ const Game = {
         this.canvas.height = 150;
         
         // Initialize Database first
-        console.log('🔍 Checking Database:', window.Database);
-        console.log('🔍 Database.init:', window.Database ? window.Database.init : 'Database not found');
-        
         if (window.Database && typeof window.Database.init === 'function') {
             await window.Database.init();
-            console.log('✅ Database initialized successfully');
-        } else {
-            console.error('❌ Database not found or init method missing');
-            console.log('Available Database methods:', window.Database ? Object.keys(window.Database) : 'none');
         }
         
         // Initialize wallet
@@ -286,7 +279,13 @@ const Game = {
             
             // Update leaderboard with new pet
             if (window.Database && WalletManager.isConnected()) {
-                Database.updateLeaderboard(WalletManager.getAddress(), this.pet);
+                Database.updatePlayerData(WalletManager.getAddress(), {
+                    pet_name: this.pet.name,
+                    level: this.pet.level,
+                    xp: this.pet.xp,
+                    tama: this.pet.tama || 0,
+                    pet_data: this.pet
+                });
                 
                 // Process referral code if exists
                 const referralCode = Utils.loadLocal('referralCode');
@@ -509,7 +508,13 @@ const Game = {
         } else {
             // Update leaderboard even without level up
             if (window.Database && WalletManager.isConnected()) {
-                Database.updateLeaderboard(WalletManager.getAddress(), this.pet);
+                Database.updatePlayerData(WalletManager.getAddress(), {
+                    pet_name: this.pet.name,
+                    level: this.pet.level,
+                    xp: this.pet.xp,
+                    tama: this.pet.tama || 0,
+                    pet_data: this.pet
+                });
             }
         }
         
