@@ -7,17 +7,25 @@ const Database = {
     initialized: false,
     
     // Initialize Supabase
-    init() {
+    async init() {
         try {
+            if (typeof supabase === 'undefined') {
+                console.error('❌ Supabase library not loaded!');
+                return false;
+            }
+            
             const { createClient } = supabase;
             this.supabase = createClient(
                 'https://zfrazyupameidxpjihrh.supabase.co',
                 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpmcmF6eXVwYW1laWR4cGppaHJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5Mzc1NTAsImV4cCI6MjA3NTUxMzU1MH0.1EkMDqCNJoAjcJDh3Dd3yPfus-JpdcwE--z2dhjh7wU'
             );
             this.initialized = true;
-            console.log('✅ Supabase initialized');
+            console.log('✅ Supabase initialized successfully');
+            console.log('✅ Supabase URL:', 'https://zfrazyupameidxpjihrh.supabase.co');
+            return true;
         } catch (error) {
-            console.error('Failed to initialize Supabase:', error);
+            console.error('❌ Failed to initialize Supabase:', error);
+            return false;
         }
     },
     
@@ -90,10 +98,19 @@ const Database = {
     
     // Update player data
     async updatePlayerData(walletAddress, updates) {
-        if (!walletAddress) return false;
+        if (!walletAddress) {
+            console.warn('⚠️ No wallet address provided to updatePlayerData');
+            return false;
+        }
+        
+        if (!this.initialized || !this.supabase) {
+            console.error('❌ Database not initialized in updatePlayerData');
+            return false;
+        }
         
         try {
-            const { error } = await this.supabase
+            console.log('💾 Saving to Supabase:', walletAddress, updates);
+            const { data, error } = await this.supabase
                 .from('leaderboard')
                 .upsert({
                     wallet_address: walletAddress,
@@ -102,9 +119,10 @@ const Database = {
                 }, { onConflict: 'wallet_address' });
             
             if (error) throw error;
+            console.log('✅ Data saved to Supabase successfully!', data);
             return true;
         } catch (error) {
-            console.error('Failed to update player data:', error);
+            console.error('❌ Failed to update player data:', error);
             return false;
         }
     },

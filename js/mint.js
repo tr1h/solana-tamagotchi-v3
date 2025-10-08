@@ -306,12 +306,20 @@ const MintPage = {
     },
     
     async savePetToDB(petData) {
-        if (!this.publicKey) return;
+        if (!this.publicKey) {
+            console.warn('⚠️ No wallet connected, cannot save pet');
+            return;
+        }
         
         try {
+            console.log('💾 Attempting to save pet to Supabase...');
+            console.log('Pet data:', petData);
+            console.log('Wallet:', this.publicKey.toString());
+            
             // Use Supabase directly instead of old API
             if (window.Database && window.Database.supabase) {
-                const { error } = await window.Database.supabase
+                console.log('✅ Database found, saving...');
+                const { data, error } = await window.Database.supabase
                     .from('leaderboard')
                     .upsert({
                         wallet_address: this.publicKey.toString(),
@@ -326,13 +334,17 @@ const MintPage = {
                         updated_at: new Date().toISOString()
                     }, { onConflict: 'wallet_address' });
                 
-                if (error) throw error;
-                console.log('Pet saved to Supabase successfully!');
+                if (error) {
+                    console.error('❌ Supabase error:', error);
+                    throw error;
+                }
+                console.log('✅ Pet saved to Supabase successfully!', data);
             } else {
-                console.error('Database not initialized');
+                console.error('❌ Database not initialized or Supabase not found');
+                console.log('Database object:', window.Database);
             }
         } catch (error) {
-            console.error('Error saving pet to DB:', error);
+            console.error('❌ Error saving pet to DB:', error);
         }
     },
     
