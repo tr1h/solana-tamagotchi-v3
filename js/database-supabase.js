@@ -2,6 +2,8 @@
 // SUPABASE DATABASE INTEGRATION
 // ============================================
 
+console.log('🔵 Loading database-supabase.js...');
+
 const Database = {
     supabase: null,
     initialized: false,
