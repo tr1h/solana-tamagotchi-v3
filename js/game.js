@@ -126,7 +126,8 @@ const Game = {
             document.getElementById('loading-screen').classList.add('fade-out');
             
             if (WalletManager.isConnected()) {
-                this.showGame();
+                // Check if player has NFT (exists in database)
+                await this.checkNFTOwnership();
             } else {
                 this.showLanding();
             }
@@ -853,6 +854,57 @@ const Game = {
     },
     
     // Check referral code
+    // Check if player owns NFT (exists in database)
+    async checkNFTOwnership() {
+        try {
+            console.log('🔍 Checking NFT ownership...');
+            
+            if (!window.Database || !window.Database.loadPlayerData) {
+                console.error('❌ Database not available');
+                this.showMintRequired();
+                return;
+            }
+            
+            const playerData = await window.Database.loadPlayerData(WalletManager.getAddress());
+            
+            if (playerData && playerData.pet_data) {
+                console.log('✅ NFT ownership confirmed, showing game');
+                this.showGame();
+            } else {
+                console.log('❌ No NFT found, redirecting to mint');
+                this.showMintRequired();
+            }
+        } catch (error) {
+            console.error('❌ Error checking NFT ownership:', error);
+            this.showMintRequired();
+        }
+    },
+    
+    // Show mint required page
+    showMintRequired() {
+        // Hide all pages
+        document.querySelectorAll('.page').forEach(page => page.classList.add('hidden'));
+        
+        // Show mint required message
+        const mintRequiredHTML = `
+            <div class="page mint-required-page">
+                <div class="container">
+                    <div class="mint-required-content">
+                        <h1>🔒 NFT Required</h1>
+                        <p>You need to mint an NFT to access the game!</p>
+                        <div class="mint-required-actions">
+                            <a href="mint.html" class="btn btn-primary">🚀 Mint NFT</a>
+                            <button onclick="Game.showLanding()" class="btn btn-secondary">🏠 Back to Home</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.insertAdjacentHTML('beforeend', mintRequiredHTML);
+        document.querySelector('.mint-required-page').classList.remove('hidden');
+    },
+
     checkReferralCode() {
         const urlParams = new URLSearchParams(window.location.search);
         const ref = urlParams.get('ref');

@@ -2,6 +2,81 @@
    SOLANA TAMAGOTCHI - MAIN STYLES
    ============================================ */
 
+/* === NFT REQUIRED PAGE === */
+.mint-required-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--dark-bg) 0%, var(--medium-dark) 100%);
+}
+
+.mint-required-content {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 3rem;
+    border-radius: 20px;
+    border: 2px solid var(--border-color);
+    backdrop-filter: blur(10px);
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.mint-required-content h1 {
+    color: var(--primary-yellow);
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.mint-required-content p {
+    color: var(--light-text);
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+}
+
+.mint-required-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.mint-required-actions .btn {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    min-width: 150px;
+}
+
+.mint-required-actions .btn-primary {
+    background: linear-gradient(45deg, var(--primary-yellow), var(--secondary-green));
+    color: var(--dark-bg);
+}
+
+.mint-required-actions .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 202, 58, 0.4);
+}
+
+.mint-required-actions .btn-secondary {
+    background: transparent;
+    color: var(--light-text);
+    border: 2px solid var(--light-text);
+}
+
+.mint-required-actions .btn-secondary:hover {
+    background: var(--light-text);
+    color: var(--dark-bg);
+    transform: translateY(-2px);
+}
+
 /* === ROOT VARIABLES === */
 :root {
     /* Colors */
@@ -1019,6 +1094,7 @@ body::before {
 .mb-1 { margin-bottom: var(--spacing-sm); }
 .mb-2 { margin-bottom: var(--spacing-md); }
 .mb-3 { margin-bottom: var(--spacing-lg); }
+
 
 
 
