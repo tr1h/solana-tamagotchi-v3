@@ -18,6 +18,14 @@ const MintPage = {
     currentMinted: 0,
     
     async init() {
+        // Initialize Database first
+        if (window.Database && window.Database.init) {
+            await window.Database.init();
+            console.log('Database initialized successfully in mint page');
+        } else {
+            console.error('Database not found or init method missing in mint page');
+        }
+        
         // Setup wallet
         if (window.solana && window.solana.isPhantom) {
             this.wallet = window.solana;

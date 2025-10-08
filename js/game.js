@@ -107,6 +107,14 @@ const Game = {
         this.canvas.width = 150;
         this.canvas.height = 150;
         
+        // Initialize Database first
+        if (window.Database && window.Database.init) {
+            await window.Database.init();
+            console.log('Database initialized successfully');
+        } else {
+            console.error('Database not found or init method missing');
+        }
+        
         // Initialize wallet
         await WalletManager.init();
         
