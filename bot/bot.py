@@ -40,18 +40,9 @@ muted_users = {}
 # Get stats from MySQL
 def get_stats():
     try:
-        db = get_db()
-        cursor = db.cursor(dictionary=True)
-        
-        cursor.execute("SELECT COUNT(*) as count FROM leaderboard")
-        players = cursor.fetchone()['count']
-        
-        cursor.execute("SELECT COUNT(*) as total FROM leaderboard")
-        result = cursor.fetchone()
-        pets = result['total']
-        
-        cursor.close()
-        db.close()
+        response = supabase.table('leaderboard').select('*', count='exact').execute()
+        players = response.count or 0
+        pets = players  # Same as players for now
         
         return {'players': players, 'pets': pets, 'price': '0.3 SOL'}
     except:
