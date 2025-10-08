@@ -768,9 +768,17 @@ const Game = {
         if (this.pet) {
             Utils.saveLocal('petData', this.pet);
             
-            // Save to Firebase if available
+            // Save to Supabase if available
             if (window.Database && WalletManager.isConnected()) {
-                Database.savePetData(WalletManager.getAddress(), this.pet);
+                Database.updatePlayerData(WalletManager.getAddress(), {
+                    pet_name: this.pet.name,
+                    pet_type: this.pet.type,
+                    pet_rarity: this.pet.rarity,
+                    level: this.pet.level,
+                    xp: this.pet.xp,
+                    tama: this.pet.tama || 0,
+                    pet_data: this.pet
+                });
             }
         }
     },

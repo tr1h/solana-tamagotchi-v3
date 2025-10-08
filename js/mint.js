@@ -301,20 +301,28 @@ const MintPage = {
         if (!this.publicKey) return;
         
         try {
-            await fetch('https://nitric-ara-unsuperlative.ngrok-free.dev/solana-tamagotchi/api/leaderboard.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    wallet_address: this.publicKey.toString(),
-                    pet_name: petData.name,
-                    pet_type: petData.type,
-                    pet_rarity: petData.rarity,
-                    level: petData.level,
-                    xp: petData.xp,
-                    tama: 500, // Bonus from mint
-                    pet_data: JSON.stringify(petData)
-                })
-            });
+            // Use Supabase directly instead of old API
+            if (window.Database && window.Database.supabase) {
+                const { error } = await window.Database.supabase
+                    .from('leaderboard')
+                    .upsert({
+                        wallet_address: this.publicKey.toString(),
+                        pet_name: petData.name,
+                        pet_type: petData.type,
+                        pet_rarity: petData.rarity,
+                        level: petData.level,
+                        xp: petData.xp,
+                        tama: 500, // Bonus from mint
+                        pet_data: petData,
+                        created_at: new Date().toISOString(),
+                        updated_at: new Date().toISOString()
+                    }, { onConflict: 'wallet_address' });
+                
+                if (error) throw error;
+                console.log('Pet saved to Supabase successfully!');
+            } else {
+                console.error('Database not initialized');
+            }
         } catch (error) {
             console.error('Error saving pet to DB:', error);
         }
