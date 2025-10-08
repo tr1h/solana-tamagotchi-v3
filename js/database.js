@@ -5,7 +5,7 @@
 const Database = {
     db: null,
     initialized: false,
-    useMySQL: true, // Toggle between MySQL and Firebase
+    useMySQL: false, // Use localStorage for now (ngrok blocked)
     apiURL: 'https://nitric-ara-unsuperlative.ngrok-free.dev/solana-tamagotchi/api', // Ngrok API URL
     
     // Firebase configuration (REPLACE WITH YOUR CONFIG)
