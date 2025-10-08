@@ -115,10 +115,7 @@ const WalletManager = {
                 }
             }
             
-            // Auto-load pet if exists
-            if (window.Game) {
-                Game.autoLoadPet();
-            }
+            // Pet loading now handled by checkNFTOwnership() in game.js
             
             // Update online status
             if (window.Database) {
