@@ -88,8 +88,8 @@ def has_banned_words(text):
             return True
     return False
 
-# Middleware for group messages
-@bot.message_handler(func=lambda message: message.chat.type in ['group', 'supergroup'])
+# Middleware for group messages (NON-COMMAND messages only)
+@bot.message_handler(func=lambda message: message.chat.type in ['group', 'supergroup'] and message.text and not message.text.startswith('/'))
 def handle_group_message(message):
     user_id = message.from_user.id
     chat_id = message.chat.id
