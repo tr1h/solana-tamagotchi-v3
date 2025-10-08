@@ -1,12 +1,13 @@
 import telebot
 from telebot import types
-import mysql.connector
 import time
 import schedule
 import threading
 import base64
+import os
 from datetime import datetime, timedelta
 from collections import defaultdict
+from supabase import create_client, Client
 
 # Bot token
 TOKEN = '8278463878:AAH590EtqekSpfoE_uJwaNQ-qKACFyt8eaw'
@@ -20,16 +21,10 @@ CHANNEL_ID = 'solana_tamagotchi_v3_bot'
 # Admin IDs (add your Telegram ID)
 ADMIN_IDS = [7401131043]
 
-# MySQL connection config
-db_config = {
-    'host': 'localhost',
-    'user': 'root',
-    'password': '',
-    'database': 'solana_tamagotchi'
-}
-
-def get_db():
-    return mysql.connector.connect(**db_config)
+# Supabase connection
+SUPABASE_URL = os.getenv('SUPABASE_URL', 'https://zfrazyupameidxpjihrh.supabase.co')
+SUPABASE_KEY = os.getenv('SUPABASE_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpmcmF6eXVwYW1laWR4cGppaHJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5Mzc1NTAsImV4cCI6MjA3NTUxMzU1MH0.1EkMDqCNJoAjcJDh3Dd3yPfus-JpdcwE--z2dhjh7wU')
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # Anti-spam tracking
 user_messages = defaultdict(list)
