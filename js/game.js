@@ -814,18 +814,21 @@ const Game = {
     async autoLoadPet() {
         if (!WalletManager.isConnected()) return;
         
-        // Load from MySQL first
-        if (window.Database && Database.useMySQL) {
-            const dbPet = await Database.loadPlayerData(WalletManager.getAddress());
-            if (dbPet && dbPet.pet) {
-                this.pet = dbPet.pet;
+        // Load from Supabase first
+        if (window.Database && window.Database.loadPlayerData) {
+            const playerData = await Database.loadPlayerData(WalletManager.getAddress());
+            if (playerData && playerData.pet_data) {
+                // pet_data contains the full pet object
+                this.pet = playerData.pet_data;
                 Utils.saveLocal('petData', this.pet);
+                console.log('✅ Pet loaded from database');
             }
         }
         
         // Fallback to localStorage
         if (!this.pet) {
             this.pet = Utils.loadLocal('petData');
+            console.log('ℹ️ Pet loaded from localStorage');
         }
         
         if (this.pet) {
