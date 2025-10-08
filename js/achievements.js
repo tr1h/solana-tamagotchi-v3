@@ -299,7 +299,8 @@ const Achievements = {
         
         // Save to database
         if (window.Database && WalletManager.isConnected()) {
-            Database.saveAchievement(WalletManager.getAddress(), achievementId);
+            // Save achievement to database (optional - can be added later)
+            // Database.saveAchievement(WalletManager.getAddress(), achievementId);
         }
     },
     
