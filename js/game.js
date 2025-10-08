@@ -826,10 +826,10 @@ const Game = {
             }
         }
         
-        // Fallback to localStorage
+        // No fallback to localStorage - NFT required!
         if (!this.pet) {
-            this.pet = Utils.loadLocal('petData');
-            console.log('ℹ️ Pet loaded from localStorage');
+            console.log('❌ No pet data found - NFT required');
+            return;
         }
         
         if (this.pet) {
@@ -871,6 +871,11 @@ const Game = {
             if (playerData && playerData.pet_data && playerData.pet_data.name) {
                 console.log('✅ NFT ownership confirmed, showing game');
                 console.log('🐾 Pet data:', playerData.pet_data);
+                
+                // Set pet data for the game
+                this.pet = playerData.pet_data;
+                Utils.saveLocal('petData', this.pet);
+                
                 this.showGame();
             } else {
                 console.log('❌ No NFT found, redirecting to mint');
