@@ -92,6 +92,7 @@ const MintPage = {
         const copyBtn = document.getElementById('copy-address');
         if (copyBtn) {
             copyBtn.style.display = 'inline-block';
+            copyBtn.onclick = () => this.copyAddress();
         }
         
         // Enable mint button
