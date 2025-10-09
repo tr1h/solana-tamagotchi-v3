@@ -10,10 +10,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@latest/lib/index.iife.min.js"></script>
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Metaplex Umi для Candy Machine v3 -->
-    <script src="https://unpkg.com/@metaplex-foundation/umi@0.9.1/dist/index.umd.js?v=3"></script>
-    <script src="https://unpkg.com/@metaplex-foundation/umi-bundle-defaults@0.9.1/dist/index.umd.js?v=3"></script>
-    <script src="https://unpkg.com/@metaplex-foundation/mpl-candy-machine@0.2.1/dist/index.umd.js?v=3"></script>
+    <!-- Metaplex Umi disabled - using SimpleNFTMint fallback for now -->
 </head>
 <body>
     <div class="mint-container">
@@ -109,9 +106,7 @@
                         💰 Get 1 SOL (Devnet)
                     </button>
                     
-                    <button id="diagnostic-btn" class="btn-airdrop hidden" onclick="runDiagnostics()">
-                        🔧 Test Candy Machine
-                    </button>
+                    <!-- Diagnostic button removed - using SimpleNFTMint fallback -->
 
                     <div class="rarity-info">
                         <h4>📊 RARITY DISTRIBUTION:</h4>
@@ -228,13 +223,10 @@
         </div>
     </div>
 
-    <script src="js/utils.js?v=4"></script>
-    <script src="js/database-supabase.js?v=4"></script>
-    <script src="js/simple-nft-mint.js?v=4"></script>
-    <script src="js/load-umi.js?v=4"></script>
-    <script src="js/umi-candy-machine.js?v=4"></script>
-    <script src="test-candy-machine.js?v=4"></script>
-    <script src="js/mint.js?v=4"></script>
+    <script src="js/utils.js?v=5"></script>
+    <script src="js/database-supabase.js?v=5"></script>
+    <script src="js/simple-nft-mint.js?v=5"></script>
+    <script src="js/mint.js?v=5"></script>
     
     <!-- Script loading diagnostics -->
     <script>
