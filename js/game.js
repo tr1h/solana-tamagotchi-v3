@@ -266,88 +266,33 @@ const Game = {
             return;
         }
         
-        // Create pet data
-        const petData = this.generatePetData(type, name);
+        // Redirect to mint page instead of creating pet directly
+        Utils.showNotification('🎨 Redirecting to NFT mint page...');
         
-        // Send transaction
-        const result = await WalletManager.createPet(petData);
+        // Close modal
+        document.getElementById('create-pet-modal').classList.add('hidden');
         
-        if (result.success) {
-            this.pet = petData;
-            this.savePetData();
-            this.updatePetDisplay();
-            this.startGameLoop();
-            
-            // Update leaderboard with new pet
-            if (window.Database && WalletManager.isConnected()) {
-                Database.updatePlayerData(WalletManager.getAddress(), {
-                    pet_name: this.pet.name,
-                    level: this.pet.level,
-                    xp: this.pet.xp,
-                    tama: this.pet.tama || 0,
-                    pet_data: this.pet
-                });
-                
-                // Process referral code if exists
-                const referralCode = Utils.loadLocal('referralCode');
-                if (referralCode) {
-                    Database.addReferral(referralCode, WalletManager.getAddress());
-                    Utils.deleteLocal('referralCode'); // Remove after use
-                }
-            }
-            
-            // Close modal
-            document.getElementById('create-pet-modal').classList.add('hidden');
-            
-            // Reset modal
-            document.querySelectorAll('.pet-type-btn').forEach(b => b.classList.remove('selected'));
-            nameInput.value = '';
-            document.getElementById('confirm-create-pet').disabled = true;
-            
-            // Check achievements
-            if (window.Achievements) {
-                Achievements.check('first_pet');
-            }
-        }
+        // Reset modal
+        document.querySelectorAll('.pet-type-btn').forEach(b => b.classList.remove('selected'));
+        nameInput.value = '';
+        document.getElementById('confirm-create-pet').disabled = true;
+        
+        // Redirect to mint page
+        setTimeout(() => {
+            window.location.href = 'mint.html';
+        }, 1000);
     },
     
-    // Generate pet data
+    // Generate pet data (deprecated - use NFT minting instead)
     generatePetData(type, name) {
-        const rarity = this.rollRarity();
-        
-        return {
-            id: Utils.generateId(),
-            name,
-            type,
-            rarity,
-            traits: {
-                color: Utils.randomChoice(this.colors),
-                pattern: Utils.randomChoice(this.patterns),
-                size: Utils.randomChoice(this.sizes),
-                personality: Utils.randomChoice(this.personalities),
-                special: rarity === 'legendary' ? Utils.randomChoice(this.specialAbilities.slice(1)) : 'none',
-                // New traits
-                background: Utils.randomChoice(this.backgrounds),
-                accessory: rarity === 'common' ? 'none' : Utils.randomChoice(this.accessories),
-                effect: rarity === 'legendary' || rarity === 'epic' ? Utils.randomChoice(this.effects) : 'none'
-            },
-            stats: { ...this.petTypes[type].baseStats },
-            level: 1,
-            xp: 0,
-            evolution: 1,
-            createdAt: Date.now(),
-            lastUpdate: Date.now(),
-            isDead: false
-        };
+        console.warn('⚠️ generatePetData is deprecated - use NFT minting instead');
+        return null;
     },
     
-    // Roll rarity
+    // Roll rarity (deprecated - use NFT minting instead)
     rollRarity() {
-        const rand = Math.random() * 100;
-        if (rand < 1) return 'legendary'; // 1%
-        if (rand < 10) return 'epic'; // 9%
-        if (rand < 30) return 'rare'; // 20%
-        return 'common'; // 70%
+        console.warn('⚠️ rollRarity is deprecated - use NFT minting instead');
+        return 'common';
     },
     
     // Click pet for XP
