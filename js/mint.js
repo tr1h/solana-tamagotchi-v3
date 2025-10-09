@@ -262,7 +262,7 @@ const MintPage = {
             }
             
             // Treasury wallet (replace with yours)
-            const treasuryWallet = 'GXvKWk8VierD1H6VXzQz7GxZBMZUxXKqvmHkBRGdPump';
+            const treasuryWallet = '2eyQycA4d4zu3FbbwdvHuJ1fVDcfQsz78qGdKGYa8NXw';
             
             // Create transaction
             const transaction = new solanaWeb3.Transaction().add(
