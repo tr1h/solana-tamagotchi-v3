@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Database Viewer - Solana Tamagotchi</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗄️</text></svg>">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -304,12 +305,21 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@latest/lib/index.iife.min.js"></script>
     <script>
+        // Initialize Database object for ranking system
+        window.Database = {
+            supabase: null
+        };
+    </script>
+    <script>
         // Supabase config
         const SUPABASE_URL = 'https://zfrazyupameidxpjihrh.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpmcmF6eXVwYW1laWR4cGppaHJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5Mzc1NTAsImV4cCI6MjA3NTUxMzU1MH0.1EkMDqCNJoAjcJDh3Dd3yPfus-JpdcwE--z2dhjh7wU';
         
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         const connection = new solanaWeb3.Connection('https://api.devnet.solana.com', 'confirmed');
+        
+        // Initialize Database object for ranking system
+        window.Database.supabase = supabase;
 
         let playersData = [];
         let mintsData = [];
