@@ -261,64 +261,52 @@ const MintPage = {
                 return;
             }
             
-            // Treasury wallet (replace with yours)
-            const treasuryWallet = '2eyQycA4d4zu3FbbwdvHuJ1fVDcfQsz78qGdKGYa8NXw';
+            // ============================================
+            // MINT ЧЕРЕЗ METAPLEX NFT
+            // ============================================
             
-            // Create transaction
-            const transaction = new solanaWeb3.Transaction().add(
-                solanaWeb3.SystemProgram.transfer({
-                    fromPubkey: this.publicKey,
-                    toPubkey: new solanaWeb3.PublicKey(treasuryWallet),
-                    lamports: lamports
-                })
-            );
+            // Инициализируем Metaplex
+            if (!window.MetaplexNFT) {
+                throw new Error('Metaplex NFT integration not loaded');
+            }
             
-            // Get recent blockhash with fresh commitment
-            const { blockhash, lastValidBlockHeight } = await this.connection.getLatestBlockhash('finalized');
-            transaction.recentBlockhash = blockhash;
-            transaction.feePayer = this.publicKey;
+            MetaplexNFT.init(this.connection, this.wallet);
             
-            // Sign and send with retry logic
-            const signed = await this.wallet.signTransaction(transaction);
+            // Минтим NFT через Metaplex
+            console.log('🚀 Minting NFT through Metaplex...');
+            const mintResult = await MetaplexNFT.mintNFT(price);
             
-            // Send with skipPreflight to avoid duplicate tx errors
-            const signature = await this.connection.sendRawTransaction(signed.serialize(), {
-                skipPreflight: false,
-                maxRetries: 3
-            });
+            if (!mintResult.success) {
+                throw new Error('Metaplex mint failed');
+            }
             
-            console.log('Transaction sent:', signature);
+            console.log('✅ NFT Minted!');
+            console.log('🔑 Mint Address:', mintResult.mintAddress);
+            console.log('📝 Signature:', mintResult.signature);
             
-            // Confirm with proper error handling
-            await this.connection.confirmTransaction({
-                signature,
-                blockhash,
-                lastValidBlockHeight
-            }, 'confirmed');
+            // Сохраняем NFT данные
+            const nftData = {
+                mintAddress: mintResult.mintAddress,
+                signature: mintResult.signature,
+                metadata: mintResult.metadata,
+                price: price,
+                owner: this.publicKey.toString()
+            };
             
-            // Generate random NFT
-            const nft = this.generateNFT();
+            // Сохраняем в localStorage
+            this.saveNFTData(nftData);
             
-            // Save NFT data
-            this.saveNFTData(nft);
-            
-            // Record mint in database
+            // Сохраняем в базу данных с MINT ADDRESS
             const phaseIndex = this.getCurrentPhase();
-            const currentPrice = this.getCurrentPrice();
-            await window.Database.recordMint(
-                this.publicKey.toString(),
-                nft,
-                currentPrice,
-                phaseIndex
-            );
+            await this.saveNFTToDatabase(nftData, phaseIndex);
             
-            // Show success modal
-            this.showSuccessModal(nft);
+            // Показываем успех
+            this.showSuccessModal(nftData);
             
-            // Reload mint stats from database to get accurate count
+            // Reload mint stats from database
             await this.loadMintStats();
             
-            // Reset minting flag on success
+            // Reset minting flag
             this.isMinting = false;
             mintBtn.disabled = false;
             mintBtn.querySelector('.btn-text').textContent = `MINT NOW - ${this.getCurrentPrice()} SOL`;
