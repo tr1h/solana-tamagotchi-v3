@@ -393,6 +393,11 @@ const MintPage = {
         
         // Auto-create pet in game after mint
         this.createPetAfterMint(nft);
+        
+        // Auto-redirect to game after 3 seconds
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 3000);
     },
     
     createPetAfterMint(nft) {
