@@ -94,6 +94,9 @@ const MintPage = {
         
         // Show airdrop button (devnet only)
         document.getElementById('airdrop-btn').classList.remove('hidden');
+        
+        // Show diagnostic button
+        document.getElementById('diagnostic-btn').classList.remove('hidden');
     },
     
     async requestAirdrop() {

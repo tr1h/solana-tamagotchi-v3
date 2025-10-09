@@ -108,6 +108,10 @@
                     <button id="airdrop-btn" class="btn-airdrop hidden">
                         💰 Get 1 SOL (Devnet)
                     </button>
+                    
+                    <button id="diagnostic-btn" class="btn-airdrop hidden" onclick="runDiagnostics()">
+                        🔧 Test Candy Machine
+                    </button>
 
                     <div class="rarity-info">
                         <h4>📊 RARITY DISTRIBUTION:</h4>
@@ -227,6 +231,7 @@
     <script src="js/utils.js"></script>
     <script src="js/database-supabase.js"></script>
     <script src="js/umi-candy-machine.js"></script>
+    <script src="test-candy-machine.js"></script>
     <script src="js/mint.js"></script>
 </body>
 </html>
