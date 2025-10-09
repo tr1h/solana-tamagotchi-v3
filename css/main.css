@@ -1095,6 +1095,79 @@ body::before {
 .mb-2 { margin-bottom: var(--spacing-md); }
 .mb-3 { margin-bottom: var(--spacing-lg); }
 
+/* ============================================
+   PET ANIMATIONS
+   ============================================ */
+
+/* Floating particle animation */
+@keyframes floatUp {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-50px) scale(0.5);
+    }
+}
+
+/* Pet canvas animations */
+.pet-canvas {
+    transition: all 0.3s ease;
+}
+
+.pet-canvas.idle {
+    animation: idleBounce 2s ease-in-out infinite;
+}
+
+.pet-canvas.happy {
+    animation: happyWiggle 1s ease-in-out infinite;
+}
+
+.pet-canvas.eating {
+    animation: eatingShake 0.5s ease-in-out infinite;
+}
+
+.pet-canvas.sleeping {
+    animation: sleepingBreathe 3s ease-in-out infinite;
+}
+
+.pet-canvas.evolving {
+    animation: evolvingGlow 1s ease-in-out infinite;
+}
+
+@keyframes idleBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+@keyframes happyWiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-5deg); }
+    75% { transform: rotate(5deg); }
+}
+
+@keyframes eatingShake {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(3px); }
+}
+
+@keyframes sleepingBreathe {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+@keyframes evolvingGlow {
+    0%, 100% { 
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        transform: scale(1);
+    }
+    50% { 
+        box-shadow: 0 0 40px rgba(255, 215, 0, 0.8);
+        transform: scale(1.1);
+    }
+}
+
 
 
 

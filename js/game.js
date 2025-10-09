@@ -647,12 +647,13 @@ const Game = {
         // Clear canvas
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         
-        // Draw pet emoji
+        // Get pet emoji with animation
+        const emoji = this.getAnimatedPetEmoji();
+        
+        // Draw pet emoji with animation
         this.ctx.font = '80px Arial';
         this.ctx.textAlign = 'center';
         this.ctx.textBaseline = 'middle';
-        
-        const emoji = Utils.getPetEmoji(this.pet.type, this.pet.evolution);
         
         if (this.pet.isCritical) {
             // Critical state - dim and add warning
@@ -663,6 +664,77 @@ const Game = {
             this.ctx.fillText('🆘', 75, 120);
         } else {
             this.ctx.fillText(emoji, 75, 75);
+        }
+        
+        // Add floating particles for happy pets
+        if (this.pet.stats.happy > 80 && Math.random() > 0.95) {
+            this.addFloatingParticle();
+        }
+    },
+    
+    // Get animated pet emoji based on state
+    getAnimatedPetEmoji() {
+        const baseEmoji = Utils.getPetEmoji(this.pet.type, this.pet.evolution);
+        const time = Date.now();
+        
+        // Animation based on pet state
+        if (this.pet.stats.happy > 80) {
+            // Happy animation - sparkles
+            if (Math.floor(time / 1000) % 2 === 0) {
+                return baseEmoji + '✨';
+            }
+        } else if (this.pet.stats.hunger < 30) {
+            // Hungry animation - food emoji
+            if (Math.floor(time / 1000) % 2 === 0) {
+                return baseEmoji + '🍽️';
+            }
+        } else if (this.pet.stats.energy < 30) {
+            // Tired animation - sleep emoji
+            if (Math.floor(time / 1000) % 2 === 0) {
+                return baseEmoji + '😴';
+            }
+        } else if (this.pet.stats.health < 50) {
+            // Sick animation - medicine
+            if (Math.floor(time / 1000) % 2 === 0) {
+                return baseEmoji + '💊';
+            }
+        }
+        
+        // Default idle animation - slight bounce
+        if (Math.floor(time / 500) % 2 === 0) {
+            return baseEmoji;
+        } else {
+            return baseEmoji;
+        }
+    },
+    
+    // Add floating particle effect
+    addFloatingParticle() {
+        const particles = ['✨', '💫', '⭐', '🌟'];
+        const particle = particles[Math.floor(Math.random() * particles.length)];
+        
+        // Create temporary particle element
+        const particleEl = document.createElement('div');
+        particleEl.textContent = particle;
+        particleEl.style.position = 'absolute';
+        particleEl.style.fontSize = '20px';
+        particleEl.style.pointerEvents = 'none';
+        particleEl.style.zIndex = '1000';
+        particleEl.style.left = (75 + Math.random() * 20 - 10) + 'px';
+        particleEl.style.top = (75 + Math.random() * 20 - 10) + 'px';
+        particleEl.style.animation = 'floatUp 2s ease-out forwards';
+        
+        // Add to canvas container
+        const canvasContainer = this.canvas.parentElement;
+        if (canvasContainer) {
+            canvasContainer.appendChild(particleEl);
+            
+            // Remove after animation
+            setTimeout(() => {
+                if (particleEl.parentElement) {
+                    particleEl.parentElement.removeChild(particleEl);
+                }
+            }, 2000);
         }
     },
     
@@ -879,9 +951,22 @@ const Game = {
                     Utils.saveLocal('petData', this.pet);
                     
                     this.showGame();
+                    this.updatePetDisplay();
+                    this.startGameLoop();
                     
                     // ✅ STEP 2: Verify on-chain в фоне (опционально)
                     this.verifyNFTOnChain(walletAddress, playerData.nft_mint_address);
+                    return;
+                } else if (playerData && playerData.nft_mint_address) {
+                    // Create pet from NFT data if no pet_data
+                    console.log('🔄 Creating pet from NFT data...');
+                    const petData = await this.createPetFromNFTData(playerData);
+                    this.pet = petData;
+                    Utils.saveLocal('petData', this.pet);
+                    
+                    this.showGame();
+                    this.updatePetDisplay();
+                    this.startGameLoop();
                     return;
                 }
             }
@@ -1000,6 +1085,40 @@ const Game = {
             isDead: false,
             isCritical: false
         };
+    },
+    
+    // Create pet from NFT data in database
+    async createPetFromNFTData(playerData) {
+        try {
+            console.log('🎨 Creating pet from NFT data:', playerData);
+            
+            const petData = {
+                id: `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                name: playerData.pet_name || 'My Pet',
+                type: playerData.pet_type || 'cat',
+                rarity: playerData.pet_rarity || 'common',
+                stats: {
+                    hunger: 100,
+                    energy: 100,
+                    happy: 100,
+                    health: 100
+                },
+                level: playerData.level || 1,
+                xp: playerData.xp || 0,
+                evolution: 0,
+                createdAt: Date.now(),
+                lastUpdate: Date.now(),
+                isDead: false,
+                isCritical: false
+            };
+            
+            console.log('✅ Pet created from NFT data:', petData);
+            return petData;
+            
+        } catch (error) {
+            console.error('❌ Error creating pet from NFT data:', error);
+            return null;
+        }
     },
     
     // Show mint required modal
