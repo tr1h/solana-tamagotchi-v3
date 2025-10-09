@@ -6,10 +6,11 @@ const MetaplexNFT = {
     connection: null,
     wallet: null,
     
-    // Candy Machine Config
-    CANDY_MACHINE_ID: '3Y82dFzikkzTzEk4vDgvHHeyQwap3M2Z7Zbz4Tj6TbJB',
-    COLLECTION_MINT: 'EHju5kq2SvPrqFMEYZ8FkXfX3FYPNsFinaQVU6bFtJRT',
-    TREASURY_WALLET: 'GXvKWk8VierD1H6VXzQz7GxZBMZUxXKqvmHkBRGdPump',
+    // Candy Machine Config (ИЗ SUGAR CLI)
+    CANDY_MACHINE_ID: '3Y82dFzikkzTzEk4vDgvHHeyQwap3M2Z7Zbz4Tj6TbJB', // ✅ Твоя CM
+    COLLECTION_MINT: 'EHju5kq2SvPrqFMEYZ8FkXfX3FYPNsFinaQVU6bFtJRT',  // ✅ Твоя коллекция
+    CANDY_MACHINE_AUTHORITY: 'FHqNWKNyXryz52koqQdWvqxe8zxb4AcaEtD58DneJSb', // ✅ Твой authority
+    TREASURY_WALLET: 'FHqNWKNyXryz52koqQdWvqxe8zxb4AcaEtD58DneJSb', // ✅ Твой treasury
     
     // Initialize
     init(connection, wallet) {
