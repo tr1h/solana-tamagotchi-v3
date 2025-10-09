@@ -460,14 +460,21 @@ const Game = {
         } else {
             // Update leaderboard even without level up
             if (window.Database && WalletManager.isConnected()) {
-                Database.updatePlayerData(WalletManager.getAddress(), {
+                const playerData = {
                     pet_name: this.pet.name,
                     level: this.pet.level,
                     xp: this.pet.xp,
                     total_xp: this.pet.total_xp,
                     tama: this.pet.tama || 0,
                     pet_data: this.pet
-                });
+                };
+                
+                Database.updatePlayerData(WalletManager.getAddress(), playerData);
+                
+                // Update ranking score
+                if (window.RankingSystem) {
+                    window.RankingSystem.updatePlayerRanking(WalletManager.getAddress(), playerData);
+                }
             }
         }
         
@@ -489,14 +496,21 @@ const Game = {
         
         // Update leaderboard
         if (window.Database && WalletManager.isConnected()) {
-            Database.updatePlayerData(WalletManager.getAddress(), {
+            const playerData = {
                 pet_name: this.pet.name,
                 level: this.pet.level,
                 xp: this.pet.xp,
                 total_xp: this.pet.total_xp,
                 tama: this.pet.tama || 0,
                 pet_data: this.pet
-            });
+            };
+            
+            Database.updatePlayerData(WalletManager.getAddress(), playerData);
+            
+            // Update ranking score
+            if (window.RankingSystem) {
+                window.RankingSystem.updatePlayerRanking(WalletManager.getAddress(), playerData);
+            }
         }
         
         // Check for evolution (every 5 levels)

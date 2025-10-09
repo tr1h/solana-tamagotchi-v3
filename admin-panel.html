@@ -406,6 +406,7 @@
                     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                         <button class="btn btn-success" onclick="syncDatabase()">🔄 Sync NFT ↔ Leaderboard</button>
                         <button class="btn btn-primary" onclick="recalculateTAMA()">💰 Recalculate TAMA</button>
+                        <button class="btn btn-primary" onclick="recalculateRankings()">🏆 Recalculate Rankings</button>
                         <button class="btn btn-primary" onclick="fixDuplicates()">🔧 Fix Duplicates</button>
                         <button class="btn btn-danger" onclick="confirmAction('Are you sure you want to clear test data?', clearTestData)">🗑️ Clear Test Data</button>
                     </div>
@@ -486,6 +487,7 @@
     </div>
 
     <script src="js/database-supabase.js"></script>
+    <script src="js/ranking-system.js"></script>
     <script>
         // Initialize Supabase
         const SUPABASE_URL = 'https://zfrazyupameidxpjihrh.supabase.co';
@@ -617,45 +619,79 @@
             }
         }
 
-        // Load Top Players
+        // Load Top Players with Advanced Ranking
         async function loadTopPlayers() {
             try {
-                const { data: players } = await supabase
-                    .from('leaderboard')
-                    .select('*')
-                    .order('total_xp', { ascending: false })
-                    .limit(10);
+                // Use advanced ranking system
+                const players = await window.RankingSystem.getAdvancedLeaderboard(15);
                 
                 const html = `
+                    <div style="margin-bottom: 20px;">
+                        <h4>🏆 Advanced Leaderboard</h4>
+                        <p style="color: #666; font-size: 14px;">
+                            Ranking based on: Total XP + Level + TAMA + Rarity + Activity
+                        </p>
+                    </div>
                     <table>
                         <thead>
                             <tr>
-                                <th>#</th>
-                                <th>Wallet</th>
+                                <th>Rank</th>
+                                <th>Player</th>
                                 <th>Pet</th>
                                 <th>Level</th>
-                                <th>Total XP</th>
-                                <th>TAMA</th>
+                                <th>Score</th>
+                                <th>Status</th>
+                                <th>Rarity</th>
                             </tr>
                         </thead>
                         <tbody>
-                            ${players.map((player, i) => `
-                                <tr>
-                                    <td>${i + 1}</td>
-                                    <td>${player.wallet_address.slice(0, 8)}...</td>
+                            ${players.map((player) => `
+                                <tr style="${player.rank <= 3 ? 'background: linear-gradient(135deg, #fef3c7, #fde68a);' : ''}">
+                                    <td>
+                                        ${player.rank === 1 ? '🥇' : player.rank === 2 ? '🥈' : player.rank === 3 ? '🥉' : `#${player.rank}`}
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <strong>${player.wallet_address.slice(0, 8)}...</strong><br>
+                                            <small style="color: #666;">${player.playtimeFormatted} played</small>
+                                        </div>
+                                    </td>
                                     <td>${player.pet_name || 'No pet'}</td>
                                     <td>${player.level || 1}</td>
-                                    <td><strong>${(player.total_xp || 0).toLocaleString()}</strong></td>
-                                    <td>${(player.tama || 0).toLocaleString()}</td>
+                                    <td>
+                                        <strong style="color: #667eea;">${player.ranking_score.toLocaleString()}</strong><br>
+                                        <small style="color: #666;">
+                                            XP: ${(player.total_xp || 0).toLocaleString()} | 
+                                            TAMA: ${(player.tama || 0).toLocaleString()}
+                                        </small>
+                                    </td>
+                                    <td>${player.activityStatus}</td>
+                                    <td>${player.rarityTier}</td>
                                 </tr>
                             `).join('')}
                         </tbody>
                     </table>
+                    
+                    <div style="margin-top: 20px; padding: 15px; background: #f8fafc; border-radius: 8px;">
+                        <h5>📊 Ranking Formula:</h5>
+                        <p style="font-size: 13px; color: #666; margin: 5px 0;">
+                            <strong>Score = Total XP + (Level × 100) + (TAMA × 0.1) + (Rarity Bonus × 50) + Activity Bonus</strong>
+                        </p>
+                        <p style="font-size: 12px; color: #888;">
+                            Rarity: Common=0, Rare=50, Epic=100, Legendary=150 | 
+                            Activity: Daily=10, Weekly=30, Monthly=50, Recent=20
+                        </p>
+                    </div>
                 `;
                 
                 document.getElementById('top-players').innerHTML = html;
             } catch (error) {
                 console.error('Error loading players:', error);
+                document.getElementById('top-players').innerHTML = `
+                    <div class="alert alert-error">
+                        ❌ Error loading leaderboard: ${error.message}
+                    </div>
+                `;
             }
         }
 
@@ -771,6 +807,25 @@
         async function recalculateTAMA() {
             if (!confirm('Recalculate TAMA for all players?')) return;
             alert('🔄 Feature coming soon!');
+        }
+
+        async function recalculateRankings() {
+            if (!confirm('Recalculate ranking scores for all players?')) return;
+            
+            try {
+                const { data: players } = await supabase.from('leaderboard').select('*');
+                
+                let updated = 0;
+                for (const player of players) {
+                    const success = await window.RankingSystem.updatePlayerRanking(player.wallet_address, player);
+                    if (success) updated++;
+                }
+                
+                alert(`✅ Updated rankings for ${updated} players!`);
+                loadTopPlayers(); // Refresh leaderboard
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
         }
 
         async function fixDuplicates() {
