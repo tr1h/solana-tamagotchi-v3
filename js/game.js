@@ -500,24 +500,23 @@ const Game = {
     addXP(amount) {
         if (!this.pet) return;
         
-        this.pet.xp = (this.pet.xp || 0) + amount;
+        this.pet.xp += amount;
         
-        // Проверяем эволюцию каждые 1000 XP
-        const evolutionLevel = Math.floor(this.pet.xp / 1000) + 1;
-        if (evolutionLevel > this.pet.evolution) {
-            this.pet.evolution = Math.min(evolutionLevel, 5); // Максимум 5 эволюций
-            Utils.showNotification(`✨ Pet evolved to stage ${this.pet.evolution}!`, 'success');
-        }
+        const xpNeeded = Utils.getXPForLevel(this.pet.level);
         
-        // Update leaderboard
-        if (window.Database && WalletManager.isConnected()) {
-            Database.updatePlayerData(WalletManager.getAddress(), {
-                pet_name: this.pet.name,
-                level: this.pet.evolution, // Используем эволюцию как уровень
-                xp: this.pet.xp,
-                tama: this.pet.tama || 0,
-                pet_data: this.pet
-            });
+        if (this.pet.xp >= xpNeeded) {
+            this.levelUp();
+        } else {
+            // Update leaderboard even without level up
+            if (window.Database && WalletManager.isConnected()) {
+                Database.updatePlayerData(WalletManager.getAddress(), {
+                    pet_name: this.pet.name,
+                    level: this.pet.level,
+                    xp: this.pet.xp,
+                    tama: this.pet.tama || 0,
+                    pet_data: this.pet
+                });
+            }
         }
         
         this.updateXPBar();
@@ -540,24 +539,23 @@ const Game = {
         if (window.Database && WalletManager.isConnected()) {
             Database.updatePlayerData(WalletManager.getAddress(), {
                 pet_name: this.pet.name,
-                level: this.pet.evolution,
+                level: this.pet.level,
                 xp: this.pet.xp,
                 tama: this.pet.tama || 0,
                 pet_data: this.pet
             });
         }
         
-        // Check for evolution (every 1000 XP)
-        const evolutionLevel = Math.floor(this.pet.xp / 1000) + 1;
-        if (evolutionLevel > this.pet.evolution && this.pet.evolution < 5) {
-            this.pet.evolution = Math.min(evolutionLevel, 5);
+        // Check for evolution (every 5 levels)
+        if (this.pet.level % 5 === 0 && this.pet.evolution < 5) {
+            this.pet.evolution++;
             this.showEvolutionModal();
         }
         
         // Check achievements
         if (window.Achievements) {
-            Achievements.check('level_10', this.pet.evolution);
-            Achievements.check('level_50', this.pet.evolution);
+            Achievements.check('level_10', this.pet.level);
+            Achievements.check('level_50', this.pet.level);
         }
         
         this.updatePetDisplay();
@@ -608,7 +606,7 @@ const Game = {
         document.getElementById('pet-name').textContent = this.pet.name || 'Unknown Pet';
         const petTypeName = this.petTypes[this.pet.type]?.name || this.pet.type || 'Unknown';
         document.getElementById('pet-type').textContent = `${petTypeName} (${this.pet.rarity || 'common'})`;
-        document.getElementById('pet-level').textContent = `XP: ${this.pet.xp || 0}`;
+        document.getElementById('pet-level').textContent = `Level ${this.pet.level || 1}`;
         
         // Update stats
         this.updateStatBar('hunger', this.pet.stats.hunger);
@@ -646,12 +644,11 @@ const Game = {
     updateXPBar() {
         if (!this.pet) return;
         
-        // Показываем общий XP без ограничений
-        const totalXP = this.pet.xp || 0;
-        const percentage = Math.min(100, (totalXP % 1000) / 10); // Каждые 1000 XP = 100%
+        const xpNeeded = Utils.getXPForLevel(this.pet.level);
+        const percentage = (this.pet.xp / xpNeeded) * 100;
         
         document.getElementById('xp-bar').style.width = `${percentage}%`;
-        document.getElementById('xp-text').textContent = `${totalXP} XP`;
+        document.getElementById('xp-text').textContent = `${this.pet.xp} / ${xpNeeded} XP`;
     },
     
     // Draw pet on canvas
@@ -1071,7 +1068,7 @@ const Game = {
                 },
                 level: nft.metadata.gameData.level || 1,
                 xp: nft.metadata.gameData.xp || 0,
-                evolution: nft.metadata.gameData.evolution || 1,
+                evolution: Math.floor((nft.metadata.gameData.level || 1) / 5) + 1, // Calculate evolution from level
                 createdAt: Date.now(),
                 lastUpdate: Date.now(),
                 isDead: false,
@@ -1122,7 +1119,7 @@ const Game = {
                 },
                 level: playerData.level || 1,
                 xp: playerData.xp || 0,
-                evolution: 1,
+                evolution: Math.floor((playerData.level || 1) / 5) + 1, // Calculate evolution from level
                 createdAt: Date.now(),
                 lastUpdate: Date.now(),
                 isDead: false,
