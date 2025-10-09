@@ -309,7 +309,17 @@ const MintPage = {
             
         } catch (error) {
             console.error('Mint failed:', error);
-            alert('Mint failed! ' + error.message);
+            
+            // Check if duplicate transaction error
+            if (error.message && error.message.includes('already been processed')) {
+                alert('⚠️ Transaction already processed!\n\nYour NFT may have been minted. Check your wallet or refresh the page.');
+                // Reload stats to check if mint was successful
+                await this.loadMintStats();
+            } else if (error.message && error.message.includes('insufficient')) {
+                alert('❌ Insufficient SOL balance!\n\n💡 Get devnet SOL: https://faucet.solana.com');
+            } else {
+                alert('❌ Mint failed! ' + error.message);
+            }
             
             mintBtn.disabled = false;
             mintBtn.querySelector('.btn-text').textContent = `MINT NOW - ${this.getCurrentPrice()} SOL`;
