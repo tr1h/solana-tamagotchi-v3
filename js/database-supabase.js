@@ -277,32 +277,48 @@ const Database = {
     // Get mint stats (total NFTs minted)
     async getMintStats() {
         if (!this.initialized || !this.supabase) {
-            console.warn('Database not initialized for getMintStats');
+            console.warn('⚠️ Database not initialized for getMintStats');
             return 0;
         }
         
         try {
+            console.log('📊 Fetching mint stats from Supabase...');
+            
             const { count, error } = await this.supabase
                 .from('nft_mints')
                 .select('*', { count: 'exact', head: true });
             
             if (error) {
-                console.error('Supabase error in getMintStats:', error);
+                console.error('❌ Supabase error in getMintStats:', error);
                 return 0;
             }
             
-            console.log(`✅ Mint stats loaded: ${count} NFTs`);
-            return count || 0;
+            const totalMints = count || 0;
+            console.log(`✅ Mint stats loaded: ${totalMints} total NFTs minted`);
+            return totalMints;
         } catch (error) {
-            console.error('Failed to get mint stats:', error);
+            console.error('❌ Failed to get mint stats:', error);
             return 0;
         }
     },
     
     // Record NFT mint
     async recordMint(walletAddress, nftData, price, phase) {
+        if (!this.initialized || !this.supabase) {
+            console.error('❌ Database not initialized for recordMint');
+            return false;
+        }
+        
         try {
-            const { error } = await this.supabase
+            console.log('💾 Recording NFT mint to database...', {
+                wallet: walletAddress,
+                type: nftData.type,
+                rarity: nftData.rarity,
+                price: price,
+                phase: phase
+            });
+            
+            const { data, error } = await this.supabase
                 .from('nft_mints')
                 .insert({
                     wallet_address: walletAddress,
@@ -311,12 +327,18 @@ const Database = {
                     nft_data: nftData,
                     mint_price: price,
                     mint_phase: phase
-                });
+                })
+                .select();
             
-            if (error) throw error;
+            if (error) {
+                console.error('❌ Supabase error in recordMint:', error);
+                throw error;
+            }
+            
+            console.log('✅ NFT mint recorded successfully!', data);
             return true;
         } catch (error) {
-            console.error('Failed to record mint:', error);
+            console.error('❌ Failed to record mint:', error);
             return false;
         }
     },

@@ -51,3 +51,5 @@ SUPABASE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZi
 - **Heroku** ($7/месяц)
 - **DigitalOcean** ($5/месяц)
 
+
+

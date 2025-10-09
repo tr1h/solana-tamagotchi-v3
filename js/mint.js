@@ -152,14 +152,41 @@ const MintPage = {
         const total = phase.max - prevMax;
         const percentage = (progress / total) * 100;
         
-        // Update UI elements if they exist
-        const progressBar = document.querySelector('.progress-fill');
-        const mintedText = document.querySelector('.minted-count');
-        const priceText = document.querySelector('.current-price');
+        // Update UI elements with correct IDs
+        const progressBar = document.getElementById('mint-progress');
+        const mintedCount = document.getElementById('minted-count');
+        const mintPrice = document.getElementById('mint-price');
         
-        if (progressBar) progressBar.style.width = `${percentage}%`;
-        if (mintedText) mintedText.textContent = `${this.currentMinted} / ${phase.max} Minted`;
-        if (priceText) priceText.textContent = `${phase.price} SOL`;
+        console.log('🔍 Updating UI elements:', {
+            progressBar: !!progressBar,
+            mintedCount: !!mintedCount,
+            mintPrice: !!mintPrice,
+            currentMinted: this.currentMinted,
+            percentage: percentage
+        });
+        
+        if (progressBar) {
+            progressBar.style.width = `${percentage}%`;
+            console.log('✅ Progress bar updated to:', `${percentage}%`);
+        } else {
+            console.warn('⚠️ Progress bar element not found');
+        }
+        
+        if (mintedCount) {
+            mintedCount.textContent = this.currentMinted;
+            console.log('✅ Minted count updated to:', this.currentMinted);
+        } else {
+            console.warn('⚠️ Minted count element not found');
+        }
+        
+        if (mintPrice) {
+            mintPrice.textContent = `${phase.price} SOL`;
+            console.log('✅ Mint price updated to:', `${phase.price} SOL`);
+        } else {
+            console.warn('⚠️ Mint price element not found');
+        }
+        
+        console.log(`📊 Progress updated: ${this.currentMinted} minted, ${percentage.toFixed(1)}% of phase ${phaseIndex + 1}`);
     },
     
     async mintNFT() {
@@ -194,9 +221,23 @@ const MintPage = {
                 
                 // Demo mode - free mint
                 const nft = this.generateNFT();
+                
+                // Record mint in database
+                const phaseIndex = this.getCurrentPhase();
+                const currentPrice = this.getCurrentPrice();
+                if (window.Database && window.Database.recordMint) {
+                    await window.Database.recordMint(
+                        this.publicKey.toString(),
+                        nft,
+                        0, // Free demo mint
+                        phaseIndex
+                    );
+                }
+                
                 this.saveNFTData(nft);
                 this.showSuccessModal(nft);
-                this.currentMinted++;
+                
+                // Reload mint stats
                 await this.loadMintStats();
                 
                 alert('🎉 FREE DEMO MINT! Get devnet SOL: solana airdrop 1');
@@ -245,8 +286,7 @@ const MintPage = {
             // Show success modal
             this.showSuccessModal(nft);
             
-            // Update stats
-            this.currentMinted++;
+            // Reload mint stats from database to get accurate count
             await this.loadMintStats();
             
         } catch (error) {
@@ -389,6 +429,9 @@ const MintPage = {
                         this.currentPhase || 1
                     );
                     console.log('✅ Mint recorded in nft_mints table');
+                    
+                    // Reload mint stats to update UI
+                    await this.loadMintStats();
                 } else {
                     console.log('❌ recordMint not available:', {
                         Database: !!window.Database,

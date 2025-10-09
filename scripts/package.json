@@ -1,0 +1,26 @@
+{
+  "name": "solana-tamagotchi-scripts",
+  "version": "1.0.0",
+  "description": "Scripts for Solana Tamagotchi NFT deployment",
+  "main": "index.js",
+  "scripts": {
+    "generate-metadata": "node generate-nft-metadata.js",
+    "create-candy-machine": "node create-candy-machine.js",
+    "mint-test": "node mint-test.js"
+  },
+  "keywords": [
+    "solana",
+    "nft",
+    "metaplex",
+    "candy-machine"
+  ],
+  "author": "Solana Tamagotchi Team",
+  "license": "MIT",
+  "dependencies": {
+    "@metaplex-foundation/js": "^0.19.4",
+    "@solana/web3.js": "^1.87.6"
+  },
+  "devDependencies": {}
+}
+
+

@@ -1,0 +1,14 @@
+{
+  "network": "devnet",
+  "collection": {
+    "address": "EHju5kq2SvPrqFMEYZ8FkXfX3FYPNsFinaQVU6bFtJRT",
+    "name": "Solana Tamagotchi",
+    "symbol": "TAMA"
+  },
+  "candyMachine": {
+    "address": "3Y82dFzikkzTzEk4vDgvHHeyQwap3M2Z7Zbz4Tj6TbJB"
+  },
+  "treasury": "FHqNWKNyXryz52koqQdWvqxe8zxb4AcaEtD58DneJSb",
+  "createdAt": "2025-10-08T22:06:30.340Z",
+  "status": "deployed_successfully"
+}

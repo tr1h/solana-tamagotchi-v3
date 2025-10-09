@@ -1,78 +1,58 @@
-# ============================================
-# GITIGNORE - Solana Tamagotchi
-# ============================================
+# Кошельки и ключи (КРИТИЧЕСКИ ВАЖНО!)
+*.json
+!package.json
+!package-lock.json
+!manifest.json
+!tsconfig.json
+!candy-machine-config.json
+*.key
+*.pem
+devnet-wallet.json
+mainnet-wallet.json
+wallet.json
 
-# Environment Variables
+# Sugar CLI
+.sugar/
+*.cache
+
+# NFT Assets (закомментируйте если хотите коммитить)
+# nft-assets/*.png
+# nft-assets/*.jpg
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+.pnpm-debug.log
+
+# Environment
 .env
 .env.local
 .env.production
 
-# API Keys & Secrets
-config/secrets.js
-firebase-config.json
-*.key
-*.pem
+# OS
+.DS_Store
+Thumbs.db
 
-# Node Modules
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Build Outputs
-dist/
-build/
-.cache/
-
-# Firebase
-.firebase/
-.firebaserc
-firebase-debug.log
-
-# IDE & Editors
+# IDE
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
-.DS_Store
 
-# OS Files
-Thumbs.db
-desktop.ini
-
-# Logs
-logs/
+# Build
+dist/
+build/
 *.log
 
-# Temporary Files
-tmp/
-temp/
-*.tmp
-
-# Testing
-coverage/
-.nyc_output/
-
-# Deployment
-.netlify/
-.vercel/
-
-# PWA Cache
-sw.js.map
-workbox-*.js
-
-# Local Storage Backups
-backup/
+# Backup
+*-backup/
 *.backup
 
-# Analytics
-.analytics/
+# Sensitive data
+secrets/
+private/
 
-# Custom
-notes.txt
-TODO.md
-
-
-
-
+# Stats
+stats.json

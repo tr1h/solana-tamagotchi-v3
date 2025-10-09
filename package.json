@@ -42,6 +42,9 @@
   },
   "engines": {
     "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "@metaplex-foundation/js": "^0.20.1",
+    "@solana/web3.js": "^1.98.4"
   }
 }
-
