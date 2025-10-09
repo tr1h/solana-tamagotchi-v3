@@ -303,6 +303,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@latest/lib/index.iife.min.js"></script>
+    <script src="js/ranking-system.js"></script>
     <script>
         // Supabase config
         const SUPABASE_URL = 'https://zfrazyupameidxpjihrh.supabase.co';
@@ -374,14 +375,22 @@
             try {
                 updateStatus('players', 'loading');
                 
-                const { data: players, error } = await supabase
-                    .from('leaderboard')
-                    .select('*')
-                    .order('xp', { ascending: false });
+                // Use advanced ranking system if available
+                let players;
+                if (window.RankingSystem) {
+                    players = await window.RankingSystem.getAdvancedLeaderboard(50);
+                } else {
+                    // Fallback to old system
+                    const { data, error } = await supabase
+                        .from('leaderboard')
+                        .select('*')
+                        .order('total_xp', { ascending: false });
+                    
+                    if (error) throw error;
+                    players = data || [];
+                }
                 
-                if (error) throw error;
-                
-                playersData = players || [];
+                playersData = players;
                 
                 const html = `
                     <table>
@@ -393,9 +402,10 @@
                                 <th>Type</th>
                                 <th>Rarity</th>
                                 <th>Level</th>
-                                <th>XP</th>
+                                <th>Total XP</th>
+                                <th>Score</th>
                                 <th>TAMA</th>
-                                <th>Telegram</th>
+                                <th>Status</th>
                                 <th>NFT Mint</th>
                                 <th>Created</th>
                             </tr>
@@ -416,9 +426,10 @@
                                     <td>${player.pet_type ? player.pet_type.charAt(0).toUpperCase() + player.pet_type.slice(1) : '-'}</td>
                                     <td>${player.pet_rarity ? `<span class="badge badge-${player.pet_rarity}">${player.pet_rarity.toUpperCase()}</span>` : '-'}</td>
                                     <td>${player.level || 1}</td>
-                                    <td>${player.xp || 0}</td>
+                                    <td><strong>${(player.total_xp || player.xp || 0).toLocaleString()}</strong></td>
+                                    <td><strong style="color: #667eea;">${(player.ranking_score || 0).toLocaleString()}</strong></td>
                                     <td><strong>${(player.tama || 0).toLocaleString()}</strong></td>
-                                    <td>${player.telegram_username ? `@${player.telegram_username}` : '-'}</td>
+                                    <td>${player.activityStatus || (player.last_activity ? '🟡 Active' : '🔴 Offline')}</td>
                                     <td>
                                         ${player.nft_mint_address ? `
                                             <a href="https://explorer.solana.com/address/${player.nft_mint_address}?cluster=devnet" 
