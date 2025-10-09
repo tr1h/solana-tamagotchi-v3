@@ -27,8 +27,15 @@ const TAMARecalculation = {
         console.log('🔄 Starting TAMA recalculation...');
         
         try {
+            // Get Supabase instance from database viewer
+            const supabase = window.Database?.supabase || window.supabase;
+            if (!supabase) {
+                console.error('❌ Supabase not found. Make sure you are on the database viewer page.');
+                return;
+            }
+            
             // Get all NFT mints ordered by creation time
-            const { data: mints, error: mintsError } = await window.supabase
+            const { data: mints, error: mintsError } = await supabase
                 .from('nft_mints')
                 .select('*')
                 .order('created_at', { ascending: true });
@@ -41,7 +48,7 @@ const TAMARecalculation = {
             console.log(`📊 Found ${mints.length} NFT mints`);
 
             // Get all leaderboard entries
-            const { data: players, error: playersError } = await window.supabase
+            const { data: players, error: playersError } = await supabase
                 .from('leaderboard')
                 .select('*');
 
@@ -80,7 +87,7 @@ const TAMARecalculation = {
                     console.log(`   Difference: ${tamaDiff > 0 ? '+' : ''}${tamaDiff}`);
 
                     // Update player's TAMA
-                    const { error: updateError } = await window.supabase
+                    const { error: updateError } = await supabase
                         .from('leaderboard')
                         .update({ 
                             tama: correctTAMA,
@@ -112,7 +119,14 @@ const TAMARecalculation = {
         console.log('📊 Current TAMA distribution:');
         
         try {
-            const { data: players, error } = await window.supabase
+            // Get Supabase instance from database viewer
+            const supabase = window.Database?.supabase || window.supabase;
+            if (!supabase) {
+                console.error('❌ Supabase not found. Make sure you are on the database viewer page.');
+                return;
+            }
+            
+            const { data: players, error } = await supabase
                 .from('leaderboard')
                 .select('wallet_address, tama, nft_mint_address')
                 .not('nft_mint_address', 'is', null)
