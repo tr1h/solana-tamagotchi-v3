@@ -538,18 +538,26 @@ const Game = {
         
         // Update leaderboard
         if (window.Database && WalletManager.isConnected()) {
-            Database.updateLeaderboard(WalletManager.getAddress(), this.pet);
+            Database.updatePlayerData(WalletManager.getAddress(), {
+                pet_name: this.pet.name,
+                level: this.pet.evolution,
+                xp: this.pet.xp,
+                tama: this.pet.tama || 0,
+                pet_data: this.pet
+            });
         }
         
-        // Check for evolution
-        if (this.pet.level % 10 === 0 && this.pet.evolution < 5) {
+        // Check for evolution (every 1000 XP)
+        const evolutionLevel = Math.floor(this.pet.xp / 1000) + 1;
+        if (evolutionLevel > this.pet.evolution && this.pet.evolution < 5) {
+            this.pet.evolution = Math.min(evolutionLevel, 5);
             this.showEvolutionModal();
         }
         
         // Check achievements
         if (window.Achievements) {
-            Achievements.check('level_10', this.pet.level);
-            Achievements.check('level_50', this.pet.level);
+            Achievements.check('level_10', this.pet.evolution);
+            Achievements.check('level_50', this.pet.evolution);
         }
         
         this.updatePetDisplay();
@@ -591,11 +599,15 @@ const Game = {
     
     // Update pet display
     updatePetDisplay() {
-        if (!this.pet) return;
+        if (!this.pet) {
+            console.log('❌ No pet data available for display');
+            return;
+        }
         
         // Update pet info
-        document.getElementById('pet-name').textContent = this.pet.name;
-        document.getElementById('pet-type').textContent = `${this.petTypes[this.pet.type].name} (${this.pet.rarity})`;
+        document.getElementById('pet-name').textContent = this.pet.name || 'Unknown Pet';
+        const petTypeName = this.petTypes[this.pet.type]?.name || this.pet.type || 'Unknown';
+        document.getElementById('pet-type').textContent = `${petTypeName} (${this.pet.rarity || 'common'})`;
         document.getElementById('pet-level').textContent = `XP: ${this.pet.xp || 0}`;
         
         // Update stats
@@ -959,7 +971,7 @@ const Game = {
                     // ✅ STEP 2: Verify on-chain в фоне (опционально)
                     this.verifyNFTOnChain(walletAddress, playerData.nft_mint_address);
                     return;
-                } else if (playerData && playerData.nft_mint_address) {
+                } else if (playerData && playerData.nft_mint_address && (playerData.pet_name || playerData.pet_type)) {
                     // Create pet from NFT data if no pet_data
                     console.log('🔄 Creating pet from NFT data...');
                     const petData = await this.createPetFromNFTData(playerData);
