@@ -28,9 +28,16 @@ const TAMARecalculation = {
         
         try {
             // Get Supabase instance from database viewer
-            const supabase = window.Database?.supabase || window.supabase;
-            if (!supabase) {
+            let supabase;
+            if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
+                // If supabase is available globally, use it
+                supabase = window.supabase;
+            } else if (typeof supabase !== 'undefined') {
+                // If supabase is available as const in database viewer
+                supabase = supabase;
+            } else {
                 console.error('❌ Supabase not found. Make sure you are on the database viewer page.');
+                console.log('Available objects:', Object.keys(window).filter(k => k.includes('supabase') || k.includes('Supabase')));
                 return;
             }
             
@@ -120,9 +127,16 @@ const TAMARecalculation = {
         
         try {
             // Get Supabase instance from database viewer
-            const supabase = window.Database?.supabase || window.supabase;
-            if (!supabase) {
+            let supabase;
+            if (typeof window.supabase !== 'undefined' && window.supabase.createClient) {
+                // If supabase is available globally, use it
+                supabase = window.supabase;
+            } else if (typeof supabase !== 'undefined') {
+                // If supabase is available as const in database viewer
+                supabase = supabase;
+            } else {
                 console.error('❌ Supabase not found. Make sure you are on the database viewer page.');
+                console.log('Available objects:', Object.keys(window).filter(k => k.includes('supabase') || k.includes('Supabase')));
                 return;
             }
             
