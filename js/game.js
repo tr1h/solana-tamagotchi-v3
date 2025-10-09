@@ -629,19 +629,19 @@ const Game = {
         const emoji = this.getAnimatedPetEmoji();
         
         // Draw pet emoji with animation
-        this.ctx.font = '80px Arial';
+        this.ctx.font = '60px Arial';
         this.ctx.textAlign = 'center';
         this.ctx.textBaseline = 'middle';
         
         if (this.pet.isCritical) {
             // Critical state - dim and add warning
             this.ctx.globalAlpha = 0.5;
-            this.ctx.fillText(emoji, 75, 75);
+            this.ctx.fillText(emoji, 60, 60);
             this.ctx.globalAlpha = 1;
-            this.ctx.font = '24px Arial';
-            this.ctx.fillText('🆘', 75, 120);
+            this.ctx.font = '20px Arial';
+            this.ctx.fillText('🆘', 60, 100);
         } else {
-            this.ctx.fillText(emoji, 75, 75);
+            this.ctx.fillText(emoji, 60, 60);
         }
         
         // Add floating particles for happy pets
@@ -652,38 +652,8 @@ const Game = {
     
     // Get animated pet emoji based on state
     getAnimatedPetEmoji() {
-        const baseEmoji = Utils.getPetEmoji(this.pet.type, this.pet.evolution);
-        const time = Date.now();
-        
-        // Animation based on pet state
-        if (this.pet.stats.happy > 80) {
-            // Happy animation - sparkles
-            if (Math.floor(time / 1000) % 2 === 0) {
-                return baseEmoji + '✨';
-            }
-        } else if (this.pet.stats.hunger < 30) {
-            // Hungry animation - food emoji
-            if (Math.floor(time / 1000) % 2 === 0) {
-                return baseEmoji + '🍽️';
-            }
-        } else if (this.pet.stats.energy < 30) {
-            // Tired animation - sleep emoji
-            if (Math.floor(time / 1000) % 2 === 0) {
-                return baseEmoji + '😴';
-            }
-        } else if (this.pet.stats.health < 50) {
-            // Sick animation - medicine
-            if (Math.floor(time / 1000) % 2 === 0) {
-                return baseEmoji + '💊';
-            }
-        }
-        
-        // Default idle animation - slight bounce
-        if (Math.floor(time / 500) % 2 === 0) {
-            return baseEmoji;
-        } else {
-            return baseEmoji;
-        }
+        // Просто возвращаем базовый эмодзи без дополнительных символов
+        return Utils.getPetEmoji(this.pet.type, this.pet.evolution);
     },
     
     // Add floating particle effect
