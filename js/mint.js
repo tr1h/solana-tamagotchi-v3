@@ -93,8 +93,11 @@ const MintPage = {
         mintBtn.disabled = false;
         mintBtn.querySelector('.btn-text').textContent = `MINT NOW - ${this.getCurrentPrice()} SOL`;
         
-        // Show airdrop button (devnet only)
-        document.getElementById('airdrop-btn').classList.remove('hidden');
+        // Show faucet link (devnet only)
+        const faucetLink = document.getElementById('faucet-link');
+        if (faucetLink) {
+            faucetLink.classList.remove('hidden');
+        }
     },
     
     async requestAirdrop() {
@@ -248,7 +251,7 @@ const MintPage = {
             
             // Check if insufficient balance
             if (balance < lamports) {
-                alert(`❌ Insufficient SOL balance!\n\nCurrent: ${(balance / solanaWeb3.LAMPORTS_PER_SOL).toFixed(2)} SOL\nRequired: ${price} SOL\n\n💡 Click "Get 1 SOL (Devnet)" button to get free devnet SOL!`);
+                alert(`❌ Insufficient SOL balance!\n\nCurrent: ${(balance / solanaWeb3.LAMPORTS_PER_SOL).toFixed(2)} SOL\nRequired: ${price} SOL\n\n💡 Click "Get Free SOL (Devnet Faucet)" link below to get free devnet SOL!\n\nOr visit: https://faucet.solana.com`);
                 
                 this.isMinting = false;
                 mintBtn.disabled = false;
