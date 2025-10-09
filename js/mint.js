@@ -88,6 +88,12 @@ const MintPage = {
         btn.textContent = `${this.publicKey.toString().slice(0, 4)}...${this.publicKey.toString().slice(-4)}`;
         btn.style.background = 'linear-gradient(135deg, #8AC926, #6A994E)';
         
+        // Show copy address button
+        const copyBtn = document.getElementById('copy-address');
+        if (copyBtn) {
+            copyBtn.style.display = 'inline-block';
+        }
+        
         // Enable mint button
         const mintBtn = document.getElementById('mint-btn');
         mintBtn.disabled = false;
@@ -97,6 +103,34 @@ const MintPage = {
         const faucetLink = document.getElementById('faucet-link');
         if (faucetLink) {
             faucetLink.classList.remove('hidden');
+        }
+    },
+    
+    async copyAddress() {
+        if (!this.publicKey) {
+            alert('❌ Wallet not connected!');
+            return;
+        }
+        
+        try {
+            await navigator.clipboard.writeText(this.publicKey.toString());
+            
+            // Show success feedback
+            const copyBtn = document.getElementById('copy-address');
+            const originalText = copyBtn.textContent;
+            copyBtn.textContent = '✅ Copied!';
+            copyBtn.style.background = 'linear-gradient(135deg, #4CAF50, #45a049)';
+            
+            setTimeout(() => {
+                copyBtn.textContent = originalText;
+                copyBtn.style.background = '';
+            }, 2000);
+            
+            console.log('📋 Address copied:', this.publicKey.toString());
+            
+        } catch (error) {
+            console.error('❌ Failed to copy address:', error);
+            alert('❌ Failed to copy address. Please copy manually:\n\n' + this.publicKey.toString());
         }
     },
     
