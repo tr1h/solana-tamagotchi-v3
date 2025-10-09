@@ -303,7 +303,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@latest/lib/index.iife.min.js"></script>
-    <script src="js/ranking-system.js"></script>
     <script>
         // Supabase config
         const SUPABASE_URL = 'https://zfrazyupameidxpjihrh.supabase.co';
@@ -375,38 +374,44 @@
             try {
                 updateStatus('players', 'loading');
                 
-                // Try advanced ranking system first, fallback to old system
-                let players;
+                // Simple approach - try different sorting methods
+                let players = [];
+                let error = null;
+                
+                // Try total_xp first (if migration is done)
                 try {
-                    if (window.RankingSystem) {
-                        players = await window.RankingSystem.getAdvancedLeaderboard(50);
-                    } else {
-                        throw new Error('RankingSystem not available');
-                    }
-                } catch (error) {
-                    console.log('🔄 Falling back to old system:', error.message);
+                    const { data, error: totalXpError } = await supabase
+                        .from('leaderboard')
+                        .select('*')
+                        .order('total_xp', { ascending: false });
                     
-                    // Fallback to old system - try total_xp first, then xp
+                    if (!totalXpError && data) {
+                        players = data;
+                        console.log('✅ Loaded with total_xp sorting');
+                    } else {
+                        throw totalXpError;
+                    }
+                } catch (totalXpError) {
+                    console.log('🔄 total_xp not available, trying xp:', totalXpError.message);
+                    
+                    // Fallback to xp sorting
                     try {
-                        const { data, error } = await supabase
-                            .from('leaderboard')
-                            .select('*')
-                            .order('total_xp', { ascending: false });
-                        
-                        if (error) throw error;
-                        players = data || [];
-                    } catch (totalXpError) {
-                        console.log('🔄 total_xp not available, using xp:', totalXpError.message);
-                        
-                        // Final fallback - use old xp system
-                        const { data, error } = await supabase
+                        const { data, error: xpError } = await supabase
                             .from('leaderboard')
                             .select('*')
                             .order('xp', { ascending: false });
                         
-                        if (error) throw error;
+                        if (xpError) throw xpError;
                         players = data || [];
+                        console.log('✅ Loaded with xp sorting');
+                    } catch (xpError) {
+                        console.error('❌ Failed to load players:', xpError);
+                        error = xpError;
                     }
+                }
+                
+                if (error) {
+                    throw error;
                 }
                 
                 playersData = players;
