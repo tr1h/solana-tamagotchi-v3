@@ -592,6 +592,8 @@ const Game = {
     updatePetDisplay() {
         if (!this.pet) return;
         
+        console.log('🔄 Updating pet display for:', this.pet);
+        
         // Update pet info
         document.getElementById('pet-name').textContent = this.pet.name;
         document.getElementById('pet-type').textContent = `${this.petTypes[this.pet.type].name} (${this.pet.rarity})`;
@@ -674,7 +676,9 @@ const Game = {
     
     // Get animated pet emoji based on state
     getAnimatedPetEmoji() {
+        console.log('🎨 Getting emoji for pet:', this.pet.type, 'evolution:', this.pet.evolution);
         const baseEmoji = Utils.getPetEmoji(this.pet.type, this.pet.evolution);
+        console.log('🎨 Base emoji:', baseEmoji);
         const time = Date.now();
         
         // Animation based on pet state
@@ -1113,6 +1117,7 @@ const Game = {
             };
             
             console.log('✅ Pet created from NFT data:', petData);
+            console.log('🎨 Pet type:', petData.type, 'Emoji should be:', Utils.getPetEmoji(petData.type, 1));
             return petData;
             
         } catch (error) {
