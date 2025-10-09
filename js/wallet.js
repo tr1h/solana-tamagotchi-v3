@@ -224,35 +224,11 @@ const WalletManager = {
         }
     },
     
-    // Create new pet (costs 0.1 SOL)
+    // Create new pet (DEPRECATED - use NFT minting instead)
     async createPet(petData) {
-        try {
-            const cost = 0.1 * solanaWeb3.LAMPORTS_PER_SOL; // 0.1 SOL
-            
-            // Check balance
-            if (this.balance < cost) {
-                throw new Error(`Insufficient balance. Need 0.1 SOL, have ${(this.balance / solanaWeb3.LAMPORTS_PER_SOL).toFixed(2)} SOL`);
-            }
-            
-            // In production, this would be a smart contract call
-            // For now, we'll simulate it with a transfer to a treasury wallet
-            const treasuryWallet = 'GXvKWk8VierD1H6VXzQz7GxZBMZUxXKqvmHkBRGdPump'; // Example address
-            
-            Utils.showNotification('⏳ Creating pet...');
-            
-            const signature = await this.sendSOL(treasuryWallet, cost);
-            
-            Utils.showNotification('✅ Pet created successfully!');
-            
-            return {
-                success: true,
-                signature,
-                petData
-            };
-        } catch (error) {
-            Utils.handleError(error, 'Create Pet');
-            return { success: false };
-        }
+        console.warn('⚠️ createPet is deprecated - use NFT minting instead');
+        Utils.showNotification('❌ Pet creation disabled. Please use NFT minting instead.');
+        return { success: false, error: 'Use NFT minting instead' };
     },
     
     // Note: Pet revival removed - pets don't die, they go into critical state

@@ -123,6 +123,7 @@ const SimpleNFTMint = {
             },
             level: 1,
             xp: 0,
+            tamaBonus: 500, // Default TAMA bonus
             // Анимированные данные для будущего
             animation: {
                 idle: `${type.emoji}`,

@@ -399,12 +399,32 @@ const Database = {
             
             console.log('✅ NFT mint recorded successfully!', data);
             
-            // ✅ Также обновляем leaderboard с nft_mint_address
-            await this.updatePlayerData(walletAddress, {
-                nft_mint_address: nftData.mintAddress,
-                pet_type: nftData.type,
-                pet_rarity: nftData.rarity
+            // ✅ Также обновляем leaderboard с nft_mint_address и TAMA
+            // Получаем TAMA бонус из фазы
+            const phaseBonuses = { 1: 500, 2: 500, 3: 500, 4: 500 }; // TAMA bonuses per phase
+            const tamaBonus = phaseBonuses[phase] || 500;
+            
+            console.log('🔄 Updating leaderboard with:', {
+                wallet: walletAddress,
+                mintAddress: nftData.mintAddress,
+                name: nftData.name,
+                type: nftData.type,
+                rarity: nftData.rarity,
+                tama: tamaBonus
             });
+            
+            const updateResult = await this.updatePlayerData(walletAddress, {
+                nft_mint_address: nftData.mintAddress,
+                pet_name: nftData.name,
+                pet_type: nftData.type,
+                pet_rarity: nftData.rarity,
+                level: nftData.level || 1,
+                xp: nftData.xp || 0,
+                tama: tamaBonus, // Use phase-based TAMA bonus
+                pet_data: nftData
+            });
+            
+            console.log('✅ Leaderboard update result:', updateResult);
             
             return true;
         } catch (error) {
