@@ -493,7 +493,7 @@ const MintPage = {
                         pet_rarity: petData.rarity,
                         level: petData.level,
                         xp: petData.xp,
-                        tama: 500, // Bonus from mint
+                        tama: this.phases[this.getCurrentPhase()].tamaBonus, // Bonus from mint
                         pet_data: petData,
                         created_at: new Date().toISOString(),
                         updated_at: new Date().toISOString()
