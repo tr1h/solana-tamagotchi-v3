@@ -355,6 +355,12 @@ const MintPage = {
             // Показываем success modal
             this.showSuccessModal(nft);
             
+            // Clear pet name input
+            const petNameInput = document.getElementById('pet-name');
+            if (petNameInput) {
+                petNameInput.value = '';
+            }
+            
             // Reload stats
             await this.loadMintStats();
             
@@ -493,6 +499,7 @@ const MintPage = {
                         pet_rarity: petData.rarity,
                         level: petData.level,
                         xp: petData.xp,
+                        total_xp: petData.total_xp || 0,
                         tama: this.phases[this.getCurrentPhase()].tamaBonus, // Bonus from mint
                         pet_data: petData,
                         created_at: new Date().toISOString(),

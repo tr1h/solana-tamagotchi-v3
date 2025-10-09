@@ -436,6 +436,7 @@ const Database = {
                 pet_rarity: nftData.rarity,
                 level: nftData.level || 1,
                 xp: nftData.xp || 0,
+                total_xp: nftData.total_xp || 0,
                 tama: tamaBonus, // Use phase-based TAMA bonus
                 pet_data: nftData
             });
