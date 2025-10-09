@@ -48,6 +48,14 @@ def get_stats():
     except:
         return {'players': 0, 'pets': 0, 'price': '0.3 SOL'}
 
+# Get wallet address by Telegram ID
+def get_wallet_by_telegram(telegram_id):
+    try:
+        response = supabase.table('leaderboard').select('wallet_address').eq('telegram_id', telegram_id).single().execute()
+        return response.data.get('wallet_address') if response.data else None
+    except:
+        return None
+
 # Check if user is admin
 def is_admin(user_id):
     return user_id in ADMIN_IDS or len(ADMIN_IDS) == 0
@@ -391,11 +399,25 @@ def send_referral(message):
     user_id = message.from_user.id
     username = message.from_user.username or message.from_user.first_name
     
-    # Create referral code
-    referral_code = base64.b64encode(str(user_id).encode()).decode()
+    # Get wallet address from database
+    telegram_id = str(user_id)
+    wallet_address = get_wallet_by_telegram(telegram_id)
     
-    # Create game link with Telegram params for auto-linking
-    game_link = f"{GAME_URL}?ref={referral_code}&tg_id={user_id}&tg_username={username}"
+    if not wallet_address:
+        bot.reply_to(message, """
+❌ *Connect your wallet first!*
+
+To get your referral link:
+1. Visit {GAME_URL}
+2. Connect your Phantom wallet
+3. Come back and use /ref
+
+Your wallet and Telegram will be linked automatically!
+        """, parse_mode='Markdown')
+        return
+    
+    # Create game link with wallet address as ref code
+    game_link = f"{GAME_URL}?ref={wallet_address}&tg_id={user_id}&tg_username={username}"
     
     text = f"""
 🔗 *Your Personal Game Link:*
@@ -403,14 +425,21 @@ def send_referral(message):
 `{game_link}`
 
 ✨ *This link will:*
-• Automatically link your Telegram to your wallet
+• Automatically link Telegram to wallet
 • Track your referrals
 • Give you bonus rewards
 
 💰 *Earn rewards:*
-• 25 TAMA for each friend who joins
+• 25 TAMA for each friend (Level 1)
 • 12 TAMA for Level 2 referrals  
 • 10% of their earnings forever!
+
+🎁 *Milestone Bonuses:*
+• 5 referrals → +500 TAMA
+• 10 referrals → +1500 TAMA
+• 25 referrals → +5000 TAMA
+• 50 referrals → +15000 TAMA
+• 100 referrals → +50000 TAMA + Legendary Badge!
 
 📤 *Share with friends and earn!*
     """

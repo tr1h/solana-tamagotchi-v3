@@ -231,15 +231,75 @@ const Database = {
             const level1 = data.filter(r => r.level === 1);
             const level2 = data.filter(r => r.level === 2);
             
+            const totalReferrals = level1.length;
+            
             return {
                 referralCount: data.length,
                 totalEarnings: data.reduce((sum, r) => sum + (r.signup_reward || 0), 0),
                 level1Count: level1.length,
-                level2Count: level2.length
+                level2Count: level2.length,
+                totalReferrals: totalReferrals
             };
         } catch (error) {
             console.error('Failed to get referral stats:', error);
             return null;
+        }
+    },
+    
+    // Check and award milestone rewards
+    async checkMilestoneRewards(wallet) {
+        if (!this.initialized || !this.supabase) return;
+        
+        try {
+            const stats = await this.getReferralStats(wallet);
+            if (!stats) return;
+            
+            const milestones = [
+                { count: 5, reward: 500, badge: 'Recruiter' },
+                { count: 10, reward: 1500, badge: 'Influencer' },
+                { count: 25, reward: 5000, badge: 'Ambassador' },
+                { count: 50, reward: 15000, badge: 'Legend' },
+                { count: 100, reward: 50000, badge: 'Legendary Master' }
+            ];
+            
+            // Get player data to check claimed milestones
+            const { data: playerData } = await this.supabase
+                .from('leaderboard')
+                .select('pet_data')
+                .eq('wallet_address', wallet)
+                .single();
+            
+            const claimedMilestones = playerData?.pet_data?.claimedMilestones || [];
+            
+            for (const milestone of milestones) {
+                if (stats.totalReferrals >= milestone.count && !claimedMilestones.includes(milestone.count)) {
+                    console.log(`🎉 Milestone reached: ${milestone.count} referrals!`);
+                    
+                    // Award TAMA
+                    await this.updateTAMA(wallet, milestone.reward);
+                    
+                    // Mark as claimed
+                    claimedMilestones.push(milestone.count);
+                    
+                    await this.supabase
+                        .from('leaderboard')
+                        .update({ 
+                            pet_data: { 
+                                ...playerData.pet_data, 
+                                claimedMilestones,
+                                badge: milestone.badge
+                            }
+                        })
+                        .eq('wallet_address', wallet);
+                    
+                    // Show notification
+                    if (window.Utils && window.Utils.showNotification) {
+                        Utils.showNotification(`🎉 Milestone! ${milestone.count} referrals → +${milestone.reward} TAMA + ${milestone.badge} Badge!`);
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Failed to check milestone rewards:', error);
         }
     },
     
