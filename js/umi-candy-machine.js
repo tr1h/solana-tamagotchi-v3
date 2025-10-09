@@ -11,6 +11,28 @@ const UmiCandyMachine = {
     wallet: null,
     
     /**
+     * Ждём загрузки Umi SDK
+     */
+    async waitForUmiSDK() {
+        const maxAttempts = 50; // 5 секунд максимум
+        let attempts = 0;
+        
+        while (attempts < maxAttempts) {
+            if (window['@metaplex-foundation/umi-bundle-defaults'] && 
+                window['@metaplex-foundation/mpl-candy-machine']) {
+                console.log('✅ Umi SDK loaded successfully');
+                return true;
+            }
+            
+            console.log(`⏳ Waiting for Umi SDK... (${attempts + 1}/${maxAttempts})`);
+            await new Promise(resolve => setTimeout(resolve, 100));
+            attempts++;
+        }
+        
+        throw new Error('Umi SDK failed to load after 5 seconds');
+    },
+    
+    /**
      * Инициализация Umi
      */
     async init(wallet) {
@@ -18,6 +40,9 @@ const UmiCandyMachine = {
             console.log('🚀 Initializing Umi for Candy Machine...');
             
             this.wallet = wallet;
+            
+            // Ждём загрузки Umi SDK
+            await this.waitForUmiSDK();
             
             // Создаем Umi instance с devnet
             const { createUmi } = window['@metaplex-foundation/umi-bundle-defaults'];
