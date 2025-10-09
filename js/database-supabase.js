@@ -102,10 +102,26 @@ const Database = {
                 return [];
             }
             
+            // Use advanced ranking system if available
+            if (window.RankingSystem) {
+                const players = await window.RankingSystem.getAdvancedLeaderboard(limit);
+                return players.map(player => ({
+                    wallet: player.wallet_address,
+                    level: player.level,
+                    xp: player.total_xp, // Use total_xp instead of current xp
+                    tama: player.tama,
+                    pet_name: player.pet_name,
+                    pet_type: player.pet_type,
+                    pet_rarity: player.pet_rarity,
+                    ranking_score: player.ranking_score
+                }));
+            }
+            
+            // Fallback to old system
             const { data, error } = await this.supabase
                 .from('leaderboard')
                 .select('*')
-                .order('xp', { ascending: false })
+                .order('total_xp', { ascending: false }) // Use total_xp instead of xp
                 .limit(limit);
             
             if (error) throw error;

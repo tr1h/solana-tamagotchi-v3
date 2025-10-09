@@ -710,6 +710,7 @@ body::before {
     padding: var(--spacing-md);
     border-radius: var(--radius-md);
     border: 2px solid transparent;
+    gap: var(--spacing-sm);
 }
 
 .leaderboard-item.top-3 {
@@ -726,18 +727,45 @@ body::before {
 
 .leaderboard-info {
     flex: 1;
-    margin: 0 var(--spacing-md);
+    margin: 0 var(--spacing-sm);
 }
 
 .leaderboard-name {
     font-size: 0.8rem;
     margin-bottom: var(--spacing-xs);
+    font-weight: 600;
+}
+
+.leaderboard-pet {
+    font-size: 0.7rem;
+    color: rgba(245, 245, 245, 0.7);
+    margin: 0;
+}
+
+.leaderboard-stats {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+}
+
+.leaderboard-level {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.6rem;
+    color: var(--primary-yellow);
+}
+
+.leaderboard-xp {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.5rem;
+    color: var(--secondary-green);
 }
 
 .leaderboard-score {
     font-family: 'Press Start 2P', cursive;
-    font-size: 0.6rem;
-    color: var(--secondary-green);
+    font-size: 0.5rem;
+    color: var(--primary-blue);
+    font-weight: bold;
 }
 
 .empty-state {

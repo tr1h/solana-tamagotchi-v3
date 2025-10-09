@@ -55,9 +55,13 @@ const UI = {
                 <span class="leaderboard-rank">${emoji}${index + 1}</span>
                 <div class="leaderboard-info">
                     <p class="leaderboard-name">${Utils.shortenAddress(player.wallet)}</p>
-                    <p class="leaderboard-score">Level ${player.level}</p>
+                    <p class="leaderboard-pet">${player.pet_name || 'No pet'} (${player.pet_rarity || 'common'})</p>
                 </div>
-                <span class="leaderboard-score">${player.xp} XP</span>
+                <div class="leaderboard-stats">
+                    <span class="leaderboard-level">Lv.${player.level}</span>
+                    <span class="leaderboard-xp">${(player.xp || 0).toLocaleString()} XP</span>
+                    ${player.ranking_score ? `<span class="leaderboard-score">${player.ranking_score.toLocaleString()}</span>` : ''}
+                </div>
             `;
             
             container.appendChild(div);
