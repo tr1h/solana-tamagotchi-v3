@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Viewer - Solana Tamagotchi</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { color: #333; text-align: center; }
+        .table-container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin: 20px 0; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #f8f9fa; font-weight: bold; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 20px 0; }
+        .stat-card { background: white; padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .stat-number { font-size: 2em; font-weight: bold; color: #007bff; }
+        .refresh-btn { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin: 10px 0; }
+        .refresh-btn:hover { background: #0056b3; }
+        .loading { text-align: center; color: #666; }
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗄️ Database Viewer - Solana Tamagotchi</h1>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="total-players">-</div>
+                <div>Total Players</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="total-nfts">-</div>
+                <div>NFTs Minted</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="total-tama">-</div>
+                <div>Total TAMA</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="linked-telegram">-</div>
+                <div>Telegram Linked</div>
+            </div>
+        </div>
+
+        <button class="refresh-btn" onclick="loadData()">🔄 Refresh Data</button>
+
+        <div class="table-container">
+            <h2>👥 Players (leaderboard)</h2>
+            <div id="players-loading" class="loading">Loading players...</div>
+            <table id="players-table" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Wallet</th>
+                        <th>Pet Name</th>
+                        <th>Type</th>
+                        <th>Rarity</th>
+                        <th>Level</th>
+                        <th>TAMA</th>
+                        <th>Telegram</th>
+                        <th>NFT Mint</th>
+                        <th>Created</th>
+                    </tr>
+                </thead>
+                <tbody id="players-tbody"></tbody>
+            </table>
+        </div>
+
+        <div class="table-container">
+            <h2>🎨 NFT Mints</h2>
+            <div id="mints-loading" class="loading">Loading mints...</div>
+            <table id="mints-table" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Wallet</th>
+                        <th>NFT Mint Address</th>
+                        <th>Type</th>
+                        <th>Rarity</th>
+                        <th>Price</th>
+                        <th>Phase</th>
+                        <th>Minted At</th>
+                    </tr>
+                </thead>
+                <tbody id="mints-tbody"></tbody>
+            </table>
+        </div>
+
+        <div class="table-container">
+            <h2>🔗 Referrals</h2>
+            <div id="referrals-loading" class="loading">Loading referrals...</div>
+            <table id="referrals-table" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Referrer</th>
+                        <th>Referred</th>
+                        <th>Level</th>
+                        <th>Reward</th>
+                        <th>Created</th>
+                    </tr>
+                </thead>
+                <tbody id="referrals-tbody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Supabase config
+        const SUPABASE_URL = 'https://zfrazyupameidxpjihrh.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpmcmF6eXVwYW1laWR4cGppaHJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5Mzc1NTAsImV4cCI6MjA3NTUxMzU1MH0.1EkMDqCNJoAjcJDh3Dd3yPfus-JpdcwE--z2dhjh7wU';
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        async function loadData() {
+            console.log('🔄 Loading database data...');
+            
+            try {
+                await Promise.all([
+                    loadStats(),
+                    loadPlayers(),
+                    loadMints(),
+                    loadReferrals()
+                ]);
+                console.log('✅ All data loaded');
+            } catch (error) {
+                console.error('❌ Error loading data:', error);
+            }
+        }
+
+        async function loadStats() {
+            try {
+                // Total players
+                const { count: playersCount } = await supabase
+                    .from('leaderboard')
+                    .select('*', { count: 'exact', head: true });
+                
+                // Total NFTs
+                const { count: nftsCount } = await supabase
+                    .from('nft_mints')
+                    .select('*', { count: 'exact', head: true });
+                
+                // Total TAMA
+                const { data: players } = await supabase
+                    .from('leaderboard')
+                    .select('tama');
+                
+                const totalTama = players?.reduce((sum, p) => sum + (p.tama || 0), 0) || 0;
+                
+                // Telegram linked
+                const { count: telegramCount } = await supabase
+                    .from('leaderboard')
+                    .select('*', { count: 'exact', head: true })
+                    .not('telegram_id', 'is', null);
+                
+                document.getElementById('total-players').textContent = playersCount || 0;
+                document.getElementById('total-nfts').textContent = nftsCount || 0;
+                document.getElementById('total-tama').textContent = totalTama.toLocaleString();
+                document.getElementById('linked-telegram').textContent = telegramCount || 0;
+                
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        async function loadPlayers() {
+            try {
+                const { data: players, error } = await supabase
+                    .from('leaderboard')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                
+                const tbody = document.getElementById('players-tbody');
+                tbody.innerHTML = '';
+                
+                players?.forEach(player => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${player.id}</td>
+                        <td title="${player.wallet_address}">${player.wallet_address?.slice(0, 8)}...</td>
+                        <td>${player.pet_name || '-'}</td>
+                        <td>${player.pet_type || '-'}</td>
+                        <td>${player.pet_rarity || '-'}</td>
+                        <td>${player.level || 1}</td>
+                        <td>${player.tama || 0}</td>
+                        <td>${player.telegram_username ? `@${player.telegram_username}` : '-'}</td>
+                        <td title="${player.nft_mint_address || ''}">${player.nft_mint_address ? player.nft_mint_address.slice(0, 8) + '...' : '-'}</td>
+                        <td>${new Date(player.created_at).toLocaleDateString()}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                
+                document.getElementById('players-loading').style.display = 'none';
+                document.getElementById('players-table').style.display = 'table';
+                
+            } catch (error) {
+                console.error('Error loading players:', error);
+                document.getElementById('players-loading').innerHTML = '<div class="error">Error loading players</div>';
+            }
+        }
+
+        async function loadMints() {
+            try {
+                const { data: mints, error } = await supabase
+                    .from('nft_mints')
+                    .select('*')
+                    .order('minted_at', { ascending: false });
+                
+                if (error) throw error;
+                
+                const tbody = document.getElementById('mints-tbody');
+                tbody.innerHTML = '';
+                
+                mints?.forEach(mint => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${mint.id}</td>
+                        <td title="${mint.wallet_address}">${mint.wallet_address?.slice(0, 8)}...</td>
+                        <td title="${mint.nft_mint_address || ''}">${mint.nft_mint_address ? mint.nft_mint_address.slice(0, 8) + '...' : '-'}</td>
+                        <td>${mint.nft_type || '-'}</td>
+                        <td>${mint.nft_rarity || '-'}</td>
+                        <td>${mint.mint_price || 0} SOL</td>
+                        <td>${mint.mint_phase || 0}</td>
+                        <td>${new Date(mint.minted_at).toLocaleString()}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                
+                document.getElementById('mints-loading').style.display = 'none';
+                document.getElementById('mints-table').style.display = 'table';
+                
+            } catch (error) {
+                console.error('Error loading mints:', error);
+                document.getElementById('mints-loading').innerHTML = '<div class="error">Error loading mints</div>';
+            }
+        }
+
+        async function loadReferrals() {
+            try {
+                const { data: referrals, error } = await supabase
+                    .from('referrals')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                
+                const tbody = document.getElementById('referrals-tbody');
+                tbody.innerHTML = '';
+                
+                referrals?.forEach(ref => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${ref.id}</td>
+                        <td title="${ref.referrer_wallet}">${ref.referrer_wallet?.slice(0, 8)}...</td>
+                        <td title="${ref.referred_wallet}">${ref.referred_wallet?.slice(0, 8)}...</td>
+                        <td>${ref.level || 1}</td>
+                        <td>${ref.reward_amount || 0} TAMA</td>
+                        <td>${new Date(ref.created_at).toLocaleDateString()}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                
+                document.getElementById('referrals-loading').style.display = 'none';
+                document.getElementById('referrals-table').style.display = 'table';
+                
+            } catch (error) {
+                console.error('Error loading referrals:', error);
+                document.getElementById('referrals-loading').innerHTML = '<div class="error">Error loading referrals</div>';
+            }
+        }
+
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', loadData);
+    </script>
+</body>
+</html>
