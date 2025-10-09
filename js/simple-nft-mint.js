@@ -30,7 +30,7 @@ const SimpleNFTMint = {
             
             // Получаем имя от пользователя
             const petNameInput = document.getElementById('pet-name');
-            const customName = petNameInput ? petNameInput.value.trim() : '';
+            const customName = petNameInput && petNameInput.value ? petNameInput.value.trim() : '';
             
             // Генерируем NFT данные
             const nftData = this.generateNFTData(customName);
@@ -122,7 +122,25 @@ const SimpleNFTMint = {
                 health: 100
             },
             level: 1,
-            xp: 0
+            xp: 0,
+            // Анимированные данные для будущего
+            animation: {
+                idle: `${type.emoji}`,
+                happy: `${type.emoji}✨`,
+                eating: `${type.emoji}🍽️`,
+                sleeping: `${type.emoji}😴`,
+                playing: `${type.emoji}🎮`
+            },
+            // Для Magic Eden совместимости
+            attributes: [
+                { trait_type: "Type", value: type.name },
+                { trait_type: "Rarity", value: rarity.name },
+                { trait_type: "Level", value: "1" },
+                { trait_type: "Health", value: "100" },
+                { trait_type: "Hunger", value: "100" },
+                { trait_type: "Energy", value: "100" },
+                { trait_type: "Happy", value: "100" }
+            ]
         };
     },
     

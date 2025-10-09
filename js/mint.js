@@ -46,9 +46,13 @@ const MintPage = {
         }
         
         // Event listeners
-        document.getElementById('connect-wallet').addEventListener('click', () => this.connectWallet());
-        document.getElementById('mint-btn').addEventListener('click', () => this.mintNFT());
-        document.getElementById('airdrop-btn').addEventListener('click', () => this.requestAirdrop());
+        const connectBtn = document.getElementById('connect-wallet');
+        const mintBtn = document.getElementById('mint-btn');
+        const airdropBtn = document.getElementById('airdrop-btn');
+        
+        if (connectBtn) connectBtn.addEventListener('click', () => this.connectWallet());
+        if (mintBtn) mintBtn.addEventListener('click', () => this.mintNFT());
+        if (airdropBtn) airdropBtn.addEventListener('click', () => this.requestAirdrop());
         
         // Load mint stats
         await this.loadMintStats();
