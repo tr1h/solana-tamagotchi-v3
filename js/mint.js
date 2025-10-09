@@ -201,12 +201,19 @@ const MintPage = {
             return;
         }
         
+        // Prevent double-click minting
+        if (this.isMinting) {
+            console.warn('⚠️ Minting already in progress');
+            return;
+        }
+        
         // Check if sold out
         if (this.currentMinted >= this.maxSupply) {
             alert('🔥 SOLD OUT! All NFTs have been minted!');
             return;
         }
         
+        this.isMinting = true;
         const mintBtn = document.getElementById('mint-btn');
         mintBtn.disabled = true;
         mintBtn.querySelector('.btn-text').textContent = 'MINTING...';
@@ -245,6 +252,10 @@ const MintPage = {
                 
                 // Reload mint stats
                 await this.loadMintStats();
+                
+                this.isMinting = false;
+                mintBtn.disabled = false;
+                mintBtn.querySelector('.btn-text').textContent = `MINT NOW - ${this.getCurrentPrice()} SOL`;
                 
                 alert('🎉 FREE DEMO MINT! Get devnet SOL: solana airdrop 1');
                 return;
@@ -307,6 +318,11 @@ const MintPage = {
             // Reload mint stats from database to get accurate count
             await this.loadMintStats();
             
+            // Reset minting flag on success
+            this.isMinting = false;
+            mintBtn.disabled = false;
+            mintBtn.querySelector('.btn-text').textContent = `MINT NOW - ${this.getCurrentPrice()} SOL`;
+            
         } catch (error) {
             console.error('Mint failed:', error);
             
@@ -321,6 +337,7 @@ const MintPage = {
                 alert('❌ Mint failed! ' + error.message);
             }
             
+            this.isMinting = false;
             mintBtn.disabled = false;
             mintBtn.querySelector('.btn-text').textContent = `MINT NOW - ${this.getCurrentPrice()} SOL`;
         }
