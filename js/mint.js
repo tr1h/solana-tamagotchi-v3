@@ -105,6 +105,12 @@ const MintPage = {
         if (faucetLink) {
             faucetLink.classList.remove('hidden');
         }
+        
+        // Show pet name input
+        const petNameInput = document.getElementById('pet-name-input');
+        if (petNameInput) {
+            petNameInput.style.display = 'block';
+        }
     },
     
     async copyAddress() {

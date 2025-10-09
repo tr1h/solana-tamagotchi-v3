@@ -28,8 +28,12 @@ const SimpleNFTMint = {
         try {
             console.log('🎨 Starting simple NFT mint...');
             
+            // Получаем имя от пользователя
+            const petNameInput = document.getElementById('pet-name');
+            const customName = petNameInput ? petNameInput.value.trim() : '';
+            
             // Генерируем NFT данные
-            const nftData = this.generateNFTData();
+            const nftData = this.generateNFTData(customName);
             
             // Создаём NFT mint (новый keypair)
             const mintKeypair = solanaWeb3.Keypair.generate();
@@ -65,7 +69,7 @@ const SimpleNFTMint = {
         }
     },
     
-    generateNFTData() {
+    generateNFTData(customName = '') {
         const types = [
             { name: 'cat', emoji: '🐱', weight: 30 },
             { name: 'dog', emoji: '🐶', weight: 25 },
@@ -103,11 +107,14 @@ const SimpleNFTMint = {
         const type = selectWeighted(types);
         const rarity = selectWeighted(rarities);
         
+        // Используем кастомное имя или генерируем автоматически
+        const petName = customName || `${rarity.name.charAt(0).toUpperCase() + rarity.name.slice(1)} ${type.name.charAt(0).toUpperCase() + type.name.slice(1)}`;
+        
         return {
             type: type.name,
             emoji: type.emoji,
             rarity: rarity.name,
-            name: `${rarity.name.charAt(0).toUpperCase() + rarity.name.slice(1)} ${type.name.charAt(0).toUpperCase() + type.name.slice(1)}`,
+            name: petName,
             stats: {
                 hunger: 100,
                 energy: 100,
