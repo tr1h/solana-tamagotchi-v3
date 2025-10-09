@@ -115,16 +115,20 @@ const WalletManager = {
                 }
             }
             
-            // Pet loading now handled by checkNFTOwnership() in game.js
+            // Check NFT ownership BEFORE showing game
+            if (window.Game && window.Game.checkNFTOwnership) {
+                await Game.checkNFTOwnership();
+            } else {
+                console.warn('⚠️ Game.checkNFTOwnership not available');
+                // Fallback: show mint required
+                if (window.Game && window.Game.showMintRequired) {
+                    Game.showMintRequired();
+                }
+            }
             
             // Update online status
             if (window.Database) {
                 Database.updatePlayerStatus(this.publicKey.toString(), 'connect');
-            }
-            
-            // Show game interface
-            if (window.Game) {
-                Game.showGame();
             }
             
             // Start auto-refresh balance
