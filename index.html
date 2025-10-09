@@ -413,6 +413,19 @@
         </div>
     </div>
 
+    <!-- NFT Required Modal -->
+    <div id="nft-required-modal" class="modal hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 10000;">
+        <div class="modal-content" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 3rem; border-radius: 20px; text-align: center; max-width: 500px; border: 3px solid #FFD700;">
+            <div style="font-size: 64px; margin-bottom: 1rem;">🔒</div>
+            <h2 style="font-size: 2rem; margin-bottom: 1rem; color: #FFD700;">NFT Required</h2>
+            <p style="font-size: 1.2rem; margin-bottom: 2rem; color: white;">You need to mint an NFT to access the game!</p>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="mint.html" class="btn btn-primary" style="padding: 1rem 2rem; font-size: 1.1rem; background: #FFD700; color: #000; text-decoration: none; border-radius: 10px; font-weight: bold;">🚀 Mint NFT</a>
+                <button onclick="document.getElementById('nft-required-modal').classList.add('hidden')" class="btn btn-secondary" style="padding: 1rem 2rem; font-size: 1.1rem; background: rgba(255,255,255,0.2); color: white; border: 2px solid white; border-radius: 10px; cursor: pointer;">🏠 Back to Home</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Notification Toast -->
     <div id="notification" class="notification hidden">
         <span id="notification-text"></span>

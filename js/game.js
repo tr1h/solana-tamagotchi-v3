@@ -892,29 +892,15 @@ const Game = {
         }
     },
     
-    // Show mint required page
+    // Show mint required modal
     showMintRequired() {
-        // Hide all pages
-        document.querySelectorAll('.page').forEach(page => page.classList.add('hidden'));
-        
-        // Show mint required message
-        const mintRequiredHTML = `
-            <div class="page mint-required-page">
-                <div class="container">
-                    <div class="mint-required-content">
-                        <h1>🔒 NFT Required</h1>
-                        <p>You need to mint an NFT to access the game!</p>
-                        <div class="mint-required-actions">
-                            <a href="mint.html" class="btn btn-primary">🚀 Mint NFT</a>
-                            <button onclick="Game.showLanding()" class="btn btn-secondary">🏠 Back to Home</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-        
-        document.body.insertAdjacentHTML('beforeend', mintRequiredHTML);
-        document.querySelector('.mint-required-page').classList.remove('hidden');
+        // Show NFT required modal
+        const modal = document.getElementById('nft-required-modal');
+        if (modal) {
+            modal.classList.remove('hidden');
+        } else {
+            console.error('❌ NFT Required modal not found');
+        }
     },
 
     checkReferralCode() {
