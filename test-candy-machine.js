@@ -4,23 +4,29 @@
 
 // Wait for Umi SDK to load
 async function waitForUmiSDK() {
-    const maxAttempts = 50; // 5 секунд максимум
-    let attempts = 0;
-    
-    while (attempts < maxAttempts) {
-        if (window['@metaplex-foundation/umi-bundle-defaults'] && 
-            window['@metaplex-foundation/mpl-candy-machine']) {
-            console.log('✅ Umi SDK loaded successfully');
-            return true;
+    if (window.UmiLoader) {
+        console.log('🔄 Using UmiLoader to load SDK...');
+        return await window.UmiLoader.waitForUmiSDK();
+    } else {
+        // Fallback to old method
+        const maxAttempts = 50; // 5 секунд максимум
+        let attempts = 0;
+        
+        while (attempts < maxAttempts) {
+            if (window['@metaplex-foundation/umi-bundle-defaults'] && 
+                window['@metaplex-foundation/mpl-candy-machine']) {
+                console.log('✅ Umi SDK loaded successfully');
+                return true;
+            }
+            
+            console.log(`⏳ Waiting for Umi SDK... (${attempts + 1}/${maxAttempts})`);
+            await new Promise(resolve => setTimeout(resolve, 100));
+            attempts++;
         }
         
-        console.log(`⏳ Waiting for Umi SDK... (${attempts + 1}/${maxAttempts})`);
-        await new Promise(resolve => setTimeout(resolve, 100));
-        attempts++;
+        console.log('❌ Umi SDK failed to load after 5 seconds');
+        return false;
     }
-    
-    console.log('❌ Umi SDK failed to load after 5 seconds');
-    return false;
 }
 
 // Test if Candy Machine exists and is accessible

@@ -11,9 +11,9 @@
     <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Metaplex Umi для Candy Machine v3 -->
-    <script src="https://unpkg.com/@metaplex-foundation/umi/dist/index.umd.js?v=2"></script>
-    <script src="https://unpkg.com/@metaplex-foundation/umi-bundle-defaults/dist/index.umd.js?v=2"></script>
-    <script src="https://unpkg.com/@metaplex-foundation/mpl-candy-machine/dist/index.umd.js?v=2"></script>
+    <script src="https://unpkg.com/@metaplex-foundation/umi@0.9.1/dist/index.umd.js?v=3"></script>
+    <script src="https://unpkg.com/@metaplex-foundation/umi-bundle-defaults@0.9.1/dist/index.umd.js?v=3"></script>
+    <script src="https://unpkg.com/@metaplex-foundation/mpl-candy-machine@0.2.1/dist/index.umd.js?v=3"></script>
 </head>
 <body>
     <div class="mint-container">
@@ -228,11 +228,30 @@
         </div>
     </div>
 
-    <script src="js/utils.js?v=2"></script>
-    <script src="js/database-supabase.js?v=2"></script>
-    <script src="js/umi-candy-machine.js?v=2"></script>
-    <script src="test-candy-machine.js?v=2"></script>
-    <script src="js/mint.js?v=2"></script>
+    <script src="js/utils.js?v=3"></script>
+    <script src="js/database-supabase.js?v=3"></script>
+    <script src="js/load-umi.js?v=3"></script>
+    <script src="js/umi-candy-machine.js?v=3"></script>
+    <script src="test-candy-machine.js?v=3"></script>
+    <script src="js/mint.js?v=3"></script>
+    
+    <!-- Script loading diagnostics -->
+    <script>
+        console.log('🔍 Script Loading Diagnostics:');
+        console.log('Umi:', typeof window['@metaplex-foundation/umi']);
+        console.log('Umi Bundle Defaults:', typeof window['@metaplex-foundation/umi-bundle-defaults']);
+        console.log('Candy Machine:', typeof window['@metaplex-foundation/mpl-candy-machine']);
+        console.log('Solana Web3:', typeof window.solanaWeb3);
+        console.log('Supabase:', typeof window.supabase);
+        
+        // Check if all required objects are available
+        setTimeout(() => {
+            console.log('🔍 After 2 seconds:');
+            console.log('Umi:', typeof window['@metaplex-foundation/umi']);
+            console.log('Umi Bundle Defaults:', typeof window['@metaplex-foundation/umi-bundle-defaults']);
+            console.log('Candy Machine:', typeof window['@metaplex-foundation/mpl-candy-machine']);
+        }, 2000);
+    </script>
 </body>
 </html>
 
