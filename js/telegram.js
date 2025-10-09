@@ -46,36 +46,46 @@ const TelegramIntegration = {
         const telegramData = this.getTelegramData();
         
         if (!telegramData) {
-            console.log('No Telegram data available');
+            console.log('ℹ️ No Telegram data available (opened directly, not from bot)');
             return { success: false, message: 'Not opened from Telegram' };
         }
 
         try {
-            const response = await fetch('https://nitric-ara-unsuperlative.ngrok-free.dev/solana-tamagotchi/api/link_telegram.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    action: 'link',
-                    wallet_address: walletAddress,
+            // Use Database (Supabase) to link
+            if (!window.Database || !window.Database.supabase) {
+                console.error('❌ Database not initialized');
+                return { success: false, message: 'Database not initialized' };
+            }
+
+            // Update leaderboard with Telegram info
+            const { data, error } = await window.Database.supabase
+                .from('leaderboard')
+                .update({
                     telegram_id: telegramData.id,
                     telegram_username: telegramData.username
                 })
-            });
+                .eq('wallet_address', walletAddress)
+                .select();
 
-            const data = await response.json();
+            if (error) {
+                console.error('❌ Telegram link error:', error);
+                return { success: false, message: error.message };
+            }
+
+            console.log('✅ Telegram linked:', telegramData);
             
-            if (data.success) {
-                console.log('✅ Telegram linked:', telegramData);
-                // Store in localStorage for future use
-                localStorage.setItem('telegram_id', telegramData.id);
-                localStorage.setItem('telegram_username', telegramData.username);
+            // Store in localStorage for future use
+            localStorage.setItem('telegram_id', telegramData.id);
+            localStorage.setItem('telegram_username', telegramData.username);
+            
+            // Show notification
+            if (window.Utils && window.Utils.showNotification) {
+                window.Utils.showNotification(`✅ Telegram linked: @${telegramData.username}`);
             }
             
-            return data;
+            return { success: true, data: data };
         } catch (error) {
-            console.error('Error linking Telegram:', error);
+            console.error('❌ Error linking Telegram:', error);
             return { success: false, message: error.message };
         }
     },
@@ -83,18 +93,21 @@ const TelegramIntegration = {
     // Get wallet by Telegram ID
     async getWalletByTelegramId(telegramId) {
         try {
-            const response = await fetch('https://nitric-ara-unsuperlative.ngrok-free.dev/solana-tamagotchi/api/link_telegram.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    action: 'get_wallet',
-                    telegram_id: telegramId
-                })
-            });
+            if (!window.Database || !window.Database.supabase) {
+                return { success: false, message: 'Database not initialized' };
+            }
 
-            return await response.json();
+            const { data, error } = await window.Database.supabase
+                .from('leaderboard')
+                .select('wallet_address')
+                .eq('telegram_id', telegramId)
+                .single();
+
+            if (error) {
+                return { success: false, message: error.message };
+            }
+
+            return { success: true, wallet_address: data?.wallet_address };
         } catch (error) {
             console.error('Error getting wallet:', error);
             return { success: false, message: error.message };
@@ -104,18 +117,25 @@ const TelegramIntegration = {
     // Get Telegram ID by wallet
     async getTelegramByWallet(walletAddress) {
         try {
-            const response = await fetch('https://nitric-ara-unsuperlative.ngrok-free.dev/solana-tamagotchi/api/link_telegram.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    action: 'get_telegram',
-                    wallet_address: walletAddress
-                })
-            });
+            if (!window.Database || !window.Database.supabase) {
+                return { success: false, message: 'Database not initialized' };
+            }
 
-            return await response.json();
+            const { data, error } = await window.Database.supabase
+                .from('leaderboard')
+                .select('telegram_id, telegram_username')
+                .eq('wallet_address', walletAddress)
+                .single();
+
+            if (error) {
+                return { success: false, message: error.message };
+            }
+
+            return { 
+                success: true, 
+                telegram_id: data?.telegram_id,
+                telegram_username: data?.telegram_username
+            };
         } catch (error) {
             console.error('Error getting Telegram:', error);
             return { success: false, message: error.message };
