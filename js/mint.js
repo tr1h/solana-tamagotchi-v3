@@ -109,7 +109,13 @@ const MintPage = {
             airdropBtn.disabled = false;
         } catch (error) {
             console.error('Airdrop failed:', error);
-            alert('❌ Airdrop failed. Try again or use: solana airdrop 1');
+            
+            // Check if rate limited
+            if (error.message && error.message.includes('429')) {
+                alert('⏰ Rate limit reached!\n\n💡 Use web faucet: https://faucet.solana.com\nOr wait a few minutes and try again.');
+            } else {
+                alert('❌ Airdrop failed. Try: https://faucet.solana.com');
+            }
             
             const airdropBtn = document.getElementById('airdrop-btn');
             airdropBtn.textContent = '💰 Get 1 SOL (Devnet)';
@@ -256,16 +262,28 @@ const MintPage = {
                 })
             );
             
-            // Get recent blockhash
-            const { blockhash } = await this.connection.getLatestBlockhash();
+            // Get recent blockhash with fresh commitment
+            const { blockhash, lastValidBlockHeight } = await this.connection.getLatestBlockhash('finalized');
             transaction.recentBlockhash = blockhash;
             transaction.feePayer = this.publicKey;
             
-            // Sign and send
+            // Sign and send with retry logic
             const signed = await this.wallet.signTransaction(transaction);
-            const signature = await this.connection.sendRawTransaction(signed.serialize());
             
-            await this.connection.confirmTransaction(signature, 'confirmed');
+            // Send with skipPreflight to avoid duplicate tx errors
+            const signature = await this.connection.sendRawTransaction(signed.serialize(), {
+                skipPreflight: false,
+                maxRetries: 3
+            });
+            
+            console.log('Transaction sent:', signature);
+            
+            // Confirm with proper error handling
+            await this.connection.confirmTransaction({
+                signature,
+                blockhash,
+                lastValidBlockHeight
+            }, 'confirmed');
             
             // Generate random NFT
             const nft = this.generateNFT();
