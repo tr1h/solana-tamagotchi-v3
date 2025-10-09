@@ -447,6 +447,12 @@ const Game = {
         
         this.pet.xp += amount;
         
+        // Initialize total_xp if not exists
+        if (!this.pet.total_xp) {
+            this.pet.total_xp = 0;
+        }
+        this.pet.total_xp += amount;
+        
         const xpNeeded = Utils.getXPForLevel(this.pet.level);
         
         if (this.pet.xp >= xpNeeded) {
@@ -458,6 +464,7 @@ const Game = {
                     pet_name: this.pet.name,
                     level: this.pet.level,
                     xp: this.pet.xp,
+                    total_xp: this.pet.total_xp,
                     tama: this.pet.tama || 0,
                     pet_data: this.pet
                 });
@@ -470,7 +477,7 @@ const Game = {
     // Level up
     levelUp() {
         this.pet.level++;
-        this.pet.xp = 0;
+        this.pet.xp = 0; // Reset current level XP, but keep total_xp
         
         // Increase stats slightly
         this.pet.stats.health = 100;
@@ -486,6 +493,7 @@ const Game = {
                 pet_name: this.pet.name,
                 level: this.pet.level,
                 xp: this.pet.xp,
+                total_xp: this.pet.total_xp,
                 tama: this.pet.tama || 0,
                 pet_data: this.pet
             });
@@ -1013,6 +1021,7 @@ const Game = {
                 },
                 level: nft.metadata.gameData.level || 1,
                 xp: nft.metadata.gameData.xp || 0,
+                total_xp: nft.metadata.gameData.total_xp || ((nft.metadata.gameData.level || 1) - 1) * 100 + (nft.metadata.gameData.xp || 0),
                 evolution: Math.floor((nft.metadata.gameData.level || 1) / 5) + 1, // Calculate evolution from level
                 createdAt: Date.now(),
                 lastUpdate: Date.now(),
@@ -1038,6 +1047,7 @@ const Game = {
             },
             level: 1,
             xp: 0,
+            total_xp: 0,
             evolution: 1,
             createdAt: Date.now(),
             lastUpdate: Date.now(),
@@ -1064,6 +1074,7 @@ const Game = {
                 },
                 level: playerData.level || 1,
                 xp: playerData.xp || 0,
+                total_xp: playerData.total_xp || ((playerData.level || 1) - 1) * 100 + (playerData.xp || 0),
                 evolution: Math.floor((playerData.level || 1) / 5) + 1, // Calculate evolution from level
                 createdAt: Date.now(),
                 lastUpdate: Date.now(),

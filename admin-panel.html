@@ -623,7 +623,7 @@
                 const { data: players } = await supabase
                     .from('leaderboard')
                     .select('*')
-                    .order('tama', { ascending: false })
+                    .order('total_xp', { ascending: false })
                     .limit(10);
                 
                 const html = `
@@ -634,6 +634,7 @@
                                 <th>Wallet</th>
                                 <th>Pet</th>
                                 <th>Level</th>
+                                <th>Total XP</th>
                                 <th>TAMA</th>
                             </tr>
                         </thead>
@@ -644,6 +645,7 @@
                                     <td>${player.wallet_address.slice(0, 8)}...</td>
                                     <td>${player.pet_name || 'No pet'}</td>
                                     <td>${player.level || 1}</td>
+                                    <td><strong>${(player.total_xp || 0).toLocaleString()}</strong></td>
                                     <td>${(player.tama || 0).toLocaleString()}</td>
                                 </tr>
                             `).join('')}
