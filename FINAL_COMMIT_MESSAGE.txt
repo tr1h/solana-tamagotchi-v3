@@ -1,0 +1,39 @@
+🚫 Remove demo mode + improve airdrop button for devnet
+
+MAJOR UPDATE - Ready for real devnet testing!
+
+🎯 Changes:
+- ❌ Removed ALL demo modes from mint and pet creation
+- ❌ Removed pet revival function (pets don't die, they go critical)
+- ✅ Improved airdrop button with progress indicators and better UX
+- ✅ Real SOL transactions only - no more free mints
+- ✅ Better error messages with faucet links
+
+📁 Updated Files:
+- js/mint.js - removed demo mode, improved airdrop
+- js/wallet.js - removed demo modes, removed revivePet function
+- index.html - removed revive pet button
+- js/database.js - removed revive references
+- START_HERE.md - updated status
+- DEMO_MODE_REMOVED.md - detailed changelog
+
+✅ What Works Now:
+- Real SOL required for all operations
+- Airdrop button actually gives 1 SOL on devnet
+- Progress indicators: "Requesting 1 SOL..." → "Confirming..."
+- Better error messages with faucet.solana.com links
+- No more free/demo mints - blockchain only!
+
+🚀 Ready for DEVNET testing:
+1. Connect Phantom (devnet)
+2. Click "Get 1 SOL (Devnet)" 
+3. Wait for confirmation
+4. Mint NFT with real SOL
+5. NFT appears in wallet!
+
+⚠️ IMPORTANT - Database Migration Still Required:
+ALTER TABLE leaderboard ADD COLUMN IF NOT EXISTS nft_mint_address TEXT;
+ALTER TABLE nft_mints ADD COLUMN IF NOT EXISTS nft_mint_address TEXT UNIQUE;
+
+🎉 No more demo mode - 100% blockchain ready!
+

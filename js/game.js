@@ -854,42 +854,152 @@ const Game = {
     },
     
     // Check referral code
-    // Check if player owns NFT (exists in database)
+    // Check if player owns NFT (database + blockchain verification)
     async checkNFTOwnership() {
         try {
             console.log('🔍 Checking NFT ownership...');
             
-            if (!window.Database || !window.Database.loadPlayerData) {
-                console.error('❌ Database not available');
+            const walletAddress = WalletManager.getAddress();
+            if (!walletAddress) {
+                console.error('❌ No wallet connected');
                 this.showMintRequired();
                 return;
             }
             
-            const playerData = await window.Database.loadPlayerData(WalletManager.getAddress());
-            console.log('🔍 Player data from database:', playerData);
-            
-            if (playerData && playerData.pet_data && playerData.pet_data.name) {
-                console.log('✅ NFT ownership confirmed, showing game');
-                console.log('🐾 Pet data:', playerData.pet_data);
+            // ✅ STEP 1: Проверка в базе данных (быстро)
+            if (window.Database && window.Database.loadPlayerData) {
+                const playerData = await window.Database.loadPlayerData(walletAddress);
+                console.log('🔍 Player data from database:', playerData);
                 
-                // Set pet data for the game
-                this.pet = playerData.pet_data;
-                Utils.saveLocal('petData', this.pet);
-                
-                this.showGame();
-            } else {
-                console.log('❌ No NFT found, redirecting to mint');
-                console.log('🔍 Player data check failed:', {
-                    hasPlayerData: !!playerData,
-                    hasPetData: !!(playerData && playerData.pet_data),
-                    hasPetName: !!(playerData && playerData.pet_data && playerData.pet_data.name)
-                });
-                this.showMintRequired();
+                if (playerData && playerData.pet_data && playerData.pet_data.name) {
+                    console.log('✅ NFT found in database, showing game');
+                    
+                    // Set pet data for the game
+                    this.pet = playerData.pet_data;
+                    Utils.saveLocal('petData', this.pet);
+                    
+                    this.showGame();
+                    
+                    // ✅ STEP 2: Verify on-chain в фоне (опционально)
+                    this.verifyNFTOnChain(walletAddress, playerData.nft_mint_address);
+                    return;
+                }
             }
+            
+            // ✅ STEP 3: Если нет в базе - проверяем blockchain напрямую
+            console.log('🔍 No data in database, checking blockchain...');
+            
+            if (window.UmiCandyMachine && window.UmiCandyMachine.umi) {
+                const ownership = await window.UmiCandyMachine.checkNFTOwnership(walletAddress);
+                
+                if (ownership && ownership.hasNFT && ownership.nfts.length > 0) {
+                    console.log('✅ NFT found on blockchain!', ownership);
+                    
+                    // Создаём pet из NFT данных
+                    const nft = ownership.nfts[0];
+                    const petData = await this.createPetFromNFT(nft);
+                    
+                    this.pet = petData;
+                    Utils.saveLocal('petData', this.pet);
+                    
+                    // Сохраняем в базу данных
+                    if (window.Database) {
+                        await window.Database.updatePlayerData(walletAddress, {
+                            nft_mint_address: nft.publicKey,
+                            pet_name: petData.name,
+                            pet_type: petData.type,
+                            pet_rarity: petData.rarity,
+                            pet_data: petData
+                        });
+                    }
+                    
+                    this.showGame();
+                    return;
+                }
+            }
+            
+            // ❌ NFT не найден ни в базе, ни на blockchain
+            console.log('❌ No NFT found, redirecting to mint');
+            this.showMintRequired();
+            
         } catch (error) {
             console.error('❌ Error checking NFT ownership:', error);
             this.showMintRequired();
         }
+    },
+    
+    // Verify NFT on blockchain (background check)
+    async verifyNFTOnChain(walletAddress, expectedMintAddress) {
+        try {
+            if (!window.UmiCandyMachine || !window.UmiCandyMachine.umi) return;
+            
+            const ownership = await window.UmiCandyMachine.checkNFTOwnership(walletAddress);
+            
+            if (ownership && ownership.hasNFT) {
+                const ownedMints = ownership.nfts.map(nft => nft.publicKey);
+                
+                if (expectedMintAddress && !ownedMints.includes(expectedMintAddress)) {
+                    console.warn('⚠️ NFT mismatch! Database says one thing, blockchain says another');
+                    // Could show warning to user
+                }
+                
+                console.log('✅ Blockchain verification passed');
+            } else {
+                console.warn('⚠️ NFT not found on blockchain but exists in database');
+            }
+        } catch (error) {
+            console.warn('⚠️ Blockchain verification failed:', error);
+        }
+    },
+    
+    // Create pet data from NFT metadata
+    async createPetFromNFT(nft) {
+        // Если есть metadata с gameData - используем её
+        if (nft.metadata && nft.metadata.gameData) {
+            return {
+                id: `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                name: `My ${nft.metadata.gameData.type.charAt(0).toUpperCase() + nft.metadata.gameData.type.slice(1)}`,
+                type: nft.metadata.gameData.type,
+                rarity: nft.metadata.gameData.rarity,
+                stats: {
+                    hunger: 100,
+                    energy: 100,
+                    happy: 100,
+                    health: 100
+                },
+                level: nft.metadata.gameData.level || 1,
+                xp: nft.metadata.gameData.xp || 0,
+                evolution: nft.metadata.gameData.evolution || 0,
+                createdAt: Date.now(),
+                lastUpdate: Date.now(),
+                isDead: false,
+                isCritical: false
+            };
+        }
+        
+        // Fallback: генерируем случайного питомца
+        const types = ['cat', 'dog', 'dragon', 'fox', 'bear', 'rabbit', 'panda', 'lion', 'unicorn', 'wolf'];
+        const randomType = types[Math.floor(Math.random() * types.length)];
+        
+        return {
+            id: `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            name: `My ${randomType.charAt(0).toUpperCase() + randomType.slice(1)}`,
+            type: randomType,
+            rarity: 'common',
+            stats: {
+                hunger: 100,
+                energy: 100,
+                happy: 100,
+                health: 100
+            },
+            level: 1,
+            xp: 0,
+            evolution: 0,
+            createdAt: Date.now(),
+            lastUpdate: Date.now(),
+            isDead: false,
+            isCritical: false
+        };
     },
     
     // Show mint required modal

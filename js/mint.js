@@ -76,6 +76,12 @@ const MintPage = {
             'confirmed'
         );
         
+        // Initialize Umi Candy Machine
+        if (window.UmiCandyMachine) {
+            await window.UmiCandyMachine.init(this.wallet);
+            console.log('✅ Umi Candy Machine ready for minting');
+        }
+        
         // Update UI
         const btn = document.getElementById('connect-wallet');
         btn.textContent = `${this.publicKey.toString().slice(0, 4)}...${this.publicKey.toString().slice(-4)}`;
@@ -93,28 +99,43 @@ const MintPage = {
     async requestAirdrop() {
         try {
             const airdropBtn = document.getElementById('airdrop-btn');
-            airdropBtn.textContent = '⏳ Requesting...';
+            airdropBtn.textContent = '⏳ Requesting 1 SOL...';
             airdropBtn.disabled = true;
+            
+            console.log('🚀 Requesting airdrop for:', this.publicKey.toString());
             
             const signature = await this.connection.requestAirdrop(
                 this.publicKey,
                 solanaWeb3.LAMPORTS_PER_SOL
             );
             
+            console.log('📝 Airdrop signature:', signature);
+            
+            airdropBtn.textContent = '⏳ Confirming...';
+            
             await this.connection.confirmTransaction(signature, 'confirmed');
             
-            alert('✅ Received 1 SOL! You can now mint your NFT!');
+            console.log('✅ Airdrop confirmed!');
+            
+            // Update balance display
+            const newBalance = await this.connection.getBalance(this.publicKey);
+            console.log('💰 New balance:', newBalance / solanaWeb3.LAMPORTS_PER_SOL, 'SOL');
+            
+            alert(`✅ Successfully received 1 SOL!\n\nNew balance: ${(newBalance / solanaWeb3.LAMPORTS_PER_SOL).toFixed(2)} SOL\n\nYou can now mint your NFT! 🎉`);
             
             airdropBtn.textContent = '💰 Get 1 SOL (Devnet)';
             airdropBtn.disabled = false;
+            
         } catch (error) {
-            console.error('Airdrop failed:', error);
+            console.error('❌ Airdrop failed:', error);
             
             // Check if rate limited
             if (error.message && error.message.includes('429')) {
-                alert('⏰ Rate limit reached!\n\n💡 Use web faucet: https://faucet.solana.com\nOr wait a few minutes and try again.');
+                alert('⏰ Rate limit reached!\n\n💡 Try again in a few minutes or use:\nhttps://faucet.solana.com');
+            } else if (error.message && error.message.includes('insufficient')) {
+                alert('❌ Airdrop failed: Insufficient funds\n\n💡 Try: https://faucet.solana.com');
             } else {
-                alert('❌ Airdrop failed. Try: https://faucet.solana.com');
+                alert(`❌ Airdrop failed: ${error.message}\n\n💡 Try: https://faucet.solana.com`);
             }
             
             const airdropBtn = document.getElementById('airdrop-btn');
@@ -224,97 +245,65 @@ const MintPage = {
             const price = this.getCurrentPrice();
             const lamports = price * solanaWeb3.LAMPORTS_PER_SOL;
             
-            // If insufficient balance, try demo mode (free mint)
+            // Check if insufficient balance
             if (balance < lamports) {
-                if (!confirm(`Insufficient balance (${(balance / solanaWeb3.LAMPORTS_PER_SOL).toFixed(2)} SOL).\n\nMint for FREE in DEMO mode?`)) {
-                    mintBtn.disabled = false;
-                    mintBtn.querySelector('.btn-text').textContent = `MINT NOW - ${this.getCurrentPrice()} SOL`;
-                    return;
-                }
-                
-                // Demo mode - free mint
-                const nft = this.generateNFT();
-                
-                // Record mint in database
-                const phaseIndex = this.getCurrentPhase();
-                const currentPrice = this.getCurrentPrice();
-                if (window.Database && window.Database.recordMint) {
-                    await window.Database.recordMint(
-                        this.publicKey.toString(),
-                        nft,
-                        0, // Free demo mint
-                        phaseIndex
-                    );
-                }
-                
-                this.saveNFTData(nft);
-                this.showSuccessModal(nft);
-                
-                // Reload mint stats
-                await this.loadMintStats();
+                alert(`❌ Insufficient SOL balance!\n\nCurrent: ${(balance / solanaWeb3.LAMPORTS_PER_SOL).toFixed(2)} SOL\nRequired: ${price} SOL\n\n💡 Click "Get 1 SOL (Devnet)" button to get free devnet SOL!`);
                 
                 this.isMinting = false;
                 mintBtn.disabled = false;
                 mintBtn.querySelector('.btn-text').textContent = `MINT NOW - ${this.getCurrentPrice()} SOL`;
-                
-                alert('🎉 FREE DEMO MINT! Get devnet SOL: solana airdrop 1');
                 return;
             }
             
             // ============================================
-            // MINT ЧЕРЕЗ CANDY MACHINE (ПРАВИЛЬНЫЙ СПОСОБ)
+            // РЕАЛЬНЫЙ МИНТ ЧЕРЕЗ UMI CANDY MACHINE V3
             // ============================================
             
-            console.log('🍬 Attempting Candy Machine mint...');
+            console.log('🍬 Starting REAL Candy Machine mint...');
             
-            // Проверяем что Candy Machine доступна
-            if (!window.CandyMachineRealMint) {
-                console.warn('⚠️ Real CM module not loaded');
+            if (!window.UmiCandyMachine || !window.UmiCandyMachine.umi) {
+                throw new Error('Umi Candy Machine not initialized');
             }
             
-            // Показываем инструкцию пользователю
-            alert(`🎉 МИНТ ГОТОВ!
-
-Для РЕАЛЬНОГО минта NFT через Candy Machine:
-
-📋 ВАРИАНТ 1 (Рекомендуем):
-1. Открой терминал WSL/Git Bash
-2. cd /mnt/c/goooog/solana-tamagotchi
-3. sugar mint --number 1
-4. Готово! NFT появится в Phantom
-
-📋 ВАРИАНТ 2 (Через сайт - в разработке):
-Полная интеграция Metaplex SDK 
-требует дополнительной настройки.
-
-💡 После минта через Sugar:
-- NFT появится в Phantom (devnet)
-- Можешь играть в игру!
-- Проверь: https://explorer.solana.com
-
-🔧 Хочешь автоматический минт с сайта?
-Напиши разработчику!`);
+            // Минтим через Umi
+            mintBtn.querySelector('.btn-text').textContent = '🔄 MINTING NFT...';
+            const result = await window.UmiCandyMachine.mintNFT();
             
-            // Создаем демо NFT для тестирования UI
-            const demoNFT = {
-                mintAddress: 'DEMO_' + Date.now(),
-                metadata: {
-                    name: 'Tamagotchi #DEMO',
-                    gameData: {
-                        type: 'lion',
-                        emoji: '🦁',
-                        rarity: 'demo'
-                    }
-                },
-                price: price,
-                owner: this.publicKey.toString()
+            if (!result.success) {
+                throw new Error(result.error || 'Mint failed');
+            }
+            
+            console.log('✅ NFT MINTED!', result);
+            
+            // Создаём NFT объект для сохранения
+            const nft = {
+                mintAddress: result.mintAddress,
+                signature: result.signature,
+                type: result.metadata.gameData.type,
+                emoji: result.metadata.gameData.emoji,
+                rarity: result.metadata.gameData.rarity,
+                tamaBonus: this.phases[this.getCurrentPhase()].tamaBonus,
+                mintedAt: Date.now(),
+                owner: this.publicKey.toString(),
+                metadata: result.metadata
             };
             
-            // Сохраняем демо данные
-            this.saveNFTData(demoNFT);
+            // Сохраняем NFT данные
+            this.saveNFTData(nft);
+            
+            // Записываем минт в базу данных
+            const phaseIndex = this.getCurrentPhase();
+            if (window.Database && window.Database.recordMint) {
+                await window.Database.recordMint(
+                    this.publicKey.toString(),
+                    nft,
+                    price,
+                    phaseIndex
+                );
+            }
             
             // Показываем success modal
-            this.showSuccessModal(demoNFT);
+            this.showSuccessModal(nft);
             
             // Reload stats
             await this.loadMintStats();

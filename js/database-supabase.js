@@ -372,6 +372,7 @@ const Database = {
         try {
             console.log('💾 Recording NFT mint to database...', {
                 wallet: walletAddress,
+                mintAddress: nftData.mintAddress,
                 type: nftData.type,
                 rarity: nftData.rarity,
                 price: price,
@@ -382,6 +383,7 @@ const Database = {
                 .from('nft_mints')
                 .insert({
                     wallet_address: walletAddress,
+                    nft_mint_address: nftData.mintAddress, // ✅ Добавляем mint address
                     nft_type: nftData.type,
                     nft_rarity: nftData.rarity,
                     nft_data: nftData,
@@ -396,6 +398,14 @@ const Database = {
             }
             
             console.log('✅ NFT mint recorded successfully!', data);
+            
+            // ✅ Также обновляем leaderboard с nft_mint_address
+            await this.updatePlayerData(walletAddress, {
+                nft_mint_address: nftData.mintAddress,
+                pet_type: nftData.type,
+                pet_rarity: nftData.rarity
+            });
+            
             return true;
         } catch (error) {
             console.error('❌ Failed to record mint:', error);

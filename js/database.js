@@ -496,7 +496,7 @@ const Database = {
             });
             
             // Update total spent
-            if (type === 'create_pet' || type === 'revive_pet') {
+            if (type === 'create_pet') {
                 await this.db.collection('players').doc(walletAddress).update({
                     totalSpent: firebase.firestore.FieldValue.increment(amount)
                 });

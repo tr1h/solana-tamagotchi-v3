@@ -224,25 +224,14 @@ const WalletManager = {
         }
     },
     
-    // Create new pet (costs 0.1 SOL or FREE in demo mode)
+    // Create new pet (costs 0.1 SOL)
     async createPet(petData) {
         try {
             const cost = 0.1 * solanaWeb3.LAMPORTS_PER_SOL; // 0.1 SOL
             
-            // If balance is 0 due to CORS or network issues, allow free pet creation (demo mode)
-            if (this.balance === 0) {
-                Utils.showNotification('⚠️ Running in DEMO mode - Pet created for FREE');
-                Utils.showNotification('💡 To use blockchain features, make sure you have SOL in your wallet');
-                
-                return {
-                    success: true,
-                    demo: true,
-                    petData
-                };
-            }
-            
+            // Check balance
             if (this.balance < cost) {
-                throw new Error('Insufficient balance. Need 0.1 SOL');
+                throw new Error(`Insufficient balance. Need 0.1 SOL, have ${(this.balance / solanaWeb3.LAMPORTS_PER_SOL).toFixed(2)} SOL`);
             }
             
             // In production, this would be a smart contract call
@@ -266,51 +255,7 @@ const WalletManager = {
         }
     },
     
-    // Revive pet (costs 0.05 SOL or 100 TAMA or FREE in demo mode)
-    async revivePet(useSOL = true) {
-        try {
-            if (useSOL) {
-                const cost = 0.05 * solanaWeb3.LAMPORTS_PER_SOL; // 0.05 SOL
-                
-                // Demo mode - allow free revival
-                if (this.balance === 0) {
-                    Utils.showNotification('⚠️ DEMO mode - Pet revived for FREE');
-                    return { success: true, demo: true };
-                }
-                
-                if (this.balance < cost) {
-                    throw new Error('Insufficient balance. Need 0.05 SOL');
-                }
-                
-                const treasuryWallet = 'GXvKWk8VierD1H6VXzQz7GxZBMZUxXKqvmHkBRGdPump';
-                
-                Utils.showNotification('⏳ Reviving pet...');
-                
-                const signature = await this.sendSOL(treasuryWallet, cost);
-                
-                Utils.showNotification('✅ Pet revived with SOL!');
-                
-                return { success: true, signature };
-            } else {
-                // Use TAMA tokens
-                const playerData = Utils.loadLocal('playerData');
-                
-                if (!playerData || playerData.tama < 100) {
-                    throw new Error('Insufficient TAMA. Need 100 TAMA');
-                }
-                
-                playerData.tama -= 100;
-                Utils.saveLocal('playerData', playerData);
-                
-                Utils.showNotification('✅ Pet revived with TAMA!');
-                
-                return { success: true };
-            }
-        } catch (error) {
-            Utils.handleError(error, 'Revive Pet');
-            return { success: false };
-        }
-    },
+    // Note: Pet revival removed - pets don't die, they go into critical state
     
     // Update wallet UI
     updateWalletUI(connected) {

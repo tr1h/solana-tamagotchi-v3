@@ -89,3 +89,4 @@ referralCode.textContent = `${window.location.origin}?ref=${wallet.publicKey}`;
 
 **Готово 2/5 задач! 🚀**
 
+
