@@ -625,6 +625,9 @@
                 // Use advanced ranking system
                 const players = await window.RankingSystem.getAdvancedLeaderboard(15);
                 
+                // Save for breakdown function
+                window.currentLeaderboard = players;
+                
                 const html = `
                     <div style="margin-bottom: 20px;">
                         <h4>🏆 Advanced Leaderboard</h4>
@@ -652,7 +655,8 @@
                                     </td>
                                     <td>
                                         <div>
-                                            <strong>${player.wallet_address.slice(0, 8)}...</strong><br>
+                                            <strong title="${player.wallet_address}">${player.wallet_address.slice(0, 8)}...</strong>
+                                            <button onclick="copyAddress('${player.wallet_address}')" style="margin-left: 5px; padding: 2px 6px; font-size: 10px; background: #667eea; color: white; border: none; border-radius: 3px; cursor: pointer;">📋</button><br>
                                             <small style="color: #666;">${player.playtimeFormatted} played</small>
                                         </div>
                                     </td>
@@ -663,7 +667,8 @@
                                         <small style="color: #666;">
                                             XP: ${(player.total_xp || 0).toLocaleString()} | 
                                             TAMA: ${(player.tama || 0).toLocaleString()}
-                                        </small>
+                                        </small><br>
+                                        <button onclick="showScoreBreakdown('${player.wallet_address}')" style="margin-top: 2px; padding: 1px 4px; font-size: 9px; background: #f3f4f6; color: #666; border: none; border-radius: 2px; cursor: pointer;">📊 Details</button>
                                     </td>
                                     <td>${player.activityStatus}</td>
                                     <td>${player.rarityTier}</td>
@@ -865,6 +870,79 @@
             if (confirm(message)) {
                 callback();
             }
+        }
+
+        // Copy address to clipboard
+        async function copyAddress(address) {
+            try {
+                await navigator.clipboard.writeText(address);
+                
+                // Show success feedback
+                const button = event.target;
+                const originalText = button.textContent;
+                button.textContent = '✅';
+                button.style.background = '#10b981';
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = '#667eea';
+                }, 2000);
+                
+                console.log('📋 Address copied:', address);
+            } catch (error) {
+                console.error('❌ Failed to copy address:', error);
+                alert('❌ Failed to copy address. Please copy manually:\n\n' + address);
+            }
+        }
+
+        // Show score breakdown
+        function showScoreBreakdown(walletAddress) {
+            // Find player data
+            const players = window.currentLeaderboard || [];
+            const player = players.find(p => p.wallet_address === walletAddress);
+            
+            if (!player) {
+                alert('❌ Player data not found');
+                return;
+            }
+            
+            const breakdown = player.scoreBreakdown || {
+                baseScore: (player.total_xp || 0) + ((player.level || 1) * 100),
+                tamaScore: (player.tama || 0) * 0.1,
+                rarityBonus: 0,
+                activityBonus: 0,
+                total: player.ranking_score || 0
+            };
+            
+            const rarityMultiplier = {
+                'common': 0,
+                'rare': 1,
+                'epic': 2,
+                'legendary': 3
+            };
+            
+            const rarityBonus = (rarityMultiplier[player.pet_rarity] || 0) * 50;
+            
+            const message = `
+🏆 SCORE BREAKDOWN for ${player.wallet_address.slice(0, 8)}...
+
+📊 Base Score: ${breakdown.baseScore.toLocaleString()}
+   • Total XP: ${(player.total_xp || 0).toLocaleString()}
+   • Level Bonus: ${(player.level || 1)} × 100 = ${((player.level || 1) * 100).toLocaleString()}
+
+💰 TAMA Score: ${breakdown.tamaScore.toFixed(1)}
+   • TAMA: ${(player.tama || 0).toLocaleString()} × 0.1
+
+🎨 Rarity Bonus: ${rarityBonus}
+   • ${player.pet_rarity || 'common'} × 50
+
+⚡ Activity Bonus: ${breakdown.activityBonus}
+   • Status: ${player.activityStatus}
+
+🏆 TOTAL SCORE: ${breakdown.total.toLocaleString()}
+            `;
+            
+            alert(message);
         }
 
         // Initialize
