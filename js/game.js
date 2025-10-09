@@ -500,23 +500,24 @@ const Game = {
     addXP(amount) {
         if (!this.pet) return;
         
-        this.pet.xp += amount;
+        this.pet.xp = (this.pet.xp || 0) + amount;
         
-        const xpNeeded = Utils.getXPForLevel(this.pet.level);
+        // Проверяем эволюцию каждые 1000 XP
+        const evolutionLevel = Math.floor(this.pet.xp / 1000) + 1;
+        if (evolutionLevel > this.pet.evolution) {
+            this.pet.evolution = Math.min(evolutionLevel, 5); // Максимум 5 эволюций
+            Utils.showNotification(`✨ Pet evolved to stage ${this.pet.evolution}!`, 'success');
+        }
         
-        if (this.pet.xp >= xpNeeded) {
-            this.levelUp();
-        } else {
-            // Update leaderboard even without level up
-            if (window.Database && WalletManager.isConnected()) {
-                Database.updatePlayerData(WalletManager.getAddress(), {
-                    pet_name: this.pet.name,
-                    level: this.pet.level,
-                    xp: this.pet.xp,
-                    tama: this.pet.tama || 0,
-                    pet_data: this.pet
-                });
-            }
+        // Update leaderboard
+        if (window.Database && WalletManager.isConnected()) {
+            Database.updatePlayerData(WalletManager.getAddress(), {
+                pet_name: this.pet.name,
+                level: this.pet.evolution, // Используем эволюцию как уровень
+                xp: this.pet.xp,
+                tama: this.pet.tama || 0,
+                pet_data: this.pet
+            });
         }
         
         this.updateXPBar();
@@ -595,7 +596,7 @@ const Game = {
         // Update pet info
         document.getElementById('pet-name').textContent = this.pet.name;
         document.getElementById('pet-type').textContent = `${this.petTypes[this.pet.type].name} (${this.pet.rarity})`;
-        document.getElementById('pet-level').textContent = `Level ${this.pet.level}`;
+        document.getElementById('pet-level').textContent = `XP: ${this.pet.xp || 0}`;
         
         // Update stats
         this.updateStatBar('hunger', this.pet.stats.hunger);
@@ -633,11 +634,12 @@ const Game = {
     updateXPBar() {
         if (!this.pet) return;
         
-        const xpNeeded = Utils.getXPForLevel(this.pet.level);
-        const percentage = (this.pet.xp / xpNeeded) * 100;
+        // Показываем общий XP без ограничений
+        const totalXP = this.pet.xp || 0;
+        const percentage = Math.min(100, (totalXP % 1000) / 10); // Каждые 1000 XP = 100%
         
         document.getElementById('xp-bar').style.width = `${percentage}%`;
-        document.getElementById('xp-text').textContent = `${this.pet.xp} / ${xpNeeded} XP`;
+        document.getElementById('xp-text').textContent = `${totalXP} XP`;
     },
     
     // Draw pet on canvas
@@ -1005,7 +1007,10 @@ const Game = {
             
             // ❌ NFT не найден ни в базе, ни на blockchain
             console.log('❌ No NFT found, redirecting to mint');
-            this.showMintRequired();
+            // Не показываем модалку сразу - даём время на обновление базы
+            setTimeout(() => {
+                this.showMintRequired();
+            }, 2000);
             
         } catch (error) {
             console.error('❌ Error checking NFT ownership:', error);
@@ -1054,7 +1059,7 @@ const Game = {
                 },
                 level: nft.metadata.gameData.level || 1,
                 xp: nft.metadata.gameData.xp || 0,
-                evolution: nft.metadata.gameData.evolution || 0,
+                evolution: nft.metadata.gameData.evolution || 1,
                 createdAt: Date.now(),
                 lastUpdate: Date.now(),
                 isDead: false,
@@ -1079,7 +1084,7 @@ const Game = {
             },
             level: 1,
             xp: 0,
-            evolution: 0,
+            evolution: 1,
             createdAt: Date.now(),
             lastUpdate: Date.now(),
             isDead: false,
