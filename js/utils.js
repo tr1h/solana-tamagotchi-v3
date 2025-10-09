@@ -149,7 +149,10 @@ const Utils = {
             unicorn: ['🦄', '🦄✨', '🦄🌈', '🦄⚡', '🦄🌟'],
             wolf: ['🐺', '🐺✨', '🐺🌙', '🐺⚡', '🐺🌟']
         };
-        return emojis[type]?.[evolution - 1] || '🐾';
+        
+        // Fix evolution index - ensure it's at least 0
+        const evolutionIndex = Math.max(0, evolution - 1);
+        return emojis[type]?.[evolutionIndex] || '🐾';
     },
 
     // Save to localStorage
