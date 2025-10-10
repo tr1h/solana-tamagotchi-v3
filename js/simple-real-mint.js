@@ -15,7 +15,12 @@ const SimpleRealMint = {
             this.wallet = wallet;
             this.connection = new solanaWeb3.Connection('https://api.devnet.solana.com', 'confirmed');
             
-            console.log('✅ Simple Real Mint initialized');
+            // Test wallet connection
+            if (!this.wallet || !this.wallet.publicKey) {
+                throw new Error('Wallet not connected');
+            }
+            
+            console.log('✅ Simple Real Mint initialized with wallet:', this.wallet.publicKey.toString());
             return true;
         } catch (error) {
             console.error('❌ Failed to initialize Simple Real Mint:', error);
@@ -47,6 +52,12 @@ const SimpleRealMint = {
             );
             
             console.log('💰 Sending SOL to treasury:', this.TREASURY_ADDRESS);
+            
+            // Check if wallet has sendTransaction method
+            if (!this.wallet.sendTransaction) {
+                throw new Error('Wallet does not support sendTransaction');
+            }
+            
             const transferSignature = await this.wallet.sendTransaction(transferTransaction, this.connection);
             await this.connection.confirmTransaction(transferSignature);
             console.log('✅ SOL sent to treasury:', transferSignature);
