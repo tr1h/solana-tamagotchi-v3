@@ -157,9 +157,9 @@
                     </button>
                     <div id="balance-display" class="balance-display hidden">
                         <span class="balance-sol">0 SOL</span>
-                        <span class="balance-tama" style="cursor: pointer; position: relative;">0 TAMA
+                        <span class="balance-tama" style="cursor: pointer; position: relative; display: inline-block;">0 TAMA
                             <!-- TAMA Hover Dropdown -->
-                            <div class="tama-header-dropdown" style="position: absolute; top: 100%; right: 0; background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); padding: 20px; margin-top: 10px; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.3s ease; z-index: 1000; color: #333; min-width: 300px;">
+                            <div class="tama-header-dropdown" style="position: absolute; top: 100%; right: 0; background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); padding: 20px; margin-top: 15px; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.3s ease; z-index: 1000; color: #333; min-width: 300px;">
                                 <div style="font-size: 12px; margin-bottom: 15px;">
                                     <div style="font-weight: bold; margin-bottom: 10px; color: #2ecc71;">💰 Earn TAMA:</div>
                                     <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
@@ -615,12 +615,7 @@
             border-bottom: 8px solid white;
         }
 
-        /* Header TAMA Hover Styles */
-        .balance-tama:hover .tama-header-dropdown {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
+        /* Header TAMA Hover Styles - handled by JavaScript */
 
         .tama-header-dropdown::before {
             content: '';
@@ -761,11 +756,33 @@
             }
         }
         
-        // Add event listener for TAMA history button
+        // Add event listener for TAMA history button and hover
         document.addEventListener('DOMContentLoaded', function() {
             const historyBtn = document.getElementById('tama-history-btn');
             if (historyBtn) {
                 historyBtn.addEventListener('click', showTAMAHistory);
+            }
+            
+            // TAMA hover functionality
+            const balanceTama = document.querySelector('.balance-tama');
+            if (balanceTama) {
+                balanceTama.addEventListener('mouseenter', function() {
+                    const dropdown = this.querySelector('.tama-header-dropdown');
+                    if (dropdown) {
+                        dropdown.style.opacity = '1';
+                        dropdown.style.visibility = 'visible';
+                        dropdown.style.transform = 'translateY(0)';
+                    }
+                });
+                
+                balanceTama.addEventListener('mouseleave', function() {
+                    const dropdown = this.querySelector('.tama-header-dropdown');
+                    if (dropdown) {
+                        dropdown.style.opacity = '0';
+                        dropdown.style.visibility = 'hidden';
+                        dropdown.style.transform = 'translateY(-10px)';
+                    }
+                });
             }
         });
     </script>
