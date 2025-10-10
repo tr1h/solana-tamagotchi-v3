@@ -3,48 +3,44 @@
 // ============================================
 
 const TAMASystem = {
-    // TAMA награды
-    REWARDS: {
-        MINT_NFT: 500,
-        DAILY_LOGIN: 25,
-        FEED_PET: 5,
-        PLAY_WITH_PET: 10,
-        TRAIN_PET: 15,
-        LEVEL_UP: 50,
-        EVOLUTION: 100,
-        ACHIEVEMENT: {
-            BRONZE: 10,
-            SILVER: 25,
-            GOLD: 50,
-            PLATINUM: 100
-        },
-        REFERRAL: {
-            LEVEL_1: 25,
-            LEVEL_2: 12,
-            PERCENT_L1: 0.10, // 10%
-            PERCENT_L2: 0.05  // 5%
-        }
+    // Use new token system
+    get token() {
+        return window.TAMAToken;
+    },
+    
+    // TAMA награды (kept for backward compatibility)
+    get REWARDS() {
+        return this.token?.ECONOMICS.EARN_RATES || {};
     },
     
     // Daily earnings cap
-    DAILY_CAP: 150,
+    get DAILY_CAP() {
+        return this.token?.ECONOMICS.DAILY_LIMITS.TOTAL_EARN || 150;
+    },
     
-    // Award TAMA with reason tracking
+    // Award TAMA with reason tracking (now uses TAMAToken)
     async awardTAMA(walletAddress, amount, reason) {
-        if (!window.Database || !walletAddress) return false;
+        if (!walletAddress) return false;
         
         try {
             console.log(`💰 Awarding ${amount} TAMA for: ${reason}`);
             
-            // Update TAMA with reason for history
-            await window.Database.updateTAMA(walletAddress, amount, reason);
-            
-            // Show notification
-            if (window.Utils && window.Utils.showNotification) {
-                window.Utils.showNotification(`+${amount} TAMA - ${reason}`);
+            // Use new token system
+            if (window.TAMAToken) {
+                return await window.TAMAToken.award(walletAddress, amount, reason);
             }
             
-            return true;
+            // Fallback to old system
+            if (window.Database) {
+                await window.Database.updateTAMA(walletAddress, amount, reason);
+                
+                if (window.Utils && window.Utils.showNotification) {
+                    window.Utils.showNotification(`+${amount} TAMA - ${reason}`);
+                }
+                return true;
+            }
+            
+            return false;
         } catch (error) {
             console.error('Failed to award TAMA:', error);
             return false;

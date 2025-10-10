@@ -271,9 +271,16 @@ const WalletManager = {
     // Update balance display
     updateBalanceDisplay() {
         const balanceSol = document.querySelector('.balance-sol');
+        const balanceTama = document.querySelector('.balance-tama');
         
         if (balanceSol) {
             balanceSol.textContent = Utils.formatSOL(this.balance);
+        }
+        
+        if (balanceTama) {
+            const playerData = Utils.loadLocal('playerData');
+            const tama = playerData?.tama || 0;
+            balanceTama.textContent = `${tama} TAMA`;
         }
     },
     
