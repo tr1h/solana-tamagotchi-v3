@@ -31,14 +31,15 @@ COMMENT ON COLUMN nft_mints.nft_rarity IS 'Редкость (Common, Rare, Epic,
 COMMENT ON COLUMN nft_mints.mint_price IS 'Цена минтинга в SOL';
 COMMENT ON COLUMN nft_mints.mint_phase IS 'Фаза минтинга (1, 2, 3, 4)';
 
--- 4. Проверить что таблица создана
-SELECT 
-    table_name,
-    column_name,
-    data_type
-FROM information_schema.columns
-WHERE table_name = 'nft_mints'
-ORDER BY ordinal_position;
+-- 4. Проверить что таблица создана (только если таблица существует)
+DO $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'nft_mints') THEN
+        RAISE NOTICE 'Table nft_mints exists, showing structure:';
+    ELSE
+        RAISE NOTICE 'Table nft_mints does not exist yet';
+    END IF;
+END $$;
 
 -- 5. Пример вставки NFT минтинга
 -- INSERT INTO nft_mints (wallet_address, mint_address, nft_name, nft_type, nft_rarity, mint_price, mint_phase)
