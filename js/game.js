@@ -339,7 +339,7 @@ const Game = {
     },
     
     // Feed pet
-    feed() {
+    async feed() {
         if (!this.pet) {
             Utils.showNotification('❌ No active pet');
             return;
@@ -354,6 +354,11 @@ const Game = {
         this.pet.stats.energy = Math.max(0, this.pet.stats.energy - 5);
         this.addXP(10);
         
+        // Award TAMA for feeding
+        if (window.TAMASystem && WalletManager.isConnected()) {
+            await TAMASystem.awardFeeding(WalletManager.getAddress());
+        }
+        
         this.updatePetDisplay();
         this.savePetData();
         
@@ -363,7 +368,7 @@ const Game = {
     },
     
     // Play with pet
-    play() {
+    async play() {
         if (!this.pet) {
             Utils.showNotification('❌ No active pet');
             return;
@@ -378,6 +383,11 @@ const Game = {
         this.pet.stats.energy = Math.max(0, this.pet.stats.energy - 15);
         this.pet.stats.hunger = Math.max(0, this.pet.stats.hunger - 10);
         this.addXP(15);
+        
+        // Award TAMA for playing
+        if (window.TAMASystem && WalletManager.isConnected()) {
+            await TAMASystem.awardPlaying(WalletManager.getAddress());
+        }
         
         this.updatePetDisplay();
         this.savePetData();
@@ -482,7 +492,7 @@ const Game = {
     },
     
     // Level up
-    levelUp() {
+    async levelUp() {
         this.pet.level++;
         this.pet.xp = 0; // Reset current level XP, but keep total_xp
         
@@ -493,6 +503,11 @@ const Game = {
         this.pet.stats.happy = Math.min(100, this.pet.stats.happy + 10);
         
         Utils.showNotification(`🎉 Level Up! Now level ${this.pet.level}`);
+        
+        // Award TAMA for level up
+        if (window.TAMASystem && WalletManager.isConnected()) {
+            await TAMASystem.awardLevelUp(WalletManager.getAddress(), this.pet.level);
+        }
         
         // Update leaderboard
         if (window.Database && WalletManager.isConnected()) {
@@ -752,7 +767,7 @@ const Game = {
     },
     
     // Claim daily reward
-    claimDailyReward() {
+    async claimDailyReward() {
         if (!WalletManager.isConnected()) {
             Utils.showNotification('❌ Connect wallet first');
             return;
@@ -766,7 +781,12 @@ const Game = {
             return;
         }
         
-        // Give reward
+        // Award TAMA for daily login
+        if (window.TAMASystem && WalletManager.isConnected()) {
+            await TAMASystem.awardDailyLogin(WalletManager.getAddress());
+        }
+        
+        // Give local reward too
         const reward = 50;
         playerData.tama = (playerData.tama || 0) + reward;
         playerData.lastDaily = Date.now();

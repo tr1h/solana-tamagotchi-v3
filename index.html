@@ -157,6 +157,46 @@
                     </button>
                     <div id="balance-display" class="balance-display hidden">
                         <span class="balance-sol">0 SOL</span>
+                        <span class="balance-tama" style="cursor: pointer; position: relative;">0 TAMA
+                            <!-- TAMA Hover Dropdown -->
+                            <div class="tama-header-dropdown" style="position: absolute; top: 100%; right: 0; background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); padding: 20px; margin-top: 10px; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.3s ease; z-index: 1000; color: #333; min-width: 300px;">
+                                <div style="font-size: 12px; margin-bottom: 15px;">
+                                    <div style="font-weight: bold; margin-bottom: 10px; color: #2ecc71;">💰 Earn TAMA:</div>
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                        <span>🌅 Daily Login:</span>
+                                        <span style="color: #2ecc71; font-weight: bold;">+25 TAMA</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                        <span>🍔 Feed Pet:</span>
+                                        <span style="color: #2ecc71; font-weight: bold;">+5 TAMA</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                        <span>🎮 Play:</span>
+                                        <span style="color: #2ecc71; font-weight: bold;">+10 TAMA</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                        <span>💪 Train:</span>
+                                        <span style="color: #2ecc71; font-weight: bold;">+15 TAMA</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                        <span>🆙 Level Up:</span>
+                                        <span style="color: #2ecc71; font-weight: bold;">+50 TAMA</span>
+                                    </div>
+                                    
+                                    <div style="border-top: 1px solid #eee; padding-top: 10px; margin-top: 10px;">
+                                        <div style="font-weight: bold; margin-bottom: 10px; color: #e74c3c;">💸 Spend TAMA:</div>
+                                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                            <span>🦋 Evolve Pet:</span>
+                                            <span style="color: #e74c3c; font-weight: bold;">-50 TAMA</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <button id="tama-history-btn" class="action-btn secondary" style="width: 100%; font-size: 12px; padding: 8px;">
+                                    📜 View TAMA History
+                                </button>
+                            </div>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -244,55 +284,6 @@
             <!-- Right Panel - Controls & Info -->
             <section class="game-controls">
                 
-                <!-- TAMA Balance & Info -->
-                <div class="control-panel">
-                    <h3 class="panel-title">💰 TAMA Balance</h3>
-                    
-                    <!-- Compact TAMA Display with Hover Info -->
-                    <div class="tama-display-compact" style="background: linear-gradient(135deg, #f39c12, #e67e22); padding: 15px; border-radius: 12px; text-align: center; color: white; margin-bottom: 15px; cursor: pointer; position: relative; transition: all 0.3s ease;">
-                        <div style="font-size: 24px; font-weight: bold; margin-bottom: 5px;" id="tama-balance-display">0 TAMA</div>
-                        <div style="font-size: 11px; opacity: 0.9;">Hover for details</div>
-                        
-                        <!-- Hover Dropdown -->
-                        <div class="tama-hover-info" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); padding: 20px; margin-top: 10px; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.3s ease; z-index: 1000; color: #333;">
-                            <div style="font-size: 12px; margin-bottom: 15px;">
-                                <div style="font-weight: bold; margin-bottom: 10px; color: #2ecc71;">💰 Earn TAMA:</div>
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                                    <span>🌅 Daily Login:</span>
-                                    <span style="color: #2ecc71; font-weight: bold;">+25 TAMA</span>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                                    <span>🍔 Feed Pet:</span>
-                                    <span style="color: #2ecc71; font-weight: bold;">+5 TAMA</span>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                                    <span>🎮 Play:</span>
-                                    <span style="color: #2ecc71; font-weight: bold;">+10 TAMA</span>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                                    <span>💪 Train:</span>
-                                    <span style="color: #2ecc71; font-weight: bold;">+15 TAMA</span>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                                    <span>🆙 Level Up:</span>
-                                    <span style="color: #2ecc71; font-weight: bold;">+50 TAMA</span>
-                                </div>
-                                
-                                <div style="border-top: 1px solid #eee; padding-top: 10px; margin-top: 10px;">
-                                    <div style="font-weight: bold; margin-bottom: 10px; color: #e74c3c;">💸 Spend TAMA:</div>
-                                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                                        <span>🦋 Evolve Pet:</span>
-                                        <span style="color: #e74c3c; font-weight: bold;">-50 TAMA</span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <button id="tama-history-btn" class="action-btn secondary" style="width: 100%; font-size: 12px; padding: 8px;">
-                                📜 View TAMA History
-                            </button>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- Pet Management -->
                 <div class="control-panel">
@@ -617,6 +608,25 @@
             top: -8px;
             left: 50%;
             transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-bottom: 8px solid white;
+        }
+
+        /* Header TAMA Hover Styles */
+        .balance-tama:hover .tama-header-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .tama-header-dropdown::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            right: 20px;
             width: 0;
             height: 0;
             border-left: 8px solid transparent;
