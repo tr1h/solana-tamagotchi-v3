@@ -430,6 +430,11 @@
                 <div class="change">Loading...</div>
             </div>
             <div class="stat-card">
+                <h3>💰 Total TAMA</h3>
+                <div class="value" id="stat-tama">-</div>
+                <div class="change" id="stat-tama-change">-</div>
+            </div>
+            <div class="stat-card">
                 <h3>NFT Minted</h3>
                 <div class="value" id="stat-nfts">-</div>
                 <div class="change">Loading...</div>
@@ -651,6 +656,9 @@
                     .from('leaderboard')
                     .select('*', { count: 'exact' });
                 
+                // Calculate total TAMA
+                const totalTAMA = players?.reduce((sum, p) => sum + (p.tama || 0), 0) || 0;
+                
                 // Get NFTs
                 const { data: nfts, error: nftsError } = await supabase
                     .from('nft_mints')
@@ -659,14 +667,12 @@
                 if (!playersError && !nftsError) {
                     document.getElementById('stat-players').textContent = players.length;
                     document.getElementById('stat-nfts').textContent = nfts.length;
+                    document.getElementById('stat-tama').textContent = totalTAMA.toLocaleString();
+                    document.getElementById('stat-tama-change').textContent = `In circulation`;
                     
                     // Calculate revenue
                     const revenue = nfts.reduce((sum, nft) => sum + (nft.mint_price || 0), 0);
                     document.getElementById('stat-revenue').textContent = revenue.toFixed(2);
-                    
-                    // Calculate total TAMA
-                    const totalTama = players.reduce((sum, p) => sum + (p.tama || 0), 0);
-                    document.getElementById('stat-tama').textContent = totalTama.toLocaleString();
                 }
             } catch (error) {
                 console.error('Error loading stats:', error);
