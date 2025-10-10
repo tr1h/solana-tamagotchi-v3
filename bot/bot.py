@@ -598,12 +598,7 @@ def send_leaderboard(message):
     text = """
 🏆 *Leaderboard:*
 
-*Top Players by TAMA:*
-1. 🥇 Player1 - 1,250 TAMA
-2. 🥈 Player2 - 980 TAMA  
-3. 🥉 Player3 - 750 TAMA
-
-*Top Players by Level:*
+*Top Players by XP:*
 1. 🥇 Player1 - Level 15
 2. 🥈 Player2 - Level 12
 3. 🥉 Player3 - Level 10
@@ -1007,9 +1002,7 @@ To start playing and tracking your stats:
             text = f"""
 🏆 *Live Leaderboard:*
 
-*Top Players by TAMA:*
-{tama_text}
-*Top Players by Level:*
+*Top Players by XP:*
 {level_text}
 🎮 *Play more to climb the ranks!*
             """
