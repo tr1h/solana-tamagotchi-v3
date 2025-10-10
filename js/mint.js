@@ -97,10 +97,26 @@ const MintPage = {
         );
         
         // Initialize SimpleNFTMint (using fallback mode for devnet)
-        if (window.SimpleNFTMint) {
+        // Try to initialize UmiCandyMachine first
+        if (window.UmiLoader) {
+            console.log('🔄 Loading Umi SDK...');
+            const umiLoaded = await window.UmiLoader.loadUmiSDK();
+            
+            if (umiLoaded && window.UmiCandyMachine) {
+                console.log('🍬 Initializing UmiCandyMachine...');
+                await window.UmiCandyMachine.init();
+                console.log('✅ UmiCandyMachine ready for real minting');
+                this.usingUmi = true;
+            } else {
+                console.warn('⚠️ Umi SDK failed to load, using fallback');
+                this.usingUmi = false;
+            }
+        }
+        
+        // Fallback to SimpleNFTMint
+        if (!this.usingUmi && window.SimpleNFTMint) {
             await window.SimpleNFTMint.init(this.wallet);
-            console.log('✅ SimpleNFTMint ready for minting');
-            this.usingUmi = false;
+            console.log('✅ SimpleNFTMint ready for minting (demo mode)');
         }
         
         // Update UI
@@ -328,11 +344,24 @@ const MintPage = {
             
             mintBtn.querySelector('.btn-text').textContent = '🔄 MINTING NFT...';
             
-            // Use SimpleNFTMint
-            if (!window.SimpleNFTMint) {
-                throw new Error('SimpleNFTMint not available');
+            // Try UmiCandyMachine first, fallback to SimpleNFTMint
+            if (window.UmiCandyMachine && window.UmiCandyMachine.umi) {
+                console.log('🍬 Using UmiCandyMachine for real minting...');
+                const result = await window.UmiCandyMachine.mintNFT();
+                
+                if (result.success) {
+                    return result;
+                } else {
+                    console.warn('⚠️ UmiCandyMachine failed, falling back to SimpleNFTMint');
+                }
             }
             
+            // Fallback to SimpleNFTMint
+            if (!window.SimpleNFTMint) {
+                throw new Error('No minting system available');
+            }
+            
+            console.log('🎨 Using SimpleNFTMint (demo mode)...');
             const result = await window.SimpleNFTMint.mintNFT();
             
             if (!result.success) {
