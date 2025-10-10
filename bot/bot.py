@@ -1051,16 +1051,16 @@ if __name__ == '__main__':
     scheduler_thread.start()
     
     try:
-        # Clear any pending updates first
-        bot.remove_webhook()
-        print("Webhook cleared, starting polling...")
-        # Wait a bit before starting polling
-        time.sleep(5)
+        # Skip webhook operations on PythonAnywhere (causes proxy errors)
+        print("Starting polling (webhook disabled for PythonAnywhere)...")
         bot.infinity_polling(none_stop=True, interval=2, timeout=60)
     except Exception as e:
         print(f"Bot error: {e}")
         print("Restarting bot in 15 seconds...")
         time.sleep(15)
-        bot.remove_webhook()
-        time.sleep(5)
-        bot.infinity_polling(none_stop=True, interval=2, timeout=60)
+        # Retry without webhook operations
+        try:
+            bot.infinity_polling(none_stop=True, interval=2, timeout=60)
+        except Exception as e2:
+            print(f"Retry failed: {e2}")
+            print("Bot stopped due to connection issues")
