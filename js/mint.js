@@ -503,8 +503,11 @@ const MintPage = {
             const tamaAmount = this.phases[phaseIndex].tamaBonus;
             console.log(`🪙 Rewarding ${tamaAmount} TAMA for minting...`);
             
-            // Try new TamaToken system first
-            if (window.TamaToken && window.TamaToken.rewardTama) {
+            // Use new TAMA Module
+            if (window.TAMAModule) {
+                await window.TAMAModule.earnTAMA(this.publicKey.toString(), tamaAmount, 'Mint NFT', `NFT Mint - ${nft.name}`);
+            } else if (window.TamaToken && window.TamaToken.rewardTama) {
+                // Fallback to old system
                 await window.TamaToken.rewardTama(this.publicKey.toString(), tamaAmount, 'mint', `NFT Mint - ${nft.name}`);
             } else if (window.TAMASystem && window.TAMASystem.awardTAMA) {
                 // Fallback to old system

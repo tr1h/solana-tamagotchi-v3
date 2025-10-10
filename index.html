@@ -659,6 +659,7 @@
     <script src="js/database-supabase.js?v=2"></script>
     <script src="js/ranking-system.js?v=2"></script>
     <script src="js/tama-token.js?v=2"></script>
+    <script src="js/tama-module.js?v=2"></script>
     <script src="js/tama-system.js?v=2"></script>
     <script src="js/achievements.js?v=2"></script>
     <script src="js/ui.js?v=2"></script>
@@ -773,6 +774,14 @@
             }
             
             // TAMA hover functionality
+            const tamaBalance = document.querySelector('.balance-tama');
+            if (tamaBalance) {
+                tamaBalance.addEventListener('click', function() {
+                    if (window.WalletManager && window.WalletManager.publicKey) {
+                        window.TAMAModule.showTAMADetails(window.WalletManager.publicKey.toString());
+                    }
+                });
+            }
             const balanceTama = document.querySelector('.balance-tama');
             if (balanceTama) {
                 balanceTama.addEventListener('mouseenter', function() {
