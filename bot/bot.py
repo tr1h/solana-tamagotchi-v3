@@ -232,23 +232,7 @@ def send_welcome(message):
     
     bot.reply_to(message, welcome_text, parse_mode='Markdown', reply_markup=keyboard)
 
-# Handle callback queries
-@bot.callback_query_handler(func=lambda call: True)
-def handle_callback(call):
-    if call.data == "get_referral":
-        # Simulate /ref command
-        send_referral(call.message)
-    elif call.data == "my_stats":
-        # Simulate /stats command
-        send_stats(call.message)
-    elif call.data == "leaderboard":
-        # Show leaderboard
-        show_leaderboard(call.message)
-    elif call.data == "rules":
-        # Show rules
-        show_rules(call.message)
-    
-    bot.answer_callback_query(call.id)
+# Handle callback queries - REMOVED DUPLICATE
 
 # Private commands (personal data)
 @bot.message_handler(commands=['stats'], func=lambda message: message.chat.type == 'private')
@@ -495,16 +479,47 @@ def send_referral(message):
     wallet_address = get_wallet_by_telegram(telegram_id)
     
     if not wallet_address:
-        bot.reply_to(message, f"""
-❌ *Connect your wallet first!*
+        # Create referral link using Telegram ID as fallback
+        user_id = message.from_user.id
+        username = message.from_user.username or message.from_user.first_name
+        telegram_ref_code = base64.b64encode(str(user_id).encode()).decode()[:8]
+        telegram_link = f"https://t.me/solana_tamagotchi_v3_bot?start=ref{telegram_ref_code}"
+        game_link = f"{GAME_URL}?tg_id={user_id}&tg_username={username}"
+        
+        text = f"""
+🔗 *Your Personal Referral Link:*
 
-To get your referral link:
-1. Visit {GAME_URL}
-2. Connect your Phantom wallet
-3. Come back and use /ref
+`{telegram_link}`
 
-Your wallet and Telegram will be linked automatically!
-        """, parse_mode='Markdown')
+✨ *This link will:*
+• Automatically link your Telegram to your wallet
+• Track your referrals perfectly
+• Give you bonus rewards
+
+💰 *Earn rewards:*
+• 100 TAMA for each friend (Level 1)
+• 50 TAMA for Level 2 referrals  
+• 15% of their earnings forever!
+
+🎁 *Milestone Bonuses:*
+• 5 referrals → +1000 TAMA
+• 10 referrals → +3000 TAMA
+• 25 referrals → +10000 TAMA
+• 50 referrals → +30000 TAMA
+• 100 referrals → +100000 TAMA + Legendary Badge!
+
+📤 *Share with friends and earn!*
+
+💡 *Note:* Connect your wallet to get full referral tracking!
+        """
+        
+        keyboard = types.InlineKeyboardMarkup()
+        keyboard.row(
+            types.InlineKeyboardButton("🎮 Play Game", url=game_link),
+            types.InlineKeyboardButton("📤 Share Link", url=f"https://t.me/share/url?url={telegram_link}&text=🎮 Join me in Solana Tamagotchi! Earn TAMA tokens!")
+        )
+        
+        bot.reply_to(message, text, parse_mode='Markdown', reply_markup=keyboard)
         return
     
     # Create short referral link using Telegram bot
