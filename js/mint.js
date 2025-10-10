@@ -470,7 +470,6 @@ const MintPage = {
             this.showSuccessModal(nft);
             
             // Clear pet name input
-            const petNameInput = document.getElementById('pet-name');
             if (petNameInput) {
                 petNameInput.value = '';
             }
