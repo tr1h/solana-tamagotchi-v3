@@ -444,11 +444,6 @@
                 <div class="value" id="stat-revenue">-</div>
                 <div class="change">SOL</div>
             </div>
-            <div class="stat-card">
-                <h3>Total TAMA</h3>
-                <div class="value" id="stat-tama">-</div>
-                <div class="change">Tokens</div>
-            </div>
         </div>
 
         <!-- Tabs -->
@@ -671,7 +666,10 @@
                     document.getElementById('stat-tama-change').textContent = `In circulation`;
                     
                     // Calculate revenue
-                    const revenue = nfts.reduce((sum, nft) => sum + (nft.mint_price || 0), 0);
+                    const revenue = nfts.reduce((sum, nft) => {
+                        const price = parseFloat(nft.price) || parseFloat(nft.mint_price) || 0;
+                        return sum + price;
+                    }, 0);
                     document.getElementById('stat-revenue').textContent = revenue.toFixed(2);
                 }
             } catch (error) {
