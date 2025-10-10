@@ -253,7 +253,7 @@
                         <div style="font-size: 12px; opacity: 0.9;">Your current balance</div>
                     </div>
                     
-                    <div style="background: rgba(0,0,0,0.1); padding: 15px; border-radius: 8px; font-size: 12px;">
+                    <div style="background: rgba(0,0,0,0.1); padding: 15px; border-radius: 8px; font-size: 12px; margin-bottom: 15px;">
                         <div style="font-weight: bold; margin-bottom: 10px;">💰 Earn TAMA:</div>
                         <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
                             <span>🌅 Daily Login:</span>
@@ -284,6 +284,10 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <button id="tama-history-btn" class="action-btn secondary" style="width: 100%; margin-bottom: 10px;">
+                        📜 View TAMA History
+                    </button>
                 </div>
 
                 <!-- Pet Management -->
@@ -475,7 +479,140 @@
     </div>
 
     <!-- Particles Container -->
-    <div id="particles-container" class="particles-container"></div>
+    <div id="particles-container" class="particles-container">    </div>
+
+    <style>
+        /* TAMA History Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 16px 16px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            color: white;
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close:hover {
+            color: #ff6b6b;
+        }
+
+        .modal-body {
+            padding: 20px;
+            background: white;
+            border-radius: 0 0 16px 16px;
+        }
+
+        .tama-history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .tama-history-table th,
+        .tama-history-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .tama-history-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .tama-history-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .tama-amount {
+            font-weight: bold;
+        }
+
+        .tama-earn {
+            color: #2ecc71;
+        }
+
+        .tama-spend {
+            color: #e74c3c;
+        }
+
+        .tama-type-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .tama-type-earn {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .tama-type-spend {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+
+    <!-- TAMA History Modal -->
+    <div id="tama-history-modal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 800px; max-height: 80vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h2>📜 Your TAMA History</h2>
+                <span class="close" onclick="closeTAMAHistory()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="tama-history-content">
+                    <div style="text-align: center; padding: 20px;">
+                        <div class="spinner"></div>
+                        <p>Loading your TAMA history...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Scripts -->
     <script src="js/utils.js?v=2"></script>
@@ -487,6 +624,112 @@
     <script src="js/tama-system.js?v=2"></script>
     <script src="js/achievements.js?v=2"></script>
     <script src="js/ui.js?v=2"></script>
+    
+    <script>
+        // TAMA History Functions
+        async function showTAMAHistory() {
+            if (!WalletManager.publicKey) {
+                alert('Please connect your wallet first!');
+                return;
+            }
+            
+            const modal = document.getElementById('tama-history-modal');
+            modal.style.display = 'block';
+            
+            // Load history
+            await loadUserTAMAHistory();
+        }
+        
+        function closeTAMAHistory() {
+            const modal = document.getElementById('tama-history-modal');
+            modal.style.display = 'none';
+        }
+        
+        async function loadUserTAMAHistory() {
+            const content = document.getElementById('tama-history-content');
+            content.innerHTML = `
+                <div style="text-align: center; padding: 20px;">
+                    <div class="spinner"></div>
+                    <p>Loading your TAMA history...</p>
+                </div>
+            `;
+            
+            try {
+                const history = await window.Database.getTAMAHistory(WalletManager.publicKey.toString(), 50);
+                
+                if (!history || history.length === 0) {
+                    content.innerHTML = `
+                        <div style="text-align: center; padding: 40px;">
+                            <div style="font-size: 48px; margin-bottom: 20px;">📜</div>
+                            <h3>No TAMA History Yet</h3>
+                            <p style="color: #666;">Start playing to earn TAMA and see your transaction history here!</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                content.innerHTML = `
+                    <div style="margin-bottom: 20px;">
+                        <h3 style="margin: 0; color: #333;">Your TAMA Transactions</h3>
+                        <p style="margin: 5px 0 0 0; color: #666;">Showing last ${history.length} transactions</p>
+                    </div>
+                    <table class="tama-history-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Amount</th>
+                                <th>Type</th>
+                                <th>Reason</th>
+                                <th>Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${history.map(transaction => `
+                                <tr>
+                                    <td>${new Date(transaction.created_at).toLocaleString()}</td>
+                                    <td class="tama-amount ${transaction.amount > 0 ? 'tama-earn' : 'tama-spend'}">
+                                        ${transaction.amount > 0 ? '+' : ''}${transaction.amount}
+                                    </td>
+                                    <td>
+                                        <span class="tama-type-badge tama-type-${transaction.type}">
+                                            ${transaction.type}
+                                        </span>
+                                    </td>
+                                    <td>${transaction.reason}</td>
+                                    <td style="font-weight: bold;">${transaction.balance_after.toLocaleString()}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } catch (error) {
+                console.error('Error loading TAMA history:', error);
+                content.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #e74c3c;">
+                        <div style="font-size: 48px; margin-bottom: 20px;">❌</div>
+                        <h3>Error Loading History</h3>
+                        <p>Failed to load your TAMA history. Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('tama-history-modal');
+            if (event.target === modal) {
+                closeTAMAHistory();
+            }
+        }
+        
+        // Add event listener for TAMA history button
+        document.addEventListener('DOMContentLoaded', function() {
+            const historyBtn = document.getElementById('tama-history-btn');
+            if (historyBtn) {
+                historyBtn.addEventListener('click', showTAMAHistory);
+            }
+        });
+    </script>
     <script src="js/game.js?v=2"></script>
     
     <!-- Service Worker Registration -->
