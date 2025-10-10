@@ -20,16 +20,72 @@ const UmiLoader = {
         console.log('🔄 Loading Umi SDK dynamically...');
         
         try {
-            // Load Umi core
-            await this.loadScript('https://unpkg.com/@metaplex-foundation/umi@0.8.0/dist/index.umd.js');
-            console.log('✅ Umi core loaded');
+            // Load Umi core (try multiple CDNs)
+            const umiUrls = [
+                'https://cdn.jsdelivr.net/npm/@metaplex-foundation/umi@0.8.0/dist/index.umd.js',
+                'https://unpkg.com/@metaplex-foundation/umi@0.8.0/dist/index.umd.js',
+                'https://cdn.skypack.dev/@metaplex-foundation/umi@0.8.0'
+            ];
+            
+            let umiLoaded = false;
+            for (const url of umiUrls) {
+                try {
+                    await this.loadScript(url);
+                    console.log('✅ Umi core loaded from:', url);
+                    umiLoaded = true;
+                    break;
+                } catch (error) {
+                    console.warn('⚠️ Failed to load Umi from:', url);
+                }
+            }
+            
+            if (!umiLoaded) {
+                throw new Error('All Umi CDN sources failed');
+            }
             
             // Load Umi bundle defaults
-            await this.loadScript('https://unpkg.com/@metaplex-foundation/umi-bundle-defaults@0.8.0/dist/index.umd.js');
-            console.log('✅ Umi bundle defaults loaded');
+            const bundleUrls = [
+                'https://cdn.jsdelivr.net/npm/@metaplex-foundation/umi-bundle-defaults@0.8.0/dist/index.umd.js',
+                'https://unpkg.com/@metaplex-foundation/umi-bundle-defaults@0.8.0/dist/index.umd.js'
+            ];
+            
+            let bundleLoaded = false;
+            for (const url of bundleUrls) {
+                try {
+                    await this.loadScript(url);
+                    console.log('✅ Umi bundle defaults loaded from:', url);
+                    bundleLoaded = true;
+                    break;
+                } catch (error) {
+                    console.warn('⚠️ Failed to load bundle from:', url);
+                }
+            }
+            
+            if (!bundleLoaded) {
+                throw new Error('All bundle CDN sources failed');
+            }
             
             // Load Candy Machine
-            await this.loadScript('https://unpkg.com/@metaplex-foundation/mpl-candy-machine@0.1.0/dist/index.umd.js');
+            const candyUrls = [
+                'https://cdn.jsdelivr.net/npm/@metaplex-foundation/mpl-candy-machine@0.1.0/dist/index.umd.js',
+                'https://unpkg.com/@metaplex-foundation/mpl-candy-machine@0.1.0/dist/index.umd.js'
+            ];
+            
+            let candyLoaded = false;
+            for (const url of candyUrls) {
+                try {
+                    await this.loadScript(url);
+                    console.log('✅ Candy Machine loaded from:', url);
+                    candyLoaded = true;
+                    break;
+                } catch (error) {
+                    console.warn('⚠️ Failed to load Candy Machine from:', url);
+                }
+            }
+            
+            if (!candyLoaded) {
+                throw new Error('All Candy Machine CDN sources failed');
+            }
             console.log('✅ Candy Machine loaded');
             
             // Verify all objects are available

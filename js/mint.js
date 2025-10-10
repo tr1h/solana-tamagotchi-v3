@@ -122,8 +122,22 @@ const MintPage = {
                 console.log('✅ MetaplexMint ready for real minting');
                 this.usingMetaplex = true;
             } else {
-                console.warn('⚠️ MetaplexMint failed to load, using demo mode');
+                console.warn('⚠️ MetaplexMint failed to load, trying SimpleRealMint');
                 this.usingMetaplex = false;
+            }
+        }
+        
+        // Try to initialize SimpleRealMint as final backup
+        if (!this.usingUmi && !this.usingMetaplex && window.SimpleRealMint) {
+            console.log('🎨 Initializing SimpleRealMint...');
+            const simpleRealLoaded = await window.SimpleRealMint.init(this.wallet);
+            
+            if (simpleRealLoaded) {
+                console.log('✅ SimpleRealMint ready for real minting');
+                this.usingSimpleReal = true;
+            } else {
+                console.warn('⚠️ SimpleRealMint failed to load, using demo mode');
+                this.usingSimpleReal = false;
             }
         }
         
@@ -378,7 +392,19 @@ const MintPage = {
                 if (result.success) {
                     return result;
                 } else {
-                    console.warn('⚠️ MetaplexMint failed, falling back to SimpleNFTMint');
+                    console.warn('⚠️ MetaplexMint failed, trying SimpleRealMint');
+                }
+            }
+            
+            // Try SimpleRealMint as third option
+            if (window.SimpleRealMint) {
+                console.log('🎨 Using SimpleRealMint for real minting...');
+                const result = await window.SimpleRealMint.mintNFT();
+                
+                if (result.success) {
+                    return result;
+                } else {
+                    console.warn('⚠️ SimpleRealMint failed, falling back to SimpleNFTMint');
                 }
             }
             

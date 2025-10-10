@@ -43,17 +43,31 @@ const MetaplexMint = {
     },
     
     async loadMetaplexSDK() {
+        const metaplexUrls = [
+            'https://cdn.jsdelivr.net/npm/@metaplex-foundation/js@0.19.0/dist/index.umd.js',
+            'https://unpkg.com/@metaplex-foundation/js@0.19.0/dist/index.umd.js',
+            'https://cdn.skypack.dev/@metaplex-foundation/js@0.19.0'
+        ];
+        
+        for (const url of metaplexUrls) {
+            try {
+                await this.loadScript(url);
+                console.log('✅ Metaplex JS SDK loaded from:', url);
+                return;
+            } catch (error) {
+                console.warn('⚠️ Failed to load Metaplex from:', url);
+            }
+        }
+        
+        throw new Error('All Metaplex CDN sources failed');
+    },
+    
+    async loadScript(url) {
         return new Promise((resolve, reject) => {
             const script = document.createElement('script');
-            script.src = 'https://unpkg.com/@metaplex-foundation/js@0.19.0/dist/index.umd.js';
-            script.onload = () => {
-                console.log('✅ Metaplex JS SDK loaded');
-                resolve();
-            };
-            script.onerror = () => {
-                console.error('❌ Failed to load Metaplex JS SDK');
-                reject(new Error('Failed to load Metaplex JS SDK'));
-            };
+            script.src = url;
+            script.onload = () => resolve();
+            script.onerror = () => reject(new Error(`Failed to load ${url}`));
             document.head.appendChild(script);
         });
     },
