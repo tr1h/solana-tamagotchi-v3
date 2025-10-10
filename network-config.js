@@ -40,6 +40,20 @@ const NetworkConfig = {
         }
     },
     
+    // 💰 TAMA БОНУСЫ ПО ФАЗАМ (Early Adopter = больше!)
+    TAMA_BONUS: {
+        devnet: {
+            phase1: 1000,  // 🎁 Early Adopter Bonus!
+            phase2: 750,   // Standard
+            phase3: 500    // Late
+        },
+        mainnet: {
+            phase1: 1000,  // 🎁 Early Adopter Bonus!
+            phase2: 750,   // Standard
+            phase3: 500    // Late
+        }
+    },
+    
     // 🏦 TREASURY WALLET
     TREASURY: {
         devnet: 'FHqNWKNyXryz52koqQdWvqxe8zxb4AcaEtD58DneJSb',
@@ -73,6 +87,10 @@ const NetworkConfig = {
     
     getMintLimit(phase = 1) {
         return this.MINT_LIMITS[this.NETWORK][`phase${phase}`];
+    },
+    
+    getTAMABonus(phase = 1) {
+        return this.TAMA_BONUS[this.NETWORK][`phase${phase}`];
     },
     
     getTreasuryWallet() {

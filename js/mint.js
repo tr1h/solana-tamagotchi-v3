@@ -8,10 +8,11 @@ const MintPage = {
     publicKey: null,
     
     // Mint phases - will be updated from NetworkConfig
+    // Early adopters get MORE TAMA bonus!
     phases: [
-        { max: 100, price: 0.1, tamaBonus: 600 },
-        { max: 200, price: 0.2, tamaBonus: 500 },
-        { max: 500, price: 0.3, tamaBonus: 500 }
+        { max: 100, price: 0.1, tamaBonus: 1000 },   // 🎁 Early Adopter Bonus!
+        { max: 200, price: 0.2, tamaBonus: 750 },    // Standard Bonus
+        { max: 500, price: 0.3, tamaBonus: 500 }     // Late Bonus
     ],
     
     maxSupply: 10000,  // Total NFT limit
@@ -23,9 +24,9 @@ const MintPage = {
         if (window.NetworkConfig) {
             const networkInfo = window.NetworkConfig.getNetworkInfo();
             this.phases = [
-                { max: networkInfo.limits.phase1, price: networkInfo.prices.phase1, tamaBonus: 600 },
-                { max: networkInfo.limits.phase2, price: networkInfo.prices.phase2, tamaBonus: 500 },
-                { max: networkInfo.limits.phase3, price: networkInfo.prices.phase3, tamaBonus: 500 }
+                { max: networkInfo.limits.phase1, price: networkInfo.prices.phase1, tamaBonus: window.NetworkConfig.getTAMABonus(1) },
+                { max: networkInfo.limits.phase2, price: networkInfo.prices.phase2, tamaBonus: window.NetworkConfig.getTAMABonus(2) },
+                { max: networkInfo.limits.phase3, price: networkInfo.prices.phase3, tamaBonus: window.NetworkConfig.getTAMABonus(3) }
             ];
             console.log('🌐 Updated phases from NetworkConfig:', this.phases);
         }
