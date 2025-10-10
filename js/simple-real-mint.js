@@ -53,12 +53,29 @@ const SimpleRealMint = {
             
             console.log('💰 Sending SOL to treasury:', this.TREASURY_ADDRESS);
             
-            // Check if wallet has sendTransaction method
-            if (!this.wallet.sendTransaction) {
-                throw new Error('Wallet does not support sendTransaction');
+            // Get recent blockhash
+            const { blockhash } = await this.connection.getLatestBlockhash();
+            transferTransaction.recentBlockhash = blockhash;
+            transferTransaction.feePayer = this.wallet.publicKey;
+            
+            // Try different methods depending on wallet
+            let transferSignature;
+            
+            if (this.wallet.signAndSendTransaction) {
+                // Solflare, etc.
+                console.log('📝 Using signAndSendTransaction...');
+                const signed = await this.wallet.signAndSendTransaction(transferTransaction);
+                transferSignature = signed.signature || signed;
+            } else if (this.wallet.signTransaction) {
+                // Phantom uses this
+                console.log('📝 Using signTransaction...');
+                const signedTransaction = await this.wallet.signTransaction(transferTransaction);
+                transferSignature = await this.connection.sendRawTransaction(signedTransaction.serialize());
+            } else {
+                throw new Error('Wallet does not support transaction signing');
             }
             
-            const transferSignature = await this.wallet.sendTransaction(transferTransaction, this.connection);
+            console.log('⏳ Confirming transaction...');
             await this.connection.confirmTransaction(transferSignature);
             console.log('✅ SOL sent to treasury:', transferSignature);
             
