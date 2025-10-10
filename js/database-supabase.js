@@ -212,23 +212,58 @@ const Database = {
         }
     },
     
-    // Update TAMA balance
-    async updateTAMA(walletAddress, amount) {
+    // Update TAMA balance with history tracking
+    async updateTAMA(walletAddress, amount, reason = 'Unknown') {
         try {
+            // Get current balance
             const { data } = await this.supabase
                 .from('leaderboard')
                 .select('tama')
                 .eq('wallet_address', walletAddress)
                 .single();
             
-            const newTAMA = (data?.tama || 0) + amount;
+            const balanceBefore = data?.tama || 0;
+            const balanceAfter = balanceBefore + amount;
             
+            // Update balance
             await this.supabase
                 .from('leaderboard')
-                .update({ tama: newTAMA })
+                .update({ tama: balanceAfter, updated_at: new Date().toISOString() })
                 .eq('wallet_address', walletAddress);
+            
+            // Save transaction history
+            await this.supabase
+                .from('tama_transactions')
+                .insert({
+                    wallet_address: walletAddress,
+                    amount: amount,
+                    balance_before: balanceBefore,
+                    balance_after: balanceAfter,
+                    type: amount > 0 ? 'earn' : 'spend',
+                    reason: reason
+                });
+            
+            console.log(`💰 TAMA ${amount > 0 ? '+' : ''}${amount} | ${reason} | Balance: ${balanceAfter}`);
         } catch (error) {
             console.error('Failed to update TAMA:', error);
+        }
+    },
+    
+    // Get TAMA transaction history
+    async getTAMAHistory(walletAddress, limit = 50) {
+        try {
+            const { data, error } = await this.supabase
+                .from('tama_transactions')
+                .select('*')
+                .eq('wallet_address', walletAddress)
+                .order('created_at', { ascending: false })
+                .limit(limit);
+            
+            if (error) throw error;
+            return data || [];
+        } catch (error) {
+            console.error('Failed to get TAMA history:', error);
+            return [];
         }
     },
     

@@ -29,14 +29,15 @@ const TAMASystem = {
     // Daily earnings cap
     DAILY_CAP: 150,
     
-    // Award TAMA
+    // Award TAMA with reason tracking
     async awardTAMA(walletAddress, amount, reason) {
         if (!window.Database || !walletAddress) return false;
         
         try {
             console.log(`💰 Awarding ${amount} TAMA for: ${reason}`);
             
-            await window.Database.updateTAMA(walletAddress, amount);
+            // Update TAMA with reason for history
+            await window.Database.updateTAMA(walletAddress, amount, reason);
             
             // Show notification
             if (window.Utils && window.Utils.showNotification) {
@@ -231,7 +232,8 @@ const TAMASystem = {
                 return false;
             }
             
-            await window.Database.updateTAMA(walletAddress, -amount);
+            // Update TAMA with reason for history
+            await window.Database.updateTAMA(walletAddress, -amount, item);
             
             if (window.Utils) {
                 Utils.showNotification(`✅ Purchased ${item} for ${amount} TAMA!`);
