@@ -497,7 +497,7 @@ const MintPage = {
             }
             
             // Сохраняем питомца в базу данных
-            await this.savePetToDatabase(nft);
+            await this.savePetToDB(nft);
             
             // Начисляем TAMA токены
             if (window.TamaToken && window.TamaToken.rewardTama) {
