@@ -500,10 +500,18 @@ const MintPage = {
             await this.savePetToDB(nft);
             
             // Начисляем TAMA токены
+            const tamaAmount = this.phases[phaseIndex].tamaBonus;
+            console.log(`🪙 Rewarding ${tamaAmount} TAMA for minting...`);
+            
+            // Try new TamaToken system first
             if (window.TamaToken && window.TamaToken.rewardTama) {
-                const tamaAmount = this.phases[phaseIndex].tamaBonus;
-                console.log(`🪙 Rewarding ${tamaAmount} TAMA for minting...`);
                 await window.TamaToken.rewardTama(this.publicKey.toString(), tamaAmount, 'mint', `NFT Mint - ${nft.name}`);
+            } else if (window.TAMASystem && window.TAMASystem.awardTAMA) {
+                // Fallback to old system
+                await window.TAMASystem.awardTAMA(this.publicKey.toString(), tamaAmount, 'NFT Minting Bonus');
+            } else if (window.Database && window.Database.updateTAMA) {
+                // Direct database update
+                await window.Database.updateTAMA(this.publicKey.toString(), tamaAmount, 'NFT Minting Bonus');
             }
             
             // Обновляем статистику
