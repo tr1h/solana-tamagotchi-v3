@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS nft_mints (
     nft_rarity TEXT NOT NULL,
     mint_price DECIMAL(10,2) NOT NULL,
     mint_phase INT NOT NULL,
-    created_at TIMESTAMPTZ DEFAULT NOW()
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- 2. Добавить индексы для быстрого поиска
