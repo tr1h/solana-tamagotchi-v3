@@ -7,17 +7,14 @@
 - ✅ Убрать старые тестовые данные
 - ✅ Начать с правильной структуры таблиц
 - ✅ Протестировать токеномику с нуля
+- ✅ Сбросить NFT данные для чистого тестирования
+- ✅ Подготовиться к Mainnet запуску
 
 ---
 
 ## 🚀 Быстрый сброс (Рекомендуется)
 
-### Шаг 1: Открой Supabase
-1. Зайди в [Supabase Dashboard](https://supabase.com/dashboard)
-2. Выбери свой проект
-3. Перейди в **SQL Editor**
-
-### Шаг 2: Выполни QUICK_RESET.sql
+### Вариант 1: Сброс только TAMA (без NFT)
 ```sql
 -- Скопируй и вставь этот код:
 
@@ -31,14 +28,53 @@ UNION ALL
 SELECT 'referrals', COUNT(*) FROM referrals;
 ```
 
+### Вариант 2: Полный сброс включая NFT (Рекомендуется)
+```sql
+-- Скопируй и вставь этот код:
+
+TRUNCATE TABLE 
+    tama_transactions, 
+    referrals, 
+    leaderboard,
+    nft_mints,
+    nft_metadata,
+    nft_holders
+RESTART IDENTITY CASCADE;
+
+-- Проверить что все пусто
+SELECT 'leaderboard' as table_name, COUNT(*) as count FROM leaderboard
+UNION ALL
+SELECT 'tama_transactions', COUNT(*) FROM tama_transactions  
+UNION ALL
+SELECT 'referrals', COUNT(*) FROM referrals
+UNION ALL
+SELECT 'nft_mints', COUNT(*) FROM nft_mints
+UNION ALL
+SELECT 'nft_metadata', COUNT(*) FROM nft_metadata
+UNION ALL
+SELECT 'nft_holders', COUNT(*) FROM nft_holders;
+```
+
+### Шаг 1: Открой Supabase
+1. Зайди в [Supabase Dashboard](https://supabase.com/dashboard)
+2. Выбери свой проект
+3. Перейди в **SQL Editor**
+
+### Шаг 2: Выбери нужный вариант
+- **Только TAMA** → используй Вариант 1
+- **Все включая NFT** → используй Вариант 2 (рекомендую)
+
 ### Шаг 3: Проверь результат
-Должно показать:
+Должно показать все 0:
 ```
 table_name      | count
 ----------------|-------
 leaderboard     | 0
 tama_transactions| 0
 referrals       | 0
+nft_mints       | 0
+nft_metadata    | 0
+nft_holders     | 0
 ```
 
 **✅ Готово! База сброшена за 30 секунд!**
@@ -77,6 +113,12 @@ referrals       | 0
 - Нажми "View TAMA History"
 - Должны быть все транзакции
 
+### 5. Протестируй NFT (если делал полный сброс)
+- Создай питомца (mint NFT)
+- Проверь что NFT появился в базе
+- Проверь что получил +500 TAMA за mint
+- Проверь что NFT отображается в игре
+
 ---
 
 ## 📊 Что проверить после сброса
@@ -93,6 +135,11 @@ ORDER BY created_at DESC;
 
 -- Проверить рефералы
 SELECT * FROM referrals;
+
+-- Проверить NFT (если делал полный сброс)
+SELECT wallet_address, mint_address, pet_name, pet_type FROM nft_mints;
+SELECT mint_address, name, rarity_score FROM nft_metadata;
+SELECT mint_address, wallet_address FROM nft_holders;
 ```
 
 ### В игре:
@@ -100,6 +147,8 @@ SELECT * FROM referrals;
 - ✅ История транзакций работает
 - ✅ Leaderboard пустой (пока)
 - ✅ Все earning работает
+- ✅ NFT minting работает (если делал полный сброс)
+- ✅ NFT отображается в игре
 
 ---
 
