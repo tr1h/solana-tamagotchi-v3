@@ -378,7 +378,9 @@ const MintPage = {
                 const result = await window.UmiCandyMachine.mintNFT();
                 
                 if (result.success) {
-                    return result;
+                    console.log('✅ NFT MINTED!', result);
+                    await this.processMintResult(result);
+                    return;
                 } else {
                     console.warn('⚠️ UmiCandyMachine failed, trying MetaplexMint');
                 }
@@ -390,7 +392,9 @@ const MintPage = {
                 const result = await window.MetaplexMint.mintNFT();
                 
                 if (result.success) {
-                    return result;
+                    console.log('✅ NFT MINTED!', result);
+                    await this.processMintResult(result);
+                    return;
                 } else {
                     console.warn('⚠️ MetaplexMint failed, trying SimpleRealMint');
                 }
@@ -402,7 +406,9 @@ const MintPage = {
                 const result = await window.SimpleRealMint.mintNFT();
                 
                 if (result.success) {
-                    return result;
+                    console.log('✅ NFT MINTED!', result);
+                    await this.processMintResult(result);
+                    return;
                 } else {
                     console.warn('⚠️ SimpleRealMint failed, falling back to SimpleNFTMint');
                 }
@@ -421,61 +427,7 @@ const MintPage = {
             }
             
             console.log('✅ NFT MINTED!', result);
-            
-            // Get pet name
-            const petNameInput = document.getElementById('pet-name');
-            const petName = petNameInput && petNameInput.value ? petNameInput.value.trim() : '';
-            
-            // Создаём NFT объект для сохранения
-            const nft = {
-                mintAddress: result.mintAddress,
-                signature: result.transaction || result.signature,
-                name: result.nftData?.name || petName || 'My Pet',
-                type: result.nftData?.type || result.metadata?.gameData?.type,
-                emoji: result.metadata?.gameData?.emoji,
-                rarity: result.nftData?.rarity || result.metadata?.gameData?.rarity,
-                tamaBonus: this.phases[this.getCurrentPhase()].tamaBonus,
-                mintedAt: Date.now(),
-                owner: this.publicKey.toString(),
-                metadata: result.metadata,
-                nftData: result.nftData
-            };
-            
-            // Сохраняем NFT данные
-            this.saveNFTData(nft);
-            
-            // Записываем минт в базу данных
-            const phaseIndex = this.getCurrentPhase();
-            if (window.Database && window.Database.recordMint) {
-                await window.Database.recordMint(
-                    this.publicKey.toString(),
-                    nft,
-                    price,
-                    phaseIndex
-                );
-            }
-            
-            // Начисляем TAMA за minting
-            if (window.TAMASystem && window.TAMASystem.awardTAMA) {
-                const tamaBonus = this.phases[phaseIndex].tamaBonus || 500;
-                await window.TAMASystem.awardTAMA(
-                    this.publicKey.toString(), 
-                    tamaBonus, 
-                    'NFT Minting Bonus'
-                );
-                console.log(`💰 Awarded ${tamaBonus} TAMA for minting!`);
-            }
-            
-            // Показываем success modal
-            this.showSuccessModal(nft);
-            
-            // Clear pet name input
-            if (petNameInput) {
-                petNameInput.value = '';
-            }
-            
-            // Reload stats
-            await this.loadMintStats();
+            await this.processMintResult(result);
             
             // Reset flag
             this.isMinting = false;
@@ -499,6 +451,71 @@ const MintPage = {
             this.isMinting = false;
             mintBtn.disabled = false;
             mintBtn.querySelector('.btn-text').textContent = `MINT NOW - ${this.getCurrentPrice()} SOL`;
+        }
+    },
+    
+    async processMintResult(result) {
+        try {
+            console.log('🔄 Processing mint result...', result);
+            
+            // Get pet name
+            const petNameInput = document.getElementById('pet-name');
+            const petName = petNameInput && petNameInput.value ? petNameInput.value.trim() : '';
+            
+            // Создаём NFT объект для сохранения
+            const nft = {
+                mintAddress: result.mintAddress,
+                signature: result.transaction || result.signature,
+                name: result.nftData?.name || petName || 'My Pet',
+                type: result.nftData?.type || result.metadata?.gameData?.type,
+                emoji: result.metadata?.gameData?.emoji,
+                rarity: result.nftData?.rarity || result.metadata?.gameData?.rarity,
+                tamaBonus: this.phases[this.getCurrentPhase()].tamaBonus,
+                mintedAt: Date.now(),
+                owner: this.publicKey.toString(),
+                metadata: result.metadata,
+                nftData: result.nftData
+            };
+            
+            console.log('💾 NFT object created:', nft);
+            
+            // Сохраняем NFT данные
+            this.saveNFTData(nft);
+            
+            // Записываем минт в базу данных
+            const phaseIndex = this.getCurrentPhase();
+            const price = this.getCurrentPrice();
+            
+            if (window.Database && window.Database.recordMint) {
+                console.log('💾 Recording NFT mint to database...', nft);
+                await window.Database.recordMint(
+                    this.publicKey.toString(),
+                    nft,
+                    price,
+                    phaseIndex
+                );
+            }
+            
+            // Сохраняем питомца в базу данных
+            await this.savePetToDatabase(nft);
+            
+            // Начисляем TAMA токены
+            if (window.TamaToken && window.TamaToken.rewardTama) {
+                const tamaAmount = this.phases[phaseIndex].tamaBonus;
+                console.log(`🪙 Rewarding ${tamaAmount} TAMA for minting...`);
+                await window.TamaToken.rewardTama(this.publicKey.toString(), tamaAmount, 'mint', `NFT Mint - ${nft.name}`);
+            }
+            
+            // Обновляем статистику
+            await this.loadMintStats();
+            
+            // Показываем успех
+            this.showMintSuccess(nft);
+            
+            console.log('✅ Mint result processed successfully!');
+            
+        } catch (error) {
+            console.error('❌ Error processing mint result:', error);
         }
     },
     
