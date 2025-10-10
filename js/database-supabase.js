@@ -177,13 +177,13 @@ const Database = {
                     referred_address: newPlayerWallet,
                     referral_code: referralCode,
                     level: 1,
-                    signup_reward: 25
+                    signup_reward: 100
                 });
             
             if (refError) throw refError;
             
             // Update referrer's TAMA
-            await this.updateTAMA(referrerWallet, 25);
+            await this.updateTAMA(referrerWallet, 100);
             
             // Check for Level 2
             const { data: level2Data } = await this.supabase
@@ -199,10 +199,10 @@ const Database = {
                     referred_address: newPlayerWallet,
                     referral_code: referralCode,
                     level: 2,
-                    signup_reward: 12
+                    signup_reward: 50
                 });
                 
-                await this.updateTAMA(level2Data.referrer_address, 12);
+                await this.updateTAMA(level2Data.referrer_address, 50);
             }
             
             return true;

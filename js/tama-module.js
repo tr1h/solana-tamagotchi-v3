@@ -26,8 +26,8 @@ const TAMAModule = {
             ACHIEVEMENT_SILVER: 25,  // Серебряное достижение
             ACHIEVEMENT_GOLD: 50,    // Золотое достижение
             ACHIEVEMENT_PLATINUM: 100, // Платиновое достижение
-            REFERRAL_L1: 25,         // Реферал 1 уровня
-            REFERRAL_L2: 12          // Реферал 2 уровня
+            REFERRAL_L1: 100,        // Реферал 1 уровня
+            REFERRAL_L2: 50          // Реферал 2 уровня
         },
         
         // ТРАТЫ TAMA

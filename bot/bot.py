@@ -446,16 +446,16 @@ Your wallet and Telegram will be linked automatically!
 • Total Earned: {total_earnings} TAMA
 
 💰 *Earn rewards:*
-• 25 TAMA for each friend (Level 1)
-• 12 TAMA for Level 2 referrals  
-• 10% of their earnings forever!
+• 100 TAMA for each friend (Level 1)
+• 50 TAMA for Level 2 referrals  
+• 15% of their earnings forever!
 
 🎁 *Milestone Bonuses:*
-• 5 referrals → +500 TAMA
-• 10 referrals → +1500 TAMA
-• 25 referrals → +5000 TAMA
-• 50 referrals → +15000 TAMA
-• 100 referrals → +50000 TAMA + Legendary Badge!
+• 5 referrals → +1000 TAMA
+• 10 referrals → +3000 TAMA
+• 25 referrals → +10000 TAMA
+• 50 referrals → +30000 TAMA
+• 100 referrals → +100000 TAMA + Legendary Badge!
 
 📤 *Share with friends and earn!*
     """

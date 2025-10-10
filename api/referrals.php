@@ -44,7 +44,7 @@ if ($method === 'POST') {
     }
     
     // Add Level 1 referral
-    $stmt = $conn->prepare("INSERT INTO referrals (referrer_address, referred_address, referral_code, level, signup_reward) VALUES (?, ?, ?, 1, 25)");
+    $stmt = $conn->prepare("INSERT INTO referrals (referrer_address, referred_address, referral_code, level, signup_reward) VALUES (?, ?, ?, 1, 100)");
     $stmt->bind_param("sss", $referrerWallet, $newPlayerWallet, $referralCode);
     
     if ($stmt->execute()) {
@@ -54,7 +54,7 @@ if ($method === 'POST') {
         $stmt->execute();
         
         // Update referrer's TAMA balance (signup reward)
-        $stmt = $conn->prepare("UPDATE leaderboard SET tama = tama + 25 WHERE wallet_address = ?");
+        $stmt = $conn->prepare("UPDATE leaderboard SET tama = tama + 100 WHERE wallet_address = ?");
         $stmt->bind_param("s", $referrerWallet);
         $stmt->execute();
         
@@ -68,17 +68,17 @@ if ($method === 'POST') {
             $level2Referrer = $row['referrer_address'];
             
             // Add Level 2 referral
-            $stmt = $conn->prepare("INSERT INTO referrals (referrer_address, referred_address, referral_code, level, signup_reward) VALUES (?, ?, ?, 2, 12)");
+            $stmt = $conn->prepare("INSERT INTO referrals (referrer_address, referred_address, referral_code, level, signup_reward) VALUES (?, ?, ?, 2, 50)");
             $stmt->bind_param("sss", $level2Referrer, $newPlayerWallet, $referralCode);
             $stmt->execute();
             
             // Give Level 2 reward
-            $stmt = $conn->prepare("UPDATE leaderboard SET tama = tama + 12 WHERE wallet_address = ?");
+            $stmt = $conn->prepare("UPDATE leaderboard SET tama = tama + 50 WHERE wallet_address = ?");
             $stmt->bind_param("s", $level2Referrer);
             $stmt->execute();
         }
         
-        sendResponse(true, ['message' => 'Referral added successfully', 'level1_reward' => 25, 'level2_reward' => 12]);
+        sendResponse(true, ['message' => 'Referral added successfully', 'level1_reward' => 100, 'level2_reward' => 50]);
     } else {
         sendResponse(false, null, 'Failed to add referral');
     }
