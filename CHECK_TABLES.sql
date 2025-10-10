@@ -34,3 +34,4 @@ UNION ALL
 SELECT 'nft_metadata', COUNT(*) FROM nft_metadata
 UNION ALL
 SELECT 'nft_holders', COUNT(*) FROM nft_holders;
+

@@ -192,3 +192,4 @@ DROP TABLE IF EXISTS nft_holders CASCADE;
 ---
 
 **Удачи! 🚀**
+

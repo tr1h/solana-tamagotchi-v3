@@ -293,6 +293,10 @@
                             <span>🛒 TAMA Shop</span>
                             <small>Buy items with TAMA</small>
                         </button>
+                        <button id="referral-btn" class="action-btn secondary">
+                            <span>🔗 Referrals</span>
+                            <small>Earn 25+12 TAMA per friend</small>
+                        </button>
                         <button id="evolve-pet-btn" class="action-btn secondary">
                             <span>Evolve Pet</span>
                             <small>50 TAMA (Level 10+)</small>
@@ -666,6 +670,7 @@
     <script src="js/tama-module.js?v=2"></script>
     <script src="js/tama-system.js?v=2"></script>
     <script src="js/shop.js?v=2"></script>
+    <script src="js/referral-system.js?v=2"></script>
     <script src="js/achievements.js?v=2"></script>
     <script src="js/ui.js?v=2"></script>
     
@@ -771,6 +776,11 @@
             // Initialize TAMA Shop
             if (window.TAMAShop) {
                 window.TAMAShop.init();
+            }
+            
+            // Initialize Referral System
+            if (window.ReferralSystem) {
+                window.ReferralSystem.init();
             }
             
             const historyBtn = document.getElementById('tama-history-btn');

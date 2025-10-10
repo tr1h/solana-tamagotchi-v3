@@ -85,3 +85,4 @@ ORDER BY table_name, ordinal_position;
 -- VALUES ('test_wallet_address', 'Test Pet', 'cat', 1, 0, 0, 0);
 
 -- ✅ Готово! База данных сброшена и готова к работе!
+

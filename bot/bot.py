@@ -404,7 +404,7 @@ def send_referral(message):
     wallet_address = get_wallet_by_telegram(telegram_id)
     
     if not wallet_address:
-        bot.reply_to(message, """
+        bot.reply_to(message, f"""
 ❌ *Connect your wallet first!*
 
 To get your referral link:
@@ -419,15 +419,31 @@ Your wallet and Telegram will be linked automatically!
     # Create game link with wallet address as ref code
     game_link = f"{GAME_URL}?ref={wallet_address}&tg_id={user_id}&tg_username={username}"
     
+    # Get referral stats
+    try:
+        response = supabase.table('referrals').select('*', count='exact').eq('referrer_address', wallet_address).execute()
+        total_referrals = response.count or 0
+        
+        level1_count = len([r for r in response.data if r.get('level') == 1]) if response.data else 0
+        level2_count = len([r for r in response.data if r.get('level') == 2]) if response.data else 0
+        
+        total_earnings = sum([r.get('signup_reward', 0) for r in response.data]) if response.data else 0
+    except:
+        total_referrals = 0
+        level1_count = 0
+        level2_count = 0
+        total_earnings = 0
+    
     text = f"""
-🔗 *Your Personal Game Link:*
+🔗 *Your Personal Referral Link:*
 
 `{game_link}`
 
-✨ *This link will:*
-• Automatically link Telegram to wallet
-• Track your referrals
-• Give you bonus rewards
+📊 *Your Stats:*
+• Total Referrals: {total_referrals}
+• Level 1: {level1_count}
+• Level 2: {level2_count}
+• Total Earned: {total_earnings} TAMA
 
 💰 *Earn rewards:*
 • 25 TAMA for each friend (Level 1)
@@ -448,6 +464,10 @@ Your wallet and Telegram will be linked automatically!
     keyboard.row(
         types.InlineKeyboardButton("🎮 Play Game", url=game_link),
         types.InlineKeyboardButton("📤 Share Link", url=f"https://t.me/share/url?url={game_link}&text=🎮 Join me in Solana Tamagotchi! Earn TAMA tokens!")
+    )
+    keyboard.row(
+        types.InlineKeyboardButton("📊 View Stats", callback_data="referral_stats"),
+        types.InlineKeyboardButton("🏆 Milestones", callback_data="referral_milestones")
     )
     
     bot.reply_to(message, text, parse_mode='Markdown', reply_markup=keyboard)

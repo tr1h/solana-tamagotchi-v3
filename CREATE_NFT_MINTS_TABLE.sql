@@ -22,3 +22,4 @@ CREATE INDEX IF NOT EXISTS idx_nft_created ON nft_mints(created_at DESC);
 
 -- Проверить что таблица создана
 SELECT 'Table nft_mints created successfully!' as status;
+

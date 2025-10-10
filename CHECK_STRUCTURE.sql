@@ -20,3 +20,4 @@ SELECT
 FROM pg_indexes
 WHERE tablename IN ('leaderboard', 'tama_transactions', 'referrals', 'nft_mints', 'nft_metadata', 'nft_holders')
 ORDER BY tablename, indexname;
+

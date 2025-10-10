@@ -40,3 +40,4 @@ ORDER BY ordinal_position;
 -- INSERT INTO tama_transactions (wallet_address, amount, balance_before, balance_after, type, reason)
 -- VALUES ('3aMp...pqxU', 25, 500, 525, 'earn', 'Daily Login');
 
+

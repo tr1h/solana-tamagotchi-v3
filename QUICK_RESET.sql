@@ -12,3 +12,4 @@ UNION ALL
 SELECT 'referrals', COUNT(*) FROM referrals;
 
 -- ✅ Готово! Все таблицы пустые!
+

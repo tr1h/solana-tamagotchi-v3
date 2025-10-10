@@ -25,3 +25,4 @@ UNION ALL
 SELECT 'nft_holders', COUNT(*) FROM nft_holders;
 
 -- ✅ Готово! Все таблицы пустые включая NFT!
+

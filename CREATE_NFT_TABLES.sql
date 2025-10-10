@@ -65,3 +65,4 @@ WHERE table_name IN ('nft_mints', 'nft_metadata', 'nft_holders')
 ORDER BY table_name, ordinal_position;
 
 -- ✅ Готово! NFT таблицы созданы!
+

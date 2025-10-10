@@ -69,3 +69,4 @@ echo "Проверь NFT в Phantom (переключи на devnet)"
 
 
 
+
