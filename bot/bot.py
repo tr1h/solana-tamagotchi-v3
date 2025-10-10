@@ -135,7 +135,9 @@ def handle_start(message):
             ref_code = ref_param[3:]  # Remove 'ref' prefix
             try:
                 # Decode the referral code to get wallet address
-                wallet_address = base64.b64decode(ref_code + '==').decode()  # Add padding
+                # Add padding if needed
+                ref_code_padded = ref_code + '=' * (4 - len(ref_code) % 4)
+                wallet_address = base64.b64decode(ref_code_padded).decode()
                 
                 # Store referral info for when user connects wallet
                 user_id = message.from_user.id
@@ -191,18 +193,33 @@ def send_welcome(message):
 ✨ *What you can do:*
 • 🎨 Mint unique NFT pets
 • 💰 Earn TAMA tokens  
-• 🔗 Multi-level referrals (25+12 TAMA)
+• 🔗 Multi-level referrals (100+50 TAMA)
 • 🏆 Daily rewards & achievements
 • 🌟 Community-driven gameplay
 
 🚀 *Ready to start?*
     """
     
-    # Create inline keyboard
+    # Create inline keyboard with referral links
     keyboard = types.InlineKeyboardMarkup()
+    
+    # Get user's wallet for referral links
+    user_id = message.from_user.id
+    username = message.from_user.username or message.from_user.first_name
+    wallet_address = get_wallet_by_telegram(str(user_id))
+    
+    if wallet_address:
+        # User has wallet - create referral links
+        game_url = f"{GAME_URL}?ref={wallet_address}&tg_id={user_id}&tg_username={username}"
+        mint_url = f"{MINT_URL}?ref={wallet_address}&tg_id={user_id}&tg_username={username}"
+    else:
+        # No wallet - use regular links
+        game_url = GAME_URL
+        mint_url = MINT_URL
+    
     keyboard.row(
-        types.InlineKeyboardButton("🎮 Play Game", url=GAME_URL),
-        types.InlineKeyboardButton("🎨 Mint NFT", url=MINT_URL)
+        types.InlineKeyboardButton("🎮 Play Game", url=game_url),
+        types.InlineKeyboardButton("🎨 Mint NFT", url=mint_url)
     )
     keyboard.row(
         types.InlineKeyboardButton("🔗 Get Referral", callback_data="get_referral"),
@@ -214,6 +231,24 @@ def send_welcome(message):
     )
     
     bot.reply_to(message, welcome_text, parse_mode='Markdown', reply_markup=keyboard)
+
+# Handle callback queries
+@bot.callback_query_handler(func=lambda call: True)
+def handle_callback(call):
+    if call.data == "get_referral":
+        # Simulate /ref command
+        send_referral(call.message)
+    elif call.data == "my_stats":
+        # Simulate /stats command
+        send_stats(call.message)
+    elif call.data == "leaderboard":
+        # Show leaderboard
+        show_leaderboard(call.message)
+    elif call.data == "rules":
+        # Show rules
+        show_rules(call.message)
+    
+    bot.answer_callback_query(call.id)
 
 # Private commands (personal data)
 @bot.message_handler(commands=['stats'], func=lambda message: message.chat.type == 'private')
