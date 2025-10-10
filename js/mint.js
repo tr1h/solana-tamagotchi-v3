@@ -510,7 +510,7 @@ const MintPage = {
             await this.loadMintStats();
             
             // Показываем успех
-            this.showMintSuccess(nft);
+            this.showSuccessModal(nft);
             
             // Auto-redirect to game after 3 seconds
             setTimeout(() => {
