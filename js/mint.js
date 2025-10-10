@@ -108,8 +108,22 @@ const MintPage = {
                 console.log('✅ UmiCandyMachine ready for real minting');
                 this.usingUmi = true;
             } else {
-                console.warn('⚠️ Umi SDK failed to load, using fallback');
+                console.warn('⚠️ Umi SDK failed to load, trying MetaplexMint');
                 this.usingUmi = false;
+            }
+        }
+        
+        // Try to initialize MetaplexMint as backup
+        if (!this.usingUmi && window.MetaplexMint) {
+            console.log('🎨 Initializing MetaplexMint...');
+            const metaplexLoaded = await window.MetaplexMint.init(this.wallet);
+            
+            if (metaplexLoaded) {
+                console.log('✅ MetaplexMint ready for real minting');
+                this.usingMetaplex = true;
+            } else {
+                console.warn('⚠️ MetaplexMint failed to load, using demo mode');
+                this.usingMetaplex = false;
             }
         }
         
@@ -344,7 +358,7 @@ const MintPage = {
             
             mintBtn.querySelector('.btn-text').textContent = '🔄 MINTING NFT...';
             
-            // Try UmiCandyMachine first, fallback to SimpleNFTMint
+            // Try UmiCandyMachine first
             if (window.UmiCandyMachine && window.UmiCandyMachine.umi) {
                 console.log('🍬 Using UmiCandyMachine for real minting...');
                 const result = await window.UmiCandyMachine.mintNFT();
@@ -352,7 +366,19 @@ const MintPage = {
                 if (result.success) {
                     return result;
                 } else {
-                    console.warn('⚠️ UmiCandyMachine failed, falling back to SimpleNFTMint');
+                    console.warn('⚠️ UmiCandyMachine failed, trying MetaplexMint');
+                }
+            }
+            
+            // Try MetaplexMint as second option
+            if (window.MetaplexMint) {
+                console.log('🎨 Using MetaplexMint for real minting...');
+                const result = await window.MetaplexMint.mintNFT();
+                
+                if (result.success) {
+                    return result;
+                } else {
+                    console.warn('⚠️ MetaplexMint failed, falling back to SimpleNFTMint');
                 }
             }
             

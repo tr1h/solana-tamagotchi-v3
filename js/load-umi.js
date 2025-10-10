@@ -21,15 +21,15 @@ const UmiLoader = {
         
         try {
             // Load Umi core
-            await this.loadScript('https://unpkg.com/@metaplex-foundation/umi@0.9.1/dist/index.umd.js');
+            await this.loadScript('https://unpkg.com/@metaplex-foundation/umi@0.8.0/dist/index.umd.js');
             console.log('✅ Umi core loaded');
             
             // Load Umi bundle defaults
-            await this.loadScript('https://unpkg.com/@metaplex-foundation/umi-bundle-defaults@0.9.1/dist/index.umd.js');
+            await this.loadScript('https://unpkg.com/@metaplex-foundation/umi-bundle-defaults@0.8.0/dist/index.umd.js');
             console.log('✅ Umi bundle defaults loaded');
             
             // Load Candy Machine
-            await this.loadScript('https://unpkg.com/@metaplex-foundation/mpl-candy-machine@0.2.1/dist/index.umd.js');
+            await this.loadScript('https://unpkg.com/@metaplex-foundation/mpl-candy-machine@0.1.0/dist/index.umd.js');
             console.log('✅ Candy Machine loaded');
             
             // Verify all objects are available
