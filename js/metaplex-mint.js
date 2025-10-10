@@ -7,7 +7,7 @@ const MetaplexMint = {
     COLLECTION_MINT: 'EHju5kq2SvPrqFMEYZ8FkXfX3FYPNsFinaQVU6bFtJRT',
     
     // Treasury адрес для получения SOL
-    TREASURY_ADDRESS: 'Zznmo9T7SpVdpjWRZP7oCbiYrEu2rpR3hm7m9BHZxuy', // Твой адрес
+    TREASURY_ADDRESS: '2eyQycA4d4zu3FbbwdvHuJ1fVDcfQsz78qGdKGYa8NXw', // Твой treasury адрес
     
     metaplex: null,
     wallet: null,
