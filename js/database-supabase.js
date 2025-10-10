@@ -215,12 +215,29 @@ const Database = {
     // Update TAMA balance with history tracking
     async updateTAMA(walletAddress, amount, reason = 'Unknown') {
         try {
-            // Get current balance
-            const { data } = await this.supabase
+            // Get current balance or create new player
+            let { data } = await this.supabase
                 .from('leaderboard')
                 .select('tama')
                 .eq('wallet_address', walletAddress)
                 .single();
+            
+            // If player doesn't exist, create them
+            if (!data) {
+                const { error } = await this.supabase
+                    .from('leaderboard')
+                    .insert({
+                        wallet_address: walletAddress,
+                        tama: 0,
+                        level: 1,
+                        xp: 0,
+                        total_xp: 0,
+                        ranking_score: 0
+                    });
+                
+                if (error) throw error;
+                data = { tama: 0 };
+            }
             
             const balanceBefore = data?.tama || 0;
             const balanceAfter = balanceBefore + amount;

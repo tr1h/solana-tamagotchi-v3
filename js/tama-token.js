@@ -125,7 +125,8 @@ const TAMAToken = {
             
             return data?.tama || 0;
         } catch (error) {
-            console.error('Failed to get database balance:', error);
+            // If player doesn't exist, return 0
+            console.log('Player not found in database, returning 0 TAMA');
             return 0;
         }
     },
@@ -283,6 +284,12 @@ const TAMAToken = {
 
 // Export for global access
 window.TAMAToken = TAMAToken;
+
+// Auto-initialize when loaded
+document.addEventListener('DOMContentLoaded', async function() {
+    console.log('🪙 Initializing TAMA Token system...');
+    await TAMAToken.init();
+});
 
 console.log('🪙 TAMA Token module loaded');
 

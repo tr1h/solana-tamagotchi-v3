@@ -293,6 +293,9 @@
                             <span>Evolve Pet</span>
                             <small>50 TAMA (Level 10+)</small>
                         </button>
+                        <button id="tama-history-btn-main" class="action-btn secondary" style="width: 100%; margin-top: 10px;">
+                            📜 View TAMA History
+                        </button>
                         <!-- Pet revival removed - pets don't die, they go into critical state -->
                     </div>
                 </div>
@@ -762,6 +765,11 @@
             const historyBtn = document.getElementById('tama-history-btn');
             if (historyBtn) {
                 historyBtn.addEventListener('click', showTAMAHistory);
+            }
+            
+            const historyBtnMain = document.getElementById('tama-history-btn-main');
+            if (historyBtnMain) {
+                historyBtnMain.addEventListener('click', showTAMAHistory);
             }
             
             // TAMA hover functionality

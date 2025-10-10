@@ -54,7 +54,7 @@ const TAMASystem = {
         
         if (lastLogin !== today) {
             localStorage.setItem('lastLogin', today);
-            await this.awardTAMA(walletAddress, this.REWARDS.DAILY_LOGIN, 'Daily Login');
+            await this.awardTAMA(walletAddress, this.REWARDS.DAILY_LOGIN || 25, 'Daily Login');
             return true;
         }
         return false;
@@ -71,7 +71,7 @@ const TAMASystem = {
             return false;
         }
         
-        await this.awardTAMA(walletAddress, this.REWARDS.FEED_PET, 'Feeding Pet');
+        await this.awardTAMA(walletAddress, this.REWARDS.FEED_PET || 5, 'Feeding Pet');
         this.updateTodayEarnings(this.REWARDS.FEED_PET);
         return true;
     },
@@ -87,7 +87,7 @@ const TAMASystem = {
             return false;
         }
         
-        await this.awardTAMA(walletAddress, this.REWARDS.PLAY_WITH_PET, 'Playing with Pet');
+        await this.awardTAMA(walletAddress, this.REWARDS.PLAY_WITH_PET || 10, 'Playing with Pet');
         this.updateTodayEarnings(this.REWARDS.PLAY_WITH_PET);
         return true;
     },
@@ -103,7 +103,7 @@ const TAMASystem = {
             return false;
         }
         
-        await this.awardTAMA(walletAddress, this.REWARDS.TRAIN_PET, 'Training Pet');
+        await this.awardTAMA(walletAddress, this.REWARDS.TRAIN_PET || 15, 'Training Pet');
         this.updateTodayEarnings(this.REWARDS.TRAIN_PET);
         return true;
     },
