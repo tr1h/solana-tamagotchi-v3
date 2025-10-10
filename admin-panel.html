@@ -550,6 +550,33 @@
                         </table>
                     </div>
                 </div>
+
+                <div class="section">
+                    <h3>💰 TAMA Transaction History</h3>
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        <input type="text" id="tama-history-wallet" placeholder="Enter wallet address..." style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        <button class="btn btn-primary" onclick="loadTAMAHistory()">🔍 Load History</button>
+                        <button class="btn btn-secondary" onclick="loadAllTAMAHistory()">📊 All Transactions</button>
+                    </div>
+                    <div class="table-container" style="max-height: 400px; overflow-y: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Wallet</th>
+                                    <th>Amount</th>
+                                    <th>Type</th>
+                                    <th>Reason</th>
+                                    <th>Balance Before</th>
+                                    <th>Balance After</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tama-history-body">
+                                <tr><td colspan="7" style="text-align: center; padding: 20px;">Enter wallet address to view TAMA history</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
             <!-- Analytics Tab -->
@@ -1081,6 +1108,101 @@
                 console.error('Error loading mints:', error);
                 document.getElementById('db-mints-body').innerHTML = 
                     '<tr><td colspan="8" style="text-align: center; padding: 20px; color: red;">Error loading data</td></tr>';
+            }
+        }
+
+        // Load TAMA history for specific wallet
+        async function loadTAMAHistory() {
+            const walletInput = document.getElementById('tama-history-wallet');
+            const walletAddress = walletInput.value.trim();
+            
+            if (!walletAddress) {
+                alert('Please enter a wallet address');
+                return;
+            }
+            
+            try {
+                const { data: history, error } = await supabase
+                    .from('tama_transactions')
+                    .select('*')
+                    .eq('wallet_address', walletAddress)
+                    .order('created_at', { ascending: false })
+                    .limit(100);
+                
+                if (error) throw error;
+                
+                const tbody = document.getElementById('tama-history-body');
+                if (!history || history.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px;">No TAMA transactions found for this wallet</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = history.map(transaction => `
+                    <tr>
+                        <td>${new Date(transaction.created_at).toLocaleString()}</td>
+                        <td title="${transaction.wallet_address}">${transaction.wallet_address?.slice(0, 8)}...</td>
+                        <td style="color: ${transaction.amount > 0 ? '#2ecc71' : '#e74c3c'}; font-weight: bold;">
+                            ${transaction.amount > 0 ? '+' : ''}${transaction.amount}
+                        </td>
+                        <td>
+                            <span style="padding: 2px 6px; border-radius: 4px; font-size: 11px; 
+                                         background: ${transaction.type === 'earn' ? '#2ecc71' : '#e74c3c'}; 
+                                         color: white;">
+                                ${transaction.type}
+                            </span>
+                        </td>
+                        <td>${transaction.reason}</td>
+                        <td>${transaction.balance_before.toLocaleString()}</td>
+                        <td style="font-weight: bold;">${transaction.balance_after.toLocaleString()}</td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading TAMA history:', error);
+                document.getElementById('tama-history-body').innerHTML = 
+                    '<tr><td colspan="7" style="text-align: center; padding: 20px; color: red;">Error loading TAMA history</td></tr>';
+            }
+        }
+
+        // Load all TAMA transactions
+        async function loadAllTAMAHistory() {
+            try {
+                const { data: history, error } = await supabase
+                    .from('tama_transactions')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(200);
+                
+                if (error) throw error;
+                
+                const tbody = document.getElementById('tama-history-body');
+                if (!history || history.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px;">No TAMA transactions found</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = history.map(transaction => `
+                    <tr>
+                        <td>${new Date(transaction.created_at).toLocaleString()}</td>
+                        <td title="${transaction.wallet_address}">${transaction.wallet_address?.slice(0, 8)}...</td>
+                        <td style="color: ${transaction.amount > 0 ? '#2ecc71' : '#e74c3c'}; font-weight: bold;">
+                            ${transaction.amount > 0 ? '+' : ''}${transaction.amount}
+                        </td>
+                        <td>
+                            <span style="padding: 2px 6px; border-radius: 4px; font-size: 11px; 
+                                         background: ${transaction.type === 'earn' ? '#2ecc71' : '#e74c3c'}; 
+                                         color: white;">
+                                ${transaction.type}
+                            </span>
+                        </td>
+                        <td>${transaction.reason}</td>
+                        <td>${transaction.balance_before.toLocaleString()}</td>
+                        <td style="font-weight: bold;">${transaction.balance_after.toLocaleString()}</td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading all TAMA history:', error);
+                document.getElementById('tama-history-body').innerHTML = 
+                    '<tr><td colspan="7" style="text-align: center; padding: 20px; color: red;">Error loading TAMA history</td></tr>';
             }
         }
 
