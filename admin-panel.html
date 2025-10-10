@@ -506,12 +506,48 @@
                 </div>
 
                 <div class="section">
-                    <h3>🔍 Recent Transactions</h3>
-                    <div class="table-container" id="recent-transactions">
-                        <div class="loading">
-                            <div class="spinner"></div>
-                            Loading transactions...
-                        </div>
+                    <h3>👥 All Players (Database View)</h3>
+                    <div class="table-container" style="max-height: 400px; overflow-y: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Wallet</th>
+                                    <th>Pet Name</th>
+                                    <th>Type</th>
+                                    <th>Level</th>
+                                    <th>Total XP</th>
+                                    <th>TAMA</th>
+                                    <th>Created</th>
+                                </tr>
+                            </thead>
+                            <tbody id="db-players-body">
+                                <tr><td colspan="8" style="text-align: center; padding: 20px;">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>🎨 All NFT Mints (Database View)</h3>
+                    <div class="table-container" style="max-height: 400px; overflow-y: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Wallet</th>
+                                    <th>Pet Name</th>
+                                    <th>Type</th>
+                                    <th>Rarity</th>
+                                    <th>Price</th>
+                                    <th>Phase</th>
+                                    <th>Minted At</th>
+                                </tr>
+                            </thead>
+                            <tbody id="db-mints-body">
+                                <tr><td colspan="8" style="text-align: center; padding: 20px;">Loading...</td></tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -681,7 +717,8 @@
         async function loadTabData(tabName) {
             if (tabName === 'database') {
                 await loadDatabaseStatus();
-                await loadRecentTransactions();
+                await loadDatabasePlayers();
+                await loadDatabaseMints();
             } else if (tabName === 'analytics') {
                 await loadCharts();
             } else if (tabName === 'users') {
@@ -975,6 +1012,76 @@
 
         async function clearTestData() {
             alert('❌ This feature is disabled for safety!');
+        }
+
+        // Load all players for database view
+        async function loadDatabasePlayers() {
+            try {
+                const { data: players, error } = await supabase
+                    .from('leaderboard')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                
+                const tbody = document.getElementById('db-players-body');
+                if (!players || players.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px;">No players found</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = players.map((player, index) => `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td title="${player.wallet_address}">${player.wallet_address?.slice(0, 8)}...</td>
+                        <td>${player.pet_name || 'N/A'}</td>
+                        <td>${player.pet_type || 'N/A'}</td>
+                        <td>${player.level || 1}</td>
+                        <td>${player.total_xp || player.xp || 0}</td>
+                        <td>${(player.tama || 0).toLocaleString()}</td>
+                        <td>${new Date(player.created_at).toLocaleDateString()}</td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading players:', error);
+                document.getElementById('db-players-body').innerHTML = 
+                    '<tr><td colspan="8" style="text-align: center; padding: 20px; color: red;">Error loading data</td></tr>';
+            }
+        }
+
+        // Load all NFT mints for database view
+        async function loadDatabaseMints() {
+            try {
+                const { data: mints, error } = await supabase
+                    .from('nft_mints')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                
+                if (error) throw error;
+                
+                const tbody = document.getElementById('db-mints-body');
+                if (!mints || mints.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px;">No mints found</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = mints.map((mint, index) => `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td title="${mint.wallet_address}">${mint.wallet_address?.slice(0, 8)}...</td>
+                        <td>${mint.pet_name || 'N/A'}</td>
+                        <td>${mint.pet_type || 'N/A'}</td>
+                        <td>${mint.pet_rarity || 'N/A'}</td>
+                        <td>${mint.price || mint.mint_price || 0} SOL</td>
+                        <td>${mint.phase || 'Phase 1'}</td>
+                        <td>${new Date(mint.created_at).toLocaleDateString()}</td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading mints:', error);
+                document.getElementById('db-mints-body').innerHTML = 
+                    '<tr><td colspan="8" style="text-align: center; padding: 20px; color: red;">Error loading data</td></tr>';
+            }
         }
 
         // Settings
