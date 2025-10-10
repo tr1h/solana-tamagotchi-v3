@@ -422,17 +422,23 @@ const MintPage = {
             
             console.log('✅ NFT MINTED!', result);
             
+            // Get pet name
+            const petNameInput = document.getElementById('pet-name');
+            const petName = petNameInput && petNameInput.value ? petNameInput.value.trim() : '';
+            
             // Создаём NFT объект для сохранения
             const nft = {
                 mintAddress: result.mintAddress,
                 signature: result.signature,
-                type: result.metadata.gameData.type,
-                emoji: result.metadata.gameData.emoji,
-                rarity: result.metadata.gameData.rarity,
+                name: result.nftData?.name || petName || 'My Pet',
+                type: result.nftData?.type || result.metadata?.gameData?.type,
+                emoji: result.metadata?.gameData?.emoji,
+                rarity: result.nftData?.rarity || result.metadata?.gameData?.rarity,
                 tamaBonus: this.phases[this.getCurrentPhase()].tamaBonus,
                 mintedAt: Date.now(),
                 owner: this.publicKey.toString(),
-                metadata: result.metadata
+                metadata: result.metadata,
+                nftData: result.nftData
             };
             
             // Сохраняем NFT данные
@@ -447,6 +453,17 @@ const MintPage = {
                     price,
                     phaseIndex
                 );
+            }
+            
+            // Начисляем TAMA за minting
+            if (window.TAMASystem && window.TAMASystem.awardTAMA) {
+                const tamaBonus = this.phases[phaseIndex].tamaBonus || 500;
+                await window.TAMASystem.awardTAMA(
+                    this.publicKey.toString(), 
+                    tamaBonus, 
+                    'NFT Minting Bonus'
+                );
+                console.log(`💰 Awarded ${tamaBonus} TAMA for minting!`);
             }
             
             // Показываем success modal

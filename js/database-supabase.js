@@ -451,10 +451,10 @@ const Database = {
                 .from('nft_mints')
                 .insert({
                     wallet_address: walletAddress,
-                    nft_mint_address: nftData.mintAddress, // ✅ Добавляем mint address
+                    mint_address: nftData.mintAddress,
+                    nft_name: nftData.name || 'My Pet',
                     nft_type: nftData.type,
                     nft_rarity: nftData.rarity,
-                    nft_data: nftData,
                     mint_price: price,
                     mint_phase: phase
                 })

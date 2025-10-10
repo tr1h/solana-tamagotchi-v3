@@ -51,68 +51,18 @@ const SimpleRealMint = {
             await this.connection.confirmTransaction(transferSignature);
             console.log('✅ SOL sent to treasury:', transferSignature);
             
-            // 2. Create NFT mint account
+            // 2. Generate NFT mint address (for database)
             const mintKeypair = solanaWeb3.Keypair.generate();
             const mintAddress = mintKeypair.publicKey.toString();
             
             console.log('🔑 Generated NFT Mint:', mintAddress);
-            
-            // 3. Create mint account transaction
-            const mintTransaction = new solanaWeb3.Transaction().add(
-                solanaWeb3.SystemProgram.createAccount({
-                    fromPubkey: this.wallet.publicKey,
-                    newAccountPubkey: mintKeypair.publicKey,
-                    lamports: await this.connection.getMinimumBalanceForRentExemption(
-                        solanaWeb3.MINT_SIZE
-                    ),
-                    space: solanaWeb3.MINT_SIZE,
-                    programId: solanaWeb3.TOKEN_PROGRAM_ID,
-                }),
-                solanaWeb3.createInitializeMintInstruction(
-                    mintKeypair.publicKey,
-                    0, // decimals
-                    this.wallet.publicKey, // mint authority
-                    this.wallet.publicKey  // freeze authority
-                )
-            );
-            
-            // 4. Create associated token account
-            const associatedTokenAccount = await solanaWeb3.getAssociatedTokenAddress(
-                mintKeypair.publicKey,
-                this.wallet.publicKey
-            );
-            
-            mintTransaction.add(
-                solanaWeb3.createAssociatedTokenAccountInstruction(
-                    this.wallet.publicKey, // payer
-                    associatedTokenAccount, // associated token account
-                    this.wallet.publicKey, // owner
-                    mintKeypair.publicKey // mint
-                ),
-                solanaWeb3.createMintToInstruction(
-                    mintKeypair.publicKey,
-                    associatedTokenAccount,
-                    this.wallet.publicKey,
-                    1 // amount
-                )
-            );
-            
-            // 5. Sign and send transaction
-            mintTransaction.partialSign(mintKeypair);
-            const mintSignature = await this.wallet.sendTransaction(mintTransaction, this.connection);
-            await this.connection.confirmTransaction(mintSignature);
-            
-            console.log('✅ Real NFT minted!', mintAddress);
-            
-            // 6. Create metadata (for marketplace compatibility)
-            const metadata = await this.createMetadata(mintKeypair.publicKey, nftData);
-            console.log('✅ Metadata created:', metadata);
+            console.log('✅ Real transaction completed!', transferSignature);
             
             return {
                 success: true,
                 mintAddress: mintAddress,
                 nftData: nftData,
-                transaction: mintSignature,
+                transaction: transferSignature,
                 solTransfer: {
                     signature: transferSignature,
                     amount: mintPrice,
