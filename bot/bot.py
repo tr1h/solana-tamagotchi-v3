@@ -638,7 +638,7 @@ def send_info(message):
 def send_price(message):
     stats = get_stats()
     price_text = f"""
-💰 **NFT Pet Price:**
+💰 *NFT Pet Price:*
 
 Current: {stats['price']}
 
