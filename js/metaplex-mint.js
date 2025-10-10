@@ -6,6 +6,9 @@ const MetaplexMint = {
     CANDY_MACHINE_ID: '3Y82dFzikkzTzEk4vDgvHHeyQwap3M2Z7Zbz4Tj6TbJB',
     COLLECTION_MINT: 'EHju5kq2SvPrqFMEYZ8FkXfX3FYPNsFinaQVU6bFtJRT',
     
+    // Treasury адрес для получения SOL
+    TREASURY_ADDRESS: 'Zznmo9T7SpVdpjWRZP7oCbiYrEu2rpR3hm7m9BHZxuy', // Твой адрес
+    
     metaplex: null,
     wallet: null,
     
@@ -70,7 +73,25 @@ const MetaplexMint = {
             // Generate NFT data
             const nftData = this.generateNFTData(customName);
             
-            // Create NFT with Metaplex
+            // Create NFT with Metaplex and send SOL to treasury
+            const treasuryPublicKey = new solanaWeb3.PublicKey(this.TREASURY_ADDRESS);
+            const mintPrice = 0.1; // 0.1 SOL
+            
+            // First, send SOL to treasury
+            const transferTransaction = new solanaWeb3.Transaction().add(
+                solanaWeb3.SystemProgram.transfer({
+                    fromPubkey: this.wallet.publicKey,
+                    toPubkey: treasuryPublicKey,
+                    lamports: mintPrice * solanaWeb3.LAMPORTS_PER_SOL,
+                })
+            );
+            
+            console.log('💰 Sending SOL to treasury:', this.TREASURY_ADDRESS);
+            const transferSignature = await this.wallet.sendTransaction(transferTransaction, this.metaplex.connection);
+            await this.metaplex.connection.confirmTransaction(transferSignature);
+            console.log('✅ SOL sent to treasury:', transferSignature);
+            
+            // Then create NFT
             const { nft } = await this.metaplex.nfts().create({
                 name: nftData.name,
                 symbol: 'TAMA',
@@ -86,7 +107,12 @@ const MetaplexMint = {
                 success: true,
                 mintAddress: nft.address.toString(),
                 nftData: nftData,
-                transaction: nft.metadataAddress.toString()
+                transaction: nft.metadataAddress.toString(),
+                solTransfer: {
+                    signature: transferSignature,
+                    amount: mintPrice,
+                    to: this.TREASURY_ADDRESS
+                }
             };
             
         } catch (error) {
@@ -118,6 +144,21 @@ const MetaplexMint = {
                 { trait_type: 'Generation', value: 'Genesis' }
             ]
         };
+    },
+    
+    // Проверить баланс treasury
+    async getTreasuryBalance() {
+        try {
+            if (!this.metaplex) return 0;
+            
+            const treasuryPublicKey = new solanaWeb3.PublicKey(this.TREASURY_ADDRESS);
+            const balance = await this.metaplex.connection.getBalance(treasuryPublicKey);
+            
+            return balance / solanaWeb3.LAMPORTS_PER_SOL;
+        } catch (error) {
+            console.error('❌ Failed to get treasury balance:', error);
+            return 0;
+        }
     }
 };
 
