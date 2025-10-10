@@ -37,6 +37,43 @@ BANNED_WORDS = ['spam', 'scam', 'http://', 'https://']  # Add more
 # Muted users
 muted_users = {}
 
+# Generate beautiful referral code
+def generate_referral_code(wallet_address, user_id):
+    """Generate a beautiful referral code like TAMA123, GOTCHI456"""
+    import hashlib
+    
+    # Create hash from wallet + user_id
+    data = f"{wallet_address}{user_id}".encode()
+    hash_obj = hashlib.md5(data).hexdigest()
+    
+    # Take first 6 characters and make them uppercase
+    code_part = hash_obj[:6].upper()
+    
+    # Add prefix based on user_id (for variety)
+    prefixes = ['TAMA', 'GOTCHI', 'SOL', 'PET', 'NFT', 'GAME', 'PLAY', 'EARN']
+    prefix = prefixes[user_id % len(prefixes)]
+    
+    return f"{prefix}{code_part}"
+
+# Find wallet by referral code
+def find_wallet_by_referral_code(ref_code):
+    """Find wallet address by beautiful referral code"""
+    try:
+        # Get all users and check their codes
+        response = supabase.table('leaderboard').select('wallet_address, telegram_id').execute()
+        
+        for user in response.data:
+            if user.get('telegram_id'):
+                # Generate code for this user
+                generated_code = generate_referral_code(user['wallet_address'], user['telegram_id'])
+                if generated_code == ref_code:
+                    return user['wallet_address']
+        
+        return None
+    except Exception as e:
+        print(f"Error finding wallet by code: {e}")
+        return None
+
 # Get stats from MySQL
 def get_stats():
     try:
@@ -134,10 +171,18 @@ def handle_start(message):
             # Extract referral code
             ref_code = ref_param[3:]  # Remove 'ref' prefix
             try:
-                # Decode the referral code to get wallet address
-                # Add padding if needed
-                ref_code_padded = ref_code + '=' * (4 - len(ref_code) % 4)
-                wallet_address = base64.b64decode(ref_code_padded).decode()
+                # Check if it's a beautiful code (like TAMA123) or old base64
+                if len(ref_code) > 8 and ref_code.isalnum():
+                    # Beautiful code - need to find wallet by code
+                    wallet_address = find_wallet_by_referral_code(ref_code)
+                    if not wallet_address:
+                        # Fallback to old system
+                        ref_code_padded = ref_code + '=' * (4 - len(ref_code) % 4)
+                        wallet_address = base64.b64decode(ref_code_padded).decode()
+                else:
+                    # Old base64 code
+                    ref_code_padded = ref_code + '=' * (4 - len(ref_code) % 4)
+                    wallet_address = base64.b64decode(ref_code_padded).decode()
                 
                 # Store referral info for when user connects wallet
                 user_id = message.from_user.id
@@ -522,10 +567,11 @@ def send_referral(message):
         bot.reply_to(message, text, parse_mode='Markdown', reply_markup=keyboard)
         return
     
-    # Create short referral link using Telegram bot
-    ref_code = base64.b64encode(wallet_address.encode()).decode()[:8]  # Short code
+    # Create beautiful referral code
+    ref_code = generate_referral_code(wallet_address, user_id)
     telegram_link = f"https://t.me/solana_tamagotchi_v3_bot?start=ref{ref_code}"
     game_link = f"{GAME_URL}?ref={wallet_address}&tg_id={user_id}&tg_username={username}"
+    short_link = f"https://tama.game/ref/{ref_code}"
     
     # Get referral stats
     try:
@@ -543,9 +589,14 @@ def send_referral(message):
         total_earnings = 0
     
     text = f"""
-🔗 *Your Personal Referral Link:*
+🔗 *Your Personal Referral Code:*
 
-`{telegram_link}`
+`{ref_code}`
+
+🔗 *Your Links:*
+• Telegram: `{telegram_link}`
+• Game: `{game_link}`
+• Short: `{short_link}`
 
 📊 *Your Stats:*
 • Total Referrals: {total_referrals}
@@ -565,7 +616,7 @@ def send_referral(message):
 • 50 referrals → +30000 TAMA
 • 100 referrals → +100000 TAMA + Legendary Badge!
 
-📤 *Share with friends and earn!*
+📤 *Share your code: {ref_code}*
     """
     
     keyboard = types.InlineKeyboardMarkup()
@@ -576,6 +627,52 @@ def send_referral(message):
     keyboard.row(
         types.InlineKeyboardButton("📊 View Stats", callback_data="referral_stats"),
         types.InlineKeyboardButton("🏆 Milestones", callback_data="referral_milestones")
+    )
+    
+    bot.reply_to(message, text, parse_mode='Markdown', reply_markup=keyboard)
+
+# Get referral code command
+@bot.message_handler(commands=['code'], func=lambda message: message.chat.type == 'private')
+def get_referral_code(message):
+    user_id = message.from_user.id
+    username = message.from_user.username or message.from_user.first_name
+    
+    # Get wallet address from database
+    telegram_id = str(user_id)
+    wallet_address = get_wallet_by_telegram(telegram_id)
+    
+    if not wallet_address:
+        bot.reply_to(message, """
+❌ *No wallet linked yet!*
+
+To get your referral code:
+1. Connect your wallet in the game
+2. Use /ref to get your code
+
+Your code will be something like: `TAMA123ABC`
+        """, parse_mode='Markdown')
+        return
+    
+    # Generate beautiful code
+    ref_code = generate_referral_code(wallet_address, user_id)
+    
+    text = f"""
+🎯 *Your Referral Code:*
+
+`{ref_code}`
+
+✨ *How to use:*
+• Share: `{ref_code}`
+• Link: `https://tama.game/ref/{ref_code}`
+• Telegram: `/start ref{ref_code}`
+
+📤 *Easy to remember and share!*
+    """
+    
+    keyboard = types.InlineKeyboardMarkup()
+    keyboard.row(
+        types.InlineKeyboardButton("📋 Copy Code", callback_data=f"copy_code_{ref_code}"),
+        types.InlineKeyboardButton("🔗 Get Full Link", callback_data="get_full_link")
     )
     
     bot.reply_to(message, text, parse_mode='Markdown', reply_markup=keyboard)
