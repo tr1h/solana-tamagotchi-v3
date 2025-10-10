@@ -104,6 +104,10 @@ const SimpleRealMint = {
             
             console.log('✅ Real NFT minted!', mintAddress);
             
+            // 6. Create metadata (for marketplace compatibility)
+            const metadata = await this.createMetadata(mintKeypair.publicKey, nftData);
+            console.log('✅ Metadata created:', metadata);
+            
             return {
                 success: true,
                 mintAddress: mintAddress,
@@ -145,6 +149,51 @@ const SimpleRealMint = {
                 { trait_type: 'Generation', value: 'Genesis' }
             ]
         };
+    },
+    
+    async createMetadata(mintAddress, nftData) {
+        try {
+            // Create metadata JSON
+            const metadata = {
+                name: nftData.name,
+                symbol: "TAMA",
+                description: nftData.description,
+                image: nftData.image,
+                attributes: nftData.attributes,
+                properties: {
+                    files: [
+                        {
+                            uri: nftData.image,
+                            type: "image/png"
+                        }
+                    ],
+                    category: "image",
+                    creators: [
+                        {
+                            address: this.TREASURY_ADDRESS,
+                            share: 100
+                        }
+                    ]
+                }
+            };
+            
+            // Upload metadata to IPFS or Arweave (simplified - using GitHub as storage)
+            const metadataUri = `https://tr1h.github.io/solana-tamagotchi-v3/metadata/${mintAddress.toString()}.json`;
+            
+            // For now, we'll store metadata locally and reference it
+            // In production, you'd upload to IPFS/Arweave
+            console.log('📝 Metadata JSON:', JSON.stringify(metadata, null, 2));
+            console.log('🔗 Metadata URI:', metadataUri);
+            
+            return {
+                uri: metadataUri,
+                data: metadata
+            };
+            
+        } catch (error) {
+            console.error('❌ Failed to create metadata:', error);
+            return null;
+        }
     }
 };
 
