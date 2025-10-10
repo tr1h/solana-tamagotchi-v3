@@ -101,6 +101,11 @@ const WalletManager = {
                 await TelegramIntegration.linkWalletToTelegram(this.publicKey.toString());
             }
             
+            // Process pending referral if exists
+            if (window.ReferralSystem) {
+                await window.ReferralSystem.processNewReferral(this.publicKey.toString());
+            }
+            
             // Fetch balance
             await this.fetchBalance();
             

@@ -383,13 +383,13 @@ const Database = {
                 // Add to referrer's referrals
                 await this.db.collection('players').doc(referrerAddress).update({
                     referrals: firebase.firestore.FieldValue.increment(1),
-                    referralEarnings: firebase.firestore.FieldValue.increment(25)
+                    referralEarnings: firebase.firestore.FieldValue.increment(100)
                 });
                 
                 // Update referrer's local data
                 const playerData = Utils.loadLocal('playerData') || {};
                 playerData.referrals = (playerData.referrals || 0) + 1;
-                playerData.tama = (playerData.tama || 0) + 25;
+                playerData.tama = (playerData.tama || 0) + 100;
                 Utils.saveLocal('playerData', playerData);
                 
                 // Save referral record

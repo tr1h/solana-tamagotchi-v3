@@ -83,6 +83,14 @@ const ReferralSystem = {
             // Сохраняем в localStorage
             Utils.saveLocal('pendingReferral', referralData);
             
+            // Сохраняем Telegram данные отдельно
+            if (tgId) {
+                Utils.saveLocal('telegram_id', tgId);
+            }
+            if (tgUsername) {
+                Utils.saveLocal('telegram_username', tgUsername);
+            }
+            
             // Показываем уведомление
             if (window.Utils && window.Utils.showNotification) {
                 window.Utils.showNotification('🔗 Referral link detected! Connect wallet to claim rewards!');

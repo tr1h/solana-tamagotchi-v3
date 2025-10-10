@@ -37,8 +37,24 @@ const TelegramIntegration = {
 
     // Get Telegram user data (any method)
     getTelegramData() {
-        // Try WebApp first, then URL params
-        return this.getTelegramDataFromWebApp() || this.getTelegramDataFromURL();
+        // Try WebApp first, then URL params, then localStorage
+        return this.getTelegramDataFromWebApp() || this.getTelegramDataFromURL() || this.getTelegramDataFromStorage();
+    },
+    
+    // Get Telegram data from localStorage
+    getTelegramDataFromStorage() {
+        const storedId = localStorage.getItem('telegram_id');
+        const storedUsername = localStorage.getItem('telegram_username');
+        
+        if (storedId && storedUsername) {
+            return {
+                id: parseInt(storedId),
+                username: storedUsername,
+                first_name: storedUsername
+            };
+        }
+        
+        return null;
     },
 
     // Link wallet to Telegram account
