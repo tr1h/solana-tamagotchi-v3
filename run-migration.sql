@@ -43,3 +43,4 @@ SELECT
 FROM leaderboard 
 ORDER BY ranking_score DESC 
 LIMIT 10;
+

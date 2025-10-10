@@ -178,3 +178,4 @@ console.log('   SimpleTAMARecalc.showTAMADistribution() - Show current TAMA dist
 console.log('   SimpleTAMARecalc.recalculateAllTAMA() - Recalculate all TAMA values');
 console.log('');
 console.log('⚠️  Make sure data is loaded first (wait for "✅ All data loaded" message)');
+

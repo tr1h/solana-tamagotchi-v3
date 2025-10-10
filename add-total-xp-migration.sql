@@ -15,3 +15,4 @@ CREATE INDEX IF NOT EXISTS idx_leaderboard_total_xp ON leaderboard(total_xp DESC
 
 -- Update the comment
 COMMENT ON COLUMN leaderboard.total_xp IS 'Total accumulated XP across all levels';
+

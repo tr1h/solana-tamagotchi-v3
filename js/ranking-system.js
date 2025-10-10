@@ -190,3 +190,4 @@ class RankingSystem {
 window.RankingSystem = new RankingSystem();
 
 console.log('🏆 Advanced Ranking System loaded!');
+

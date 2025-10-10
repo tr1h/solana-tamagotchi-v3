@@ -7,19 +7,34 @@ const MintPage = {
     connection: null,
     publicKey: null,
     
-    // Mint phases
+    // Mint phases - will be updated from NetworkConfig
     phases: [
-        { max: 100, price: 0.3, tamaBonus: 600 },
-        { max: 500, price: 0.5, tamaBonus: 500 },
-        { max: 1000, price: 0.8, tamaBonus: 500 },
-        { max: 10000, price: 1.0, tamaBonus: 500 }  // MAX 10,000 NFTs total
+        { max: 100, price: 0.1, tamaBonus: 600 },
+        { max: 200, price: 0.2, tamaBonus: 500 },
+        { max: 500, price: 0.3, tamaBonus: 500 }
     ],
     
     maxSupply: 10000,  // Total NFT limit
     
     currentMinted: 0,
     
+    // Update phases from NetworkConfig
+    updatePhasesFromConfig() {
+        if (window.NetworkConfig) {
+            const networkInfo = window.NetworkConfig.getNetworkInfo();
+            this.phases = [
+                { max: networkInfo.limits.phase1, price: networkInfo.prices.phase1, tamaBonus: 600 },
+                { max: networkInfo.limits.phase2, price: networkInfo.prices.phase2, tamaBonus: 500 },
+                { max: networkInfo.limits.phase3, price: networkInfo.prices.phase3, tamaBonus: 500 }
+            ];
+            console.log('🌐 Updated phases from NetworkConfig:', this.phases);
+        }
+    },
+    
     async init() {
+        // Update phases from NetworkConfig if available
+        this.updatePhasesFromConfig();
+        
         // Initialize Database first
         if (window.Database && window.Database.init) {
             await window.Database.init();
@@ -74,9 +89,9 @@ const MintPage = {
     async handleConnect() {
         this.publicKey = this.wallet.publicKey;
         
-        // Setup connection
+        // Setup connection using NetworkConfig
         this.connection = new solanaWeb3.Connection(
-            'https://api.devnet.solana.com',
+            window.NetworkConfig ? window.NetworkConfig.getRpcEndpoint() : 'https://api.devnet.solana.com',
             'confirmed'
         );
         

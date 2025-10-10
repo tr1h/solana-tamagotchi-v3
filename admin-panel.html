@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="network-config.js"></script>
     <style>
         * {
             margin: 0;
@@ -204,6 +205,93 @@
 
         .btn-danger:hover {
             background: #dc2626;
+        }
+
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e67e22;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        /* Network Configuration Styles */
+        .network-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+        }
+
+        .network-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .network-badge.devnet {
+            background: #3498db;
+            color: white;
+        }
+
+        .network-badge.mainnet {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .network-info {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .price-display, .limit-display {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .price-display span, .limit-display span {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .price-display span:last-child, .limit-display span:last-child {
+            border-bottom: none;
+        }
+
+        .network-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 14px;
         }
 
         .btn-success {
@@ -460,6 +548,49 @@
 
             <!-- Settings Tab -->
             <div id="settings-tab" class="tab-content">
+                <div class="section">
+                    <h3>🌐 Network Configuration</h3>
+                    <div class="form-group">
+                        <label>Current Network</label>
+                        <div class="network-status" id="network-status">
+                            <span class="network-badge" id="network-badge">🔧 Devnet</span>
+                            <span class="network-info" id="network-info">Testing Network</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>RPC Endpoint</label>
+                        <input type="text" id="rpc-endpoint" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Current Prices</label>
+                        <div class="price-display" id="price-display">
+                            <span>Phase 1: <strong id="phase1-price-display">0.1 SOL</strong></span>
+                            <span>Phase 2: <strong id="phase2-price-display">0.2 SOL</strong></span>
+                            <span>Phase 3: <strong id="phase3-price-display">0.3 SOL</strong></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Mint Limits</label>
+                        <div class="limit-display" id="limit-display">
+                            <span>Phase 1: <strong id="phase1-limit-display">100</strong></span>
+                            <span>Phase 2: <strong id="phase2-limit-display">200</strong></span>
+                            <span>Phase 3: <strong id="phase3-limit-display">500</strong></span>
+                        </div>
+                    </div>
+                    <div class="network-actions">
+                        <button class="btn btn-warning" onclick="switchToMainnet()" id="mainnet-btn">
+                            🚀 Switch to Mainnet
+                        </button>
+                        <button class="btn btn-secondary" onclick="switchToDevnet()" id="devnet-btn" style="display: none;">
+                            🔧 Switch to Devnet
+                        </button>
+                    </div>
+                    <div class="warning-box" id="mainnet-warning" style="display: none;">
+                        ⚠️ <strong>MAINNET WARNING:</strong> This will use real SOL and real money! 
+                        Make sure you're ready for production launch.
+                    </div>
+                </div>
+
                 <div class="section">
                     <h3>⚙️ General Settings</h3>
                     <div class="form-group">
@@ -872,6 +1003,107 @@
             }
         }
 
+        // Network Configuration Functions
+        function updateNetworkDisplay() {
+            const networkInfo = window.NetworkConfig.getNetworkInfo();
+            
+            // Update network badge
+            const badge = document.getElementById('network-badge');
+            const info = document.getElementById('network-info');
+            const rpcEndpoint = document.getElementById('rpc-endpoint');
+            
+            if (networkInfo.isMainnet) {
+                badge.textContent = '🚀 Mainnet';
+                badge.className = 'network-badge mainnet';
+                info.textContent = 'Production Network - Real SOL';
+            } else {
+                badge.textContent = '🔧 Devnet';
+                badge.className = 'network-badge devnet';
+                info.textContent = 'Testing Network - Free SOL';
+            }
+            
+            rpcEndpoint.value = networkInfo.rpc;
+            
+            // Update prices
+            document.getElementById('phase1-price-display').textContent = networkInfo.prices.phase1 + ' SOL';
+            document.getElementById('phase2-price-display').textContent = networkInfo.prices.phase2 + ' SOL';
+            document.getElementById('phase3-price-display').textContent = networkInfo.prices.phase3 + ' SOL';
+            
+            // Update limits
+            document.getElementById('phase1-limit-display').textContent = networkInfo.limits.phase1;
+            document.getElementById('phase2-limit-display').textContent = networkInfo.limits.phase2;
+            document.getElementById('phase3-limit-display').textContent = networkInfo.limits.phase3;
+            
+            // Update buttons
+            const mainnetBtn = document.getElementById('mainnet-btn');
+            const devnetBtn = document.getElementById('devnet-btn');
+            const warningBox = document.getElementById('mainnet-warning');
+            
+            if (networkInfo.isMainnet) {
+                mainnetBtn.style.display = 'none';
+                devnetBtn.style.display = 'inline-block';
+                warningBox.style.display = 'block';
+            } else {
+                mainnetBtn.style.display = 'inline-block';
+                devnetBtn.style.display = 'none';
+                warningBox.style.display = 'none';
+            }
+        }
+
+        function switchToMainnet() {
+            const confirmed = confirm(
+                '🚀 SWITCH TO MAINNET?\n\n' +
+                '⚠️ WARNING: This will use REAL SOL and REAL MONEY!\n' +
+                '• Users will pay real SOL for NFTs\n' +
+                '• All transactions will be permanent\n' +
+                '• Make sure you\'re ready for production\n\n' +
+                'Are you absolutely sure?'
+            );
+            
+            if (confirmed) {
+                window.NetworkConfig.switchToMainnet();
+                updateNetworkDisplay();
+                
+                // Save to localStorage
+                localStorage.setItem('networkConfig', JSON.stringify({
+                    network: 'mainnet',
+                    switchedAt: new Date().toISOString()
+                }));
+                
+                alert('🚀 SWITCHED TO MAINNET!\n\n' +
+                      '• RPC: ' + window.NetworkConfig.getRpcEndpoint() + '\n' +
+                      '• Prices: ' + JSON.stringify(window.NetworkConfig.PRICES.mainnet) + '\n' +
+                      '• Limits: ' + JSON.stringify(window.NetworkConfig.MINT_LIMITS.mainnet) + '\n\n' +
+                      '⚠️ Remember to update your Treasury wallet address!');
+            }
+        }
+
+        function switchToDevnet() {
+            const confirmed = confirm(
+                '🔧 SWITCH TO DEVNET?\n\n' +
+                'This will switch back to testing mode:\n' +
+                '• Free test SOL\n' +
+                '• No real money involved\n' +
+                '• Safe for development\n\n' +
+                'Continue?'
+            );
+            
+            if (confirmed) {
+                window.NetworkConfig.switchToDevnet();
+                updateNetworkDisplay();
+                
+                // Save to localStorage
+                localStorage.setItem('networkConfig', JSON.stringify({
+                    network: 'devnet',
+                    switchedAt: new Date().toISOString()
+                }));
+                
+                alert('🔧 SWITCHED TO DEVNET!\n\n' +
+                      '• RPC: ' + window.NetworkConfig.getRpcEndpoint() + '\n' +
+                      '• Safe testing mode activated');
+            }
+        }
+
         // Copy address to clipboard
         async function copyAddress(address) {
             try {
@@ -948,6 +1180,11 @@
         // Initialize
         loadStats();
         loadPhaseStatus();
+        
+        // Initialize network configuration display
+        setTimeout(() => {
+            updateNetworkDisplay();
+        }, 1000);
     </script>
 </body>
 </html>

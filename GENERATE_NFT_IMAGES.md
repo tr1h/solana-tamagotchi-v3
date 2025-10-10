@@ -83,3 +83,4 @@ bundlr upload image.png -c solana -w wallet.json
 
 PNG с прозрачным фоном.
 
+

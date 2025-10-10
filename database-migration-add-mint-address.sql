@@ -16,3 +16,4 @@ CREATE INDEX IF NOT EXISTS idx_nft_mints_mint_address ON public.nft_mints (nft_m
 -- Done!
 -- Now NFT mint addresses will be saved in the database
 
+

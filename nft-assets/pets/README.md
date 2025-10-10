@@ -21,3 +21,4 @@
 2. Загрузи на Arweave
 3. Обнови URL в metadata
 
+

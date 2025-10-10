@@ -264,3 +264,4 @@ Telegram: https://t.me/solana_tamagotchi
 
 Good luck! 🍀
 
+

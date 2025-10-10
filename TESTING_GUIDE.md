@@ -279,3 +279,4 @@ https://explorer.solana.com/address/<MINT_ADDRESS>?cluster=devnet
 
 Если всё ещё не работает - напиши в Telegram: https://t.me/solana_tamagotchi
 
+

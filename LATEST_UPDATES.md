@@ -220,3 +220,4 @@ python -m http.server 8000
 3. Проверь Supabase logs
 4. Telegram: https://t.me/solana_tamagotchi
 
+

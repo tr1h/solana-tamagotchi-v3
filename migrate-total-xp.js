@@ -66,3 +66,4 @@ async function migrateTotalXP() {
 
 // Auto-run migration
 migrateTotalXP();
+

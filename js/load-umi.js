@@ -101,3 +101,4 @@ const UmiLoader = {
 window.UmiLoader = UmiLoader;
 
 console.log('🔧 UmiLoader ready');
+

@@ -148,3 +148,4 @@
         alert('❌ Analysis failed: ' + error.message);
     }
 })();
+

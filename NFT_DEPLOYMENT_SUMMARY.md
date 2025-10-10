@@ -473,3 +473,4 @@ document.getElementById('minted-count').textContent = this.currentMinted;
 
 
 
+

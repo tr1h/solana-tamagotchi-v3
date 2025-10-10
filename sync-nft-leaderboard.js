@@ -127,3 +127,4 @@ console.log('🔄 NFT-Leaderboard Sync Script loaded!');
 console.log('Usage:');
 console.log('- InlineSyncScript.showSyncStats() - показать статистику');
 console.log('- InlineSyncScript.syncNFTsWithLeaderboard() - синхронизировать данные');
+

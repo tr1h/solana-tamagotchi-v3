@@ -100,3 +100,4 @@
         alert('❌ Sync failed: ' + error.message);
     }
 })();
+
