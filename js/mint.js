@@ -512,6 +512,12 @@ const MintPage = {
             // Показываем успех
             this.showMintSuccess(nft);
             
+            // Auto-redirect to game after 3 seconds
+            setTimeout(() => {
+                console.log('🚀 Redirecting to game...');
+                window.location.href = 'index.html';
+            }, 3000);
+            
             console.log('✅ Mint result processed successfully!');
             
         } catch (error) {

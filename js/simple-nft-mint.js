@@ -150,11 +150,43 @@ const SimpleNFTMint = {
         try {
             console.log('🔍 Checking NFT ownership for:', walletAddress);
             
-            // Для devnet теста - проверяем в базе данных
+            // Проверяем в таблице nft_mints
+            if (window.Database && window.Database.supabase) {
+                const { data, error } = await window.Database.supabase
+                    .from('nft_mints')
+                    .select('*')
+                    .eq('wallet_address', walletAddress)
+                    .order('created_at', { ascending: false })
+                    .limit(1);
+                
+                if (error) {
+                    console.error('❌ Error checking NFT ownership:', error);
+                } else if (data && data.length > 0) {
+                    const nft = data[0];
+                    console.log('✅ NFT found in nft_mints table:', nft);
+                    return {
+                        hasNFT: true,
+                        nfts: [{
+                            publicKey: nft.mint_address,
+                            metadata: {
+                                name: nft.nft_name,
+                                symbol: 'TAMA',
+                                uri: 'https://arweave.net/demo',
+                                gameData: {
+                                    type: nft.nft_type,
+                                    rarity: nft.nft_rarity
+                                }
+                            }
+                        }]
+                    };
+                }
+            }
+            
+            // Fallback: проверяем в players таблице
             if (window.Database && window.Database.loadPlayerData) {
                 const playerData = await window.Database.loadPlayerData(walletAddress);
                 if (playerData && playerData.nft_mint_address) {
-                    console.log('✅ NFT found in database:', playerData.nft_mint_address);
+                    console.log('✅ NFT found in players table:', playerData.nft_mint_address);
                     return {
                         hasNFT: true,
                         nfts: [{
@@ -170,6 +202,7 @@ const SimpleNFTMint = {
                 }
             }
             
+            console.log('❌ No NFT found for wallet:', walletAddress);
             return {
                 hasNFT: false,
                 nfts: []

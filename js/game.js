@@ -906,7 +906,54 @@ const Game = {
                 return;
             }
             
-            // ✅ STEP 1: Проверка в базе данных (быстро)
+            // ✅ STEP 1: Проверка в таблице nft_mints (быстро)
+            if (window.Database && window.Database.supabase) {
+                const { data, error } = await window.Database.supabase
+                    .from('nft_mints')
+                    .select('*')
+                    .eq('wallet_address', walletAddress)
+                    .order('created_at', { ascending: false })
+                    .limit(1);
+                
+                if (error) {
+                    console.error('❌ Error checking NFT ownership:', error);
+                } else if (data && data.length > 0) {
+                    const nft = data[0];
+                    console.log('✅ NFT found in nft_mints table:', nft);
+                    
+                    // Создаём pet из NFT данных
+                    const petData = {
+                        id: `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                        name: nft.nft_name,
+                        type: nft.nft_type,
+                        rarity: nft.nft_rarity,
+                        level: 1,
+                        xp: 0,
+                        happiness: 100,
+                        hunger: 100,
+                        energy: 100,
+                        health: 100,
+                        mintAddress: nft.mint_address,
+                        createdAt: new Date(nft.created_at).getTime(),
+                        lastFed: Date.now(),
+                        lastPlayed: Date.now(),
+                        lastSlept: Date.now()
+                    };
+                    
+                    this.pet = petData;
+                    Utils.saveLocal('petData', this.pet);
+                    
+                    this.showGame();
+                    this.updatePetDisplay();
+                    this.startGameLoop();
+                    
+                    // ✅ STEP 2: Verify on-chain в фоне (опционально)
+                    this.verifyNFTOnChain(walletAddress, nft.mint_address);
+                    return;
+                }
+            }
+            
+            // ✅ STEP 1.5: Fallback - проверка в players таблице
             if (window.Database && window.Database.loadPlayerData) {
                 const playerData = await window.Database.loadPlayerData(walletAddress);
                 console.log('🔍 Player data from database:', playerData);
