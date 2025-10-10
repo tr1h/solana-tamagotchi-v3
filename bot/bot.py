@@ -267,7 +267,7 @@ def send_welcome(message):
         types.InlineKeyboardButton("🎨 Mint NFT", url=mint_url)
     )
     keyboard.row(
-        types.InlineKeyboardButton("🔗 Get Referral", callback_data="get_referral"),
+        types.InlineKeyboardButton("🔗 /ref", callback_data="get_referral"),
         types.InlineKeyboardButton("📊 My Stats", callback_data="my_stats")
     )
     keyboard.row(
