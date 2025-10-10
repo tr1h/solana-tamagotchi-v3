@@ -235,15 +235,22 @@ const ReferralSystem = {
             }
             
             const walletAddress = window.WalletManager.publicKey.toString();
+            
+            // Create short referral code
+            const shortCode = btoa(walletAddress).substring(0, 8);
+            const telegramLink = `https://t.me/solana_tamagotchi_v3_bot?start=ref${shortCode}`;
+            
+            // Fallback to full link
             const baseUrl = window.location.origin + window.location.pathname;
-            const referralLink = `${baseUrl}?ref=${walletAddress}`;
+            const fullLink = `${baseUrl}?ref=${walletAddress}`;
             
             const linkInput = document.getElementById('referral-link');
             if (linkInput) {
-                linkInput.value = referralLink;
+                linkInput.value = telegramLink;
+                linkInput.title = `Short: ${telegramLink}\nFull: ${fullLink}`;
             }
             
-            console.log('🔗 Generated referral link:', referralLink);
+            console.log('🔗 Generated referral links:', { telegram: telegramLink, full: fullLink });
             
         } catch (error) {
             console.error('❌ Error generating referral link:', error);

@@ -124,8 +124,64 @@ def handle_group_message(message):
             pass
         return
 
+# Handle referral links
+@bot.message_handler(commands=['start'], func=lambda message: message.chat.type == 'private')
+def handle_start(message):
+    # Check if it's a referral link
+    if len(message.text.split()) > 1:
+        ref_param = message.text.split()[1]
+        if ref_param.startswith('ref'):
+            # Extract referral code
+            ref_code = ref_param[3:]  # Remove 'ref' prefix
+            try:
+                # Decode the referral code to get wallet address
+                wallet_address = base64.b64decode(ref_code + '==').decode()  # Add padding
+                
+                # Store referral info for when user connects wallet
+                user_id = message.from_user.id
+                username = message.from_user.username or message.from_user.first_name
+                
+                # Save to database or send to game
+                referral_data = {
+                    'referrer_wallet': wallet_address,
+                    'telegram_id': user_id,
+                    'telegram_username': username,
+                    'timestamp': datetime.now().isoformat()
+                }
+                
+                # Send welcome with referral info
+                welcome_text = f"""
+🎮 *Welcome to Solana Tamagotchi!*
+
+You were invited by a friend! 🎉
+
+✨ *What you can do:*
+• 🎨 Mint unique NFT pets
+• 💰 Earn TAMA tokens  
+• 🔗 Multi-level referrals (100+50 TAMA)
+• 🏆 Daily rewards & achievements
+• 🌟 Community-driven gameplay
+
+🚀 *Ready to start?*
+                """
+                
+                keyboard = types.InlineKeyboardMarkup()
+                keyboard.row(
+                    types.InlineKeyboardButton("🎮 Play Game", url=f"{GAME_URL}?ref={wallet_address}&tg_id={user_id}&tg_username={username}"),
+                    types.InlineKeyboardButton("🎨 Mint NFT", url=f"{MINT_URL}?ref={wallet_address}&tg_id={user_id}&tg_username={username}")
+                )
+                
+                bot.reply_to(message, welcome_text, parse_mode='Markdown', reply_markup=keyboard)
+                return
+                
+            except Exception as e:
+                print(f"Error processing referral: {e}")
+    
+    # Regular start command
+    send_welcome(message)
+
 # Commands - Private chat only
-@bot.message_handler(commands=['start', 'help'], func=lambda message: message.chat.type == 'private')
+@bot.message_handler(commands=['help'], func=lambda message: message.chat.type == 'private')
 def send_welcome(message):
     welcome_text = f"""
 🎮 *Welcome to Solana Tamagotchi!*
@@ -416,7 +472,9 @@ Your wallet and Telegram will be linked automatically!
         """, parse_mode='Markdown')
         return
     
-    # Create game link with wallet address as ref code
+    # Create short referral link using Telegram bot
+    ref_code = base64.b64encode(wallet_address.encode()).decode()[:8]  # Short code
+    telegram_link = f"https://t.me/solana_tamagotchi_v3_bot?start=ref{ref_code}"
     game_link = f"{GAME_URL}?ref={wallet_address}&tg_id={user_id}&tg_username={username}"
     
     # Get referral stats
@@ -437,7 +495,7 @@ Your wallet and Telegram will be linked automatically!
     text = f"""
 🔗 *Your Personal Referral Link:*
 
-`{game_link}`
+`{telegram_link}`
 
 📊 *Your Stats:*
 • Total Referrals: {total_referrals}
@@ -463,7 +521,7 @@ Your wallet and Telegram will be linked automatically!
     keyboard = types.InlineKeyboardMarkup()
     keyboard.row(
         types.InlineKeyboardButton("🎮 Play Game", url=game_link),
-        types.InlineKeyboardButton("📤 Share Link", url=f"https://t.me/share/url?url={game_link}&text=🎮 Join me in Solana Tamagotchi! Earn TAMA tokens!")
+        types.InlineKeyboardButton("📤 Share Link", url=f"https://t.me/share/url?url={telegram_link}&text=🎮 Join me in Solana Tamagotchi! Earn TAMA tokens!")
     )
     keyboard.row(
         types.InlineKeyboardButton("📊 View Stats", callback_data="referral_stats"),
