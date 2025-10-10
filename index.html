@@ -289,6 +289,10 @@
                 <div class="control-panel">
                     <h3 class="panel-title">🐾 Pet Management</h3>
                     <div class="button-group">
+                        <button id="shop-btn" class="action-btn primary">
+                            <span>🛒 TAMA Shop</span>
+                            <small>Buy items with TAMA</small>
+                        </button>
                         <button id="evolve-pet-btn" class="action-btn secondary">
                             <span>Evolve Pet</span>
                             <small>50 TAMA (Level 10+)</small>
@@ -661,6 +665,7 @@
     <script src="js/tama-token.js?v=2"></script>
     <script src="js/tama-module.js?v=2"></script>
     <script src="js/tama-system.js?v=2"></script>
+    <script src="js/shop.js?v=2"></script>
     <script src="js/achievements.js?v=2"></script>
     <script src="js/ui.js?v=2"></script>
     
@@ -763,6 +768,11 @@
         
         // Add event listener for TAMA history button and hover
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialize TAMA Shop
+            if (window.TAMAShop) {
+                window.TAMAShop.init();
+            }
+            
             const historyBtn = document.getElementById('tama-history-btn');
             if (historyBtn) {
                 historyBtn.addEventListener('click', showTAMAHistory);
