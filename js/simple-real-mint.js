@@ -86,7 +86,8 @@ const SimpleRealMint = {
             console.log('🔑 Generated NFT Mint:', mintAddress);
             console.log('✅ Real transaction completed!', transferSignature);
             
-            return {
+            // Return result in the same format as other mint modules
+            const result = {
                 success: true,
                 mintAddress: mintAddress,
                 nftData: nftData,
@@ -97,6 +98,9 @@ const SimpleRealMint = {
                     to: this.TREASURY_ADDRESS
                 }
             };
+            
+            console.log('📤 Returning result:', result);
+            return result;
             
         } catch (error) {
             console.error('❌ Failed to mint NFT:', error);

@@ -429,7 +429,7 @@ const MintPage = {
             // Создаём NFT объект для сохранения
             const nft = {
                 mintAddress: result.mintAddress,
-                signature: result.signature,
+                signature: result.transaction || result.signature,
                 name: result.nftData?.name || petName || 'My Pet',
                 type: result.nftData?.type || result.metadata?.gameData?.type,
                 emoji: result.metadata?.gameData?.emoji,
