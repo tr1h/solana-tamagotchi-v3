@@ -577,10 +577,23 @@
             try {
                 updateStatus('mints', 'loading');
                 
-                const { data: mints, error } = await supabase
+                // Try to order by created_at, fallback to id if column doesn't exist
+                let { data: mints, error } = await supabase
                     .from('nft_mints')
                     .select('*')
-                    .order('created_at', { ascending: false });
+                    .order('id', { ascending: false }); // Use id as fallback
+                
+                // If we have created_at column, try to sort by it
+                if (mints && mints.length > 0 && mints[0].created_at) {
+                    const { data: mintsWithDate, error: dateError } = await supabase
+                        .from('nft_mints')
+                        .select('*')
+                        .order('created_at', { ascending: false });
+                    
+                    if (!dateError && mintsWithDate) {
+                        mints = mintsWithDate;
+                    }
+                }
                 
                 if (error) throw error;
                 
@@ -628,7 +641,7 @@
                                     <td><strong>${mint.mint_price || 0} SOL</strong></td>
                                     <td>Phase ${mint.mint_phase || 1}</td>
                                     <td id="blockchain-${mint.id}">-</td>
-                                    <td>${new Date(mint.created_at).toLocaleString()}</td>
+                                    <td>${mint.created_at ? new Date(mint.created_at).toLocaleString() : 'N/A'}</td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -649,10 +662,23 @@
             try {
                 updateStatus('referrals', 'loading');
                 
-                const { data: referrals, error } = await supabase
+                // Try to order by created_at, fallback to id if column doesn't exist
+                let { data: referrals, error } = await supabase
                     .from('referrals')
                     .select('*')
-                    .order('created_at', { ascending: false });
+                    .order('id', { ascending: false }); // Use id as fallback
+                
+                // If we have created_at column, try to sort by it
+                if (referrals && referrals.length > 0 && referrals[0].created_at) {
+                    const { data: referralsWithDate, error: dateError } = await supabase
+                        .from('referrals')
+                        .select('*')
+                        .order('created_at', { ascending: false });
+                    
+                    if (!dateError && referralsWithDate) {
+                        referrals = referralsWithDate;
+                    }
+                }
                 
                 if (error) throw error;
                 
@@ -676,7 +702,7 @@
                                     <td title="${ref.referred_address}">${ref.referred_address?.slice(0, 8)}...</td>
                                     <td>Level ${ref.level || 1}</td>
                                     <td><strong>${ref.signup_reward || 0} TAMA</strong></td>
-                                    <td>${new Date(ref.created_at).toLocaleDateString()}</td>
+                                    <td>${ref.created_at ? new Date(ref.created_at).toLocaleDateString() : 'N/A'}</td>
                                 </tr>
                             `).join('')}
                         </tbody>
