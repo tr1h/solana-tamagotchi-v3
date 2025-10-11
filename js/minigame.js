@@ -84,8 +84,8 @@ class TAMACatchGame {
         this.gameRunning = false;
         clearInterval(this.timerInterval);
         
-        // Награждаем TAMA за игру
-        const earnedTAMA = Math.floor(this.score / 10); // 1 TAMA за 10 очков
+        // Награждаем TAMA за игру (БОЛЬШЕ TAMA!)
+        const earnedTAMA = Math.floor(this.score / 5); // 1 TAMA за 5 очков (в 2 раза больше!)
         
         if (earnedTAMA > 0 && window.TAMAModule) {
             window.TAMAModule.earnTAMA(earnedTAMA, 'minigame', `TAMA Catch: ${this.score} points`);
@@ -329,7 +329,8 @@ class TAMACatchGame {
             • Catch falling TAMA tokens<br>
             • Red tokens = 1 point<br>
             • Gold tokens = 5 points<br>
-            • Earn TAMA for your score!
+            • Earn TAMA: 1 TAMA per 5 points!<br>
+            • <span style="color: #00ff00; font-weight: bold;">UNLIMITED TAMA! 🚀</span>
         `;
         instructions.style.cssText = 'margin-bottom: 20px; color: #333;';
 

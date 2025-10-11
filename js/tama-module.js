@@ -40,8 +40,8 @@ const TAMAModule = {
             SPECIAL_ITEM: 100        // Особые предметы
         },
         
-        // Лимиты
-        DAILY_EARN_LIMIT: 1000,      // Максимум TAMA в день
+        // Лимиты (УБРАНЫ!)
+        DAILY_EARN_LIMIT: null,      // БЕЗ ЛИМИТОВ! 🚀
         MIN_BALANCE: 0               // Минимальный баланс
     },
     
@@ -89,35 +89,25 @@ const TAMAModule = {
             console.log(`💰 Earning ${amount} TAMA for: ${reason}`);
             
             if (this.CONFIG.USE_DATABASE && window.Database) {
-                // Проверяем дневной лимит (но не блокируем полностью)
-                const dailyEarned = await this.getDailyEarned(walletAddress);
-                if (dailyEarned >= this.ECONOMICS.DAILY_EARN_LIMIT) {
-                    console.warn('⚠️ Daily TAMA earning limit reached - no more TAMA today');
-                    return false;
-                }
-                
-                // Если превышаем лимит, даем только до лимита
-                const actualAmount = Math.min(amount, this.ECONOMICS.DAILY_EARN_LIMIT - dailyEarned);
-                if (actualAmount < amount) {
-                    console.warn(`⚠️ Daily limit reached. Giving ${actualAmount} instead of ${amount} TAMA`);
-                }
+                // 🚀 БЕЗ ЛИМИТОВ! Зарабатывай сколько хочешь!
+                console.log('🚀 Unlimited TAMA earning mode!');
                 
                 // Обновляем баланс
                 const currentBalance = await this.getBalance(walletAddress);
-                const newBalance = currentBalance + actualAmount;
+                const newBalance = currentBalance + amount;
                 
-                await window.Database.updateTAMA(walletAddress, actualAmount, reason, details);
+                await window.Database.updateTAMA(walletAddress, amount, reason, details);
                 
                 // Записываем в историю
-                await this.recordTransaction(walletAddress, actualAmount, 'earn', reason, details);
+                await this.recordTransaction(walletAddress, amount, 'earn', reason, details);
                 
                 // Обновляем UI
                 this.updateUIBalance(newBalance);
                 
                 // Показываем уведомление
-                this.showEarnNotification(actualAmount, reason);
+                this.showEarnNotification(amount, reason);
                 
-                console.log(`✅ Earned ${actualAmount} TAMA. New balance: ${newBalance}`);
+                console.log(`✅ Earned ${amount} TAMA. New balance: ${newBalance}`);
                 return true;
             }
             
@@ -188,7 +178,7 @@ const TAMAModule = {
         }
     },
     
-    // Получить дневной заработок
+    // Получить дневной заработок (теперь просто для статистики)
     async getDailyEarned(walletAddress) {
         try {
             const today = new Date().toDateString();
@@ -290,7 +280,7 @@ const TAMAModule = {
                     <div class="tama-info">
                         <p><strong>Balance:</strong> <span id="tama-detail-balance">Loading...</span></p>
                         <p><strong>Daily Earned:</strong> <span id="tama-daily-earned">Loading...</span></p>
-                        <p><strong>Daily Limit:</strong> ${this.ECONOMICS.DAILY_EARN_LIMIT} TAMA</p>
+                        <p><strong>Daily Limit:</strong> <span style="color: #00ff00; font-weight: bold;">UNLIMITED! 🚀</span></p>
                     </div>
                     <div class="tama-economics">
                         <h4>💰 How to Earn TAMA:</h4>
