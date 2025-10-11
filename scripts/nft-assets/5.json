@@ -1,0 +1,53 @@
+{
+  "name": "Solana Tamagotchi #5",
+  "symbol": "TAMA",
+  "description": "A unique Solana Tamagotchi NFT Pet - Play, Earn, and Evolve! This is a Common Bear with Brown Gradient pattern.",
+  "seller_fee_basis_points": 500,
+  "image": "5.png",
+  "external_url": "https://tr1h.github.io/solana-tamagotchi-v3/?nft=5",
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Bear"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Common"
+    },
+    {
+      "trait_type": "Color",
+      "value": "Brown"
+    },
+    {
+      "trait_type": "Pattern",
+      "value": "Gradient"
+    },
+    {
+      "trait_type": "Background",
+      "value": "Forest"
+    },
+    {
+      "trait_type": "Accessory",
+      "value": "None"
+    },
+    {
+      "trait_type": "Special Ability",
+      "value": "None"
+    }
+  ],
+  "properties": {
+    "files": [
+      {
+        "uri": "5.png",
+        "type": "image/png"
+      }
+    ],
+    "category": "image",
+    "creators": [
+      {
+        "address": "GXvKWk8VierD1H6VXzQz7GxZBMZUxXKqvmHkBRGdPump",
+        "share": 100
+      }
+    ]
+  }
+}

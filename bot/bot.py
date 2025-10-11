@@ -10,20 +10,20 @@ from collections import defaultdict
 from supabase import create_client, Client
 
 # Bot token
-TOKEN = '8278463878:AAH590EtqekSpfoE_uJwaNQ-qKACFyt8eaw'
+TOKEN = os.getenv('TELEGRAM_BOT_TOKEN', 'YOUR_BOT_TOKEN_HERE')
 bot = telebot.TeleBot(TOKEN)
 
 # URLs
-GAME_URL = 'https://tr1h.github.io/solana-tamagotchi-v3'  # GitHub Pages
-MINT_URL = 'https://tr1h.github.io/solana-tamagotchi-v3/mint.html'
+GAME_URL = 'https://tr1h.github.io/solana-tamagotchi-v3/coming-soon.html'  # Coming Soon Page
+MINT_URL = 'https://tr1h.github.io/solana-tamagotchi-v3/coming-soon.html'  # Coming Soon Page
 CHANNEL_ID = 'solana_tamagotchi_v3_bot'
 
 # Admin IDs (add your Telegram ID)
 ADMIN_IDS = [7401131043]
 
 # Supabase connection
-SUPABASE_URL = os.getenv('SUPABASE_URL', 'https://zfrazyupameidxpjihrh.supabase.co')
-SUPABASE_KEY = os.getenv('SUPABASE_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpmcmF6eXVwYW1laWR4cGppaHJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5Mzc1NTAsImV4cCI6MjA3NTUxMzU1MH0.1EkMDqCNJoAjcJDh3Dd3yPfus-JpdcwE--z2dhjh7wU')
+SUPABASE_URL = os.getenv('SUPABASE_URL', 'YOUR_SUPABASE_URL_HERE')
+SUPABASE_KEY = os.getenv('SUPABASE_KEY', 'YOUR_SUPABASE_KEY_HERE')
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # Anti-spam tracking
@@ -887,24 +887,25 @@ def broadcast_message(message):
 def welcome_new_member(message):
     for new_member in message.new_chat_members:
         welcome_text = f"""
-🎮 *Welcome to Solana Tamagotchi Community, {new_member.first_name}!*
+🎮 Welcome to Solana Tamagotchi Community, {new_member.first_name}!
 
-🐾 *What's this about?*
+🐾 What's this about?
 • Play-to-Earn NFT pet game on Solana
 • Mint unique pets and earn TAMA tokens
 • Multi-level referral system
 • Daily rewards & achievements
 
-🚀 *Get Started:*
+🚀 Get Started:
 • Mint your first pet: [Mint Page]({MINT_URL})
 • Play the game: [Game]({GAME_URL})
 • Use /help for bot commands
 
-📢 *Stay Updated:*
-• News: @solana_tamagotchi
+📢 Stay Updated:
+• Twitter: @GotchiGame
+• News: @GotchiGame
 • Bot: @solana_tamagotchi_v3_bot
 
-*Let's build the biggest Tamagotchi community on Solana!* 🌟
+Let's build the biggest Tamagotchi community on Solana! 🌟
         """
         
         # Create welcome keyboard
@@ -915,7 +916,7 @@ def welcome_new_member(message):
         )
         keyboard.add(types.InlineKeyboardButton("🤖 Bot Commands", url="https://t.me/solana_tamagotchi_v3_bot?start=help"))
         
-        bot.send_message(message.chat.id, welcome_text, parse_mode='Markdown', reply_markup=keyboard)
+        bot.send_message(message.chat.id, welcome_text, reply_markup=keyboard)
 
 # Daily stats post
 def post_daily_stats():

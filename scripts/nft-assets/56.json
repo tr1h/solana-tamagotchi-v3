@@ -1,0 +1,53 @@
+{
+  "name": "Solana Tamagotchi #56",
+  "symbol": "TAMA",
+  "description": "A unique Solana Tamagotchi NFT Pet - Play, Earn, and Evolve! This is a Rare Rabbit with Green Striped pattern.",
+  "seller_fee_basis_points": 500,
+  "image": "56.png",
+  "external_url": "https://tr1h.github.io/solana-tamagotchi-v3/?nft=56",
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Rabbit"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Rare"
+    },
+    {
+      "trait_type": "Color",
+      "value": "Green"
+    },
+    {
+      "trait_type": "Pattern",
+      "value": "Striped"
+    },
+    {
+      "trait_type": "Background",
+      "value": "Ocean"
+    },
+    {
+      "trait_type": "Accessory",
+      "value": "Wings"
+    },
+    {
+      "trait_type": "Special Ability",
+      "value": "None"
+    }
+  ],
+  "properties": {
+    "files": [
+      {
+        "uri": "56.png",
+        "type": "image/png"
+      }
+    ],
+    "category": "image",
+    "creators": [
+      {
+        "address": "GXvKWk8VierD1H6VXzQz7GxZBMZUxXKqvmHkBRGdPump",
+        "share": 100
+      }
+    ]
+  }
+}

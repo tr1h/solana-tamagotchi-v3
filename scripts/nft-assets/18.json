@@ -1,0 +1,53 @@
+{
+  "name": "Solana Tamagotchi #18",
+  "symbol": "TAMA",
+  "description": "A unique Solana Tamagotchi NFT Pet - Play, Earn, and Evolve! This is a Common Panda with Green Spotted pattern.",
+  "seller_fee_basis_points": 500,
+  "image": "18.png",
+  "external_url": "https://tr1h.github.io/solana-tamagotchi-v3/?nft=18",
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Panda"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Common"
+    },
+    {
+      "trait_type": "Color",
+      "value": "Green"
+    },
+    {
+      "trait_type": "Pattern",
+      "value": "Spotted"
+    },
+    {
+      "trait_type": "Background",
+      "value": "Mountain"
+    },
+    {
+      "trait_type": "Accessory",
+      "value": "None"
+    },
+    {
+      "trait_type": "Special Ability",
+      "value": "None"
+    }
+  ],
+  "properties": {
+    "files": [
+      {
+        "uri": "18.png",
+        "type": "image/png"
+      }
+    ],
+    "category": "image",
+    "creators": [
+      {
+        "address": "GXvKWk8VierD1H6VXzQz7GxZBMZUxXKqvmHkBRGdPump",
+        "share": 100
+      }
+    ]
+  }
+}

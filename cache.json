@@ -1,0 +1,818 @@
+{
+  "program": {
+    "candyMachine": "3Y82dFzikkzTzEk4vDgvHHeyQwap3M2Z7Zbz4Tj6TbJB",
+    "candyGuard": "",
+    "candyMachineCreator": "E5vYBH8kGTBwTNMx7oY9bzgGnpZi2tGiPqWpxoLWktyB",
+    "collectionMint": "EHju5kq2SvPrqFMEYZ8FkXfX3FYPNsFinaQVU6bFtJRT"
+  },
+  "items": {
+    "-1": {
+      "name": "Solana Tamagotchi Collection",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/6uzW2SeYwWHbfJ6WtmyvTw4nWbZHuBVg6YSkyzp4T5HA?ext=png",
+      "metadata_hash": "594843b5f08dde9f1dffb5427c2d039dbbe5a0d66b6414672903f8f16f4257a5",
+      "metadata_link": "https://gateway.irys.xyz/GCbSuT5JdpDkik7tt6rQVMRYSb8MebsTzoPoVyZzZsgu",
+      "onChain": true
+    },
+    "0": {
+      "name": "Tamagotchi #0",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/HTMnjwqG38AuGZSAqksXvAVLwso91KJvVhAjaRDmHvee?ext=png",
+      "metadata_hash": "44a798618881d763adc7fa774eeb66e99a596e14d1698540b85e8d416b8b3163",
+      "metadata_link": "https://gateway.irys.xyz/BHxLSzuRaj4qbccuqCAX4dcJRzfyQE9adSBnWuTbqH6C",
+      "onChain": true
+    },
+    "1": {
+      "name": "Tamagotchi #1",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/3Sqe4nxXVwvyBi5dHAfrv6Gaw2MkfZPMdk7EZWffpUms?ext=png",
+      "metadata_hash": "9e10e8dd028674479d6cac93980a6a9a4065a0c736bd2544fd7e540176c555f2",
+      "metadata_link": "https://gateway.irys.xyz/9zVomuu3jHC4t6nNRUZowpTBkigVq46Xw23aa7KvNtbP",
+      "onChain": true
+    },
+    "2": {
+      "name": "Tamagotchi #2",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/3DeuuY2qpB2CYq3Cok1Jdj3VZpsznxS9AMMT5oCgqcJV?ext=png",
+      "metadata_hash": "685587ea6b2ec54bee640134755b13718363c55e246efde6f75f4ba793ae229b",
+      "metadata_link": "https://gateway.irys.xyz/4NBcqMmkbVSXCJ2tiJ8v9WgK5wxN3VkXoYKYY1EyNip6",
+      "onChain": true
+    },
+    "3": {
+      "name": "Tamagotchi #3",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/6zCQUiMW2CtV5712gapqBTc4kEt7t2bQmFcagc8N2EMd?ext=png",
+      "metadata_hash": "33070982c102f10a08c985034ecb029dd09a64e63235d4e6656caeaa0e5b2fd4",
+      "metadata_link": "https://gateway.irys.xyz/Bwdg7AXhiunCejNReJanhLsRCy6xj3YYBKgp7o8R92Ud",
+      "onChain": true
+    },
+    "4": {
+      "name": "Tamagotchi #4",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/9y6HsLDNbtYgZDoWWi4fYZGH7QNwmMhvY9yxXnCrbx2m?ext=png",
+      "metadata_hash": "969ccd1bf4740138d3187d23c117064dafc58342204896dd550008c1ff9d2e8f",
+      "metadata_link": "https://gateway.irys.xyz/A6nV7orUkPWXKz1ihyoVKMnWVLzvH7DUhBK1uJDKm19M",
+      "onChain": true
+    },
+    "5": {
+      "name": "Tamagotchi #5",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/J5wvfYAkyzzwYMifFEvrKf2dfs6UWncNtxCEPuXuSX6t?ext=png",
+      "metadata_hash": "a0362948a78e147e73b885db7e771c59cffdbd4a4aa17a98aa6b829f5c8cb40a",
+      "metadata_link": "https://gateway.irys.xyz/D5nttDzcvbtfZkFVFDcu7nQNhRmL7jNyDEKsuhyepBJY",
+      "onChain": true
+    },
+    "6": {
+      "name": "Tamagotchi #6",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/BgjQdZx6s3QVXvPq27qzPyL5ycoJRzBMFgh1or2AYsaR?ext=png",
+      "metadata_hash": "bcef1a6b806a269e3545db6570ec1704267a13f667957c96bb28146bd2f984ff",
+      "metadata_link": "https://gateway.irys.xyz/7KcuCh1qDtAsVzgYge7Sgc7ruk2EuaEFxhc3WfQPLM8G",
+      "onChain": true
+    },
+    "7": {
+      "name": "Tamagotchi #7",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/2ococqyznyhdksW7HSzckpMFd555GDMzJtkWmf1UV3YX?ext=png",
+      "metadata_hash": "0c3fc82ab52424a6e04ce215bfd1f116314ea0ff9e7b2a22951a3ed046da07e0",
+      "metadata_link": "https://gateway.irys.xyz/AxMQtPNNbqKnjgQuguJnqSFjMozsqmKd8v8k2DTN3Zm2",
+      "onChain": true
+    },
+    "8": {
+      "name": "Tamagotchi #8",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/2n6LEBrdr43z39uWZpebvwUaVurK5quKY6RvtScbYg4H?ext=png",
+      "metadata_hash": "761cb002b562ff26d3ca577ae56ae90a968b8ddd77166625a53dd2e1efb9c925",
+      "metadata_link": "https://gateway.irys.xyz/4TXU7cBRpduTUwUGUJPfCZiTmSKp7V1NU8J38RTykmqQ",
+      "onChain": true
+    },
+    "9": {
+      "name": "Tamagotchi #9",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/jd1RHrUecS9eZre1xkZfASnJCENFhJumWxhnJKxtct1?ext=png",
+      "metadata_hash": "29bfa89e33db8a4bc1f7b634c3456a9df1037716236ab12d53a960b86907778e",
+      "metadata_link": "https://gateway.irys.xyz/9jRzXMe3vqT5bL7SWzBXcygPMv4h1aUD4rd2RRnheuQS",
+      "onChain": true
+    },
+    "10": {
+      "name": "Tamagotchi #10",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/BEBjahLuuA3ajirunDBLa4AAi8citWzzBV5X1pozzhfX?ext=png",
+      "metadata_hash": "e0f889a5dcbd27c0428d00389d836780f95f579c9797d22d441ac70b4082356d",
+      "metadata_link": "https://gateway.irys.xyz/9ALYpVscAVe31GQ97Zz7UMsyP8UppuYiaWgDMaQzMeQu",
+      "onChain": true
+    },
+    "11": {
+      "name": "Tamagotchi #11",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/G9jBKThKDKS38WHw8tCrZaiodjWCqycdnDSZemj7mFLR?ext=png",
+      "metadata_hash": "6d9134c35ea371aed23446b24dd0f4837fa33757699bca00165f20a9577d4df5",
+      "metadata_link": "https://gateway.irys.xyz/4NYGCKpo81Tu7jgg3bmAiVcZiMtoQ3EDdK5D9m37vKij",
+      "onChain": true
+    },
+    "12": {
+      "name": "Tamagotchi #12",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/GkKo9E8MXrL9LZqTVnD6KsKq3xe2xQER8wD3HGgoVn93?ext=png",
+      "metadata_hash": "597e2a59e797ddb4337d5a77fbcc6934ea5584a1aac86ee957ee82af08c783d2",
+      "metadata_link": "https://gateway.irys.xyz/B8gjAREfrAHWu3dAroS4JPHQPecjkpa8nk98JjTENK5i",
+      "onChain": true
+    },
+    "13": {
+      "name": "Tamagotchi #13",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/CWmh9ZTAZ9RGoxp1dJBouEP7zYjgmEx22TPdWtgaJ89F?ext=png",
+      "metadata_hash": "3c06f5180f451cc60809167cf3482f8df4f3c505d7a66718caeccde6334b3ef9",
+      "metadata_link": "https://gateway.irys.xyz/BgPj3mipFzjn9EJngSAUdFYCe3uTdqEMaMg4BHeFQsFx",
+      "onChain": true
+    },
+    "14": {
+      "name": "Tamagotchi #14",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/DEshQndvBvWGJFmgMQmBt7cHJtuWg8KRAQde5q9LvykJ?ext=png",
+      "metadata_hash": "d52fd01cd83bfa6dc2e69018256a6aa0d329ed7ad07c0776d6181de0b6c4fa9a",
+      "metadata_link": "https://gateway.irys.xyz/65AGZC476ytWBr4nvpt7rSJwyn4BBJymKG1DNXnfJVmB",
+      "onChain": true
+    },
+    "15": {
+      "name": "Tamagotchi #15",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/658ZgbHfyQ84qEvcEY2C2MtjemQGdsDnUziNDa8k8Beh?ext=png",
+      "metadata_hash": "7074d16df6ca0a3c3ff6bf1832ac19d2d6d17a1b3ab02087de0d7f5c8285f597",
+      "metadata_link": "https://gateway.irys.xyz/EC8ckaRvL1bhdppV7xSwCpvfLXGKfuwpnDBbxJw1Eqy4",
+      "onChain": true
+    },
+    "16": {
+      "name": "Tamagotchi #16",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/EfyDGS9dyawu4JFhUT3TdeNRTDQRkafbS58Mv2a7nieA?ext=png",
+      "metadata_hash": "8dbbed47aac1270ae912770f46da74ac5e29f2313b4c2026c6a4b17a97c03893",
+      "metadata_link": "https://gateway.irys.xyz/DudYHAWcoQpp5PEX4vg6vKL16CHLmrREVztxXBdeDQuY",
+      "onChain": true
+    },
+    "17": {
+      "name": "Tamagotchi #17",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/J7CcBwGiWDoD4GERStTyErGnAhGBYPPyCsE5K9LtzejL?ext=png",
+      "metadata_hash": "9600b97ec3ea38fa6d7df6d89b8ee9b837e04a8c52498cca82b5e08db75873ec",
+      "metadata_link": "https://gateway.irys.xyz/BRkimNMkYKyqKmPX3bZbna4ivywKautX7DfjuLg2uw4Y",
+      "onChain": true
+    },
+    "18": {
+      "name": "Tamagotchi #18",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/e87A1zwFom46nQCpUsb8vWxQgBFhVcc8kH8x1cBytdj?ext=png",
+      "metadata_hash": "40d6d6f1f106fd709805d84eef4441dc1473ae8c971ccba915b11719432ec307",
+      "metadata_link": "https://gateway.irys.xyz/2C9DyDkAyc3XMjvRnAsA9XsM4A8PwgFzUVit8haVNapQ",
+      "onChain": true
+    },
+    "19": {
+      "name": "Tamagotchi #19",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/39ixKqK6FbGGz92PxpMQ2peef3fP1st1fra9rqsgU5oh?ext=png",
+      "metadata_hash": "912fba86e742f701a2a271c70c02fad158223a7f2fa44437bca8ac625a6b8c40",
+      "metadata_link": "https://gateway.irys.xyz/8ZfEX2j1vQzHU3UGVrdoxvGgS7wG18rnHcmbNk4c3mXU",
+      "onChain": true
+    },
+    "20": {
+      "name": "Tamagotchi #20",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/HZXCSwTZiR5dGiK23R6JnJHDtNbHi4ii3RoydGsHmKpt?ext=png",
+      "metadata_hash": "02cc02db288aa26d8e1a178eae33156bb60f1808c7ac910695af612571b5c220",
+      "metadata_link": "https://gateway.irys.xyz/EuJ3awCJVJJBufmpwHqyPdYuq3yBkQ2w1ZeCnbXzVjz2",
+      "onChain": true
+    },
+    "21": {
+      "name": "Tamagotchi #21",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/7Sezi75AfwAypiwLgH86BySujd7FtoSJvxGBYoLEmMNZ?ext=png",
+      "metadata_hash": "9dd8bc053fb0ce23f329de73eb3f7271fbbf7d7c27cddb26d9fa87b1d8f43189",
+      "metadata_link": "https://gateway.irys.xyz/B2rN6qJwx9M1PykU7QnR8fE5cDptFbD8Wnju8a588buS",
+      "onChain": true
+    },
+    "22": {
+      "name": "Tamagotchi #22",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/5qhk2wteJTYG9ZK7PMqq3ww2CXQfi1BmYvEGR73ycrj3?ext=png",
+      "metadata_hash": "fbb52bce7b6c1dd7aafed60ec8bcee34f14c8de1dae6def804b316378e8e4374",
+      "metadata_link": "https://gateway.irys.xyz/8zsRo4JVXBo76kZGehGkoW5PM4qwDA7Ri6PY93FNJnKC",
+      "onChain": true
+    },
+    "23": {
+      "name": "Tamagotchi #23",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/A3CLJYgPHbSMj3YBJsf5ErL6yogxi6zZWf9uSY62J6eD?ext=png",
+      "metadata_hash": "d46151595fbdfe6c01d1893044915ad5aae687c9e2bc7a5a135212ff01eea763",
+      "metadata_link": "https://gateway.irys.xyz/DSxggCGz3qYGGfb4UbFLAG6oWJzfBX2ReaeCBWiKbVLp",
+      "onChain": true
+    },
+    "24": {
+      "name": "Tamagotchi #24",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/8EBHDqXs7hkFUtNrub49ZhF7n9LdNsBp6mWSviAHRUMZ?ext=png",
+      "metadata_hash": "785295cf3ee4e8cc59c731d371c016aa273976258291cbbcca37a84119ca6b4a",
+      "metadata_link": "https://gateway.irys.xyz/C1QC3ZLmwcjJmnd9UgoehHvvNMwmzjY91b1cc7EgCkti",
+      "onChain": true
+    },
+    "25": {
+      "name": "Tamagotchi #25",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/A5mZXsiEZk8NJnCAhzxV3qY3kuJvqVZpeAEwYC4LjsNd?ext=png",
+      "metadata_hash": "ae921432b0e250b4a45e3f101eec118371458073e7a04885781601e4ced4f614",
+      "metadata_link": "https://gateway.irys.xyz/pRQooECDEKN8jcZvBKzuCMgcSBATdMB3VSBjZaYYriV",
+      "onChain": true
+    },
+    "26": {
+      "name": "Tamagotchi #26",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/GQM2uTNXKKDjrDNgrT9No8shPnnr9e66HzQGpypH5yea?ext=png",
+      "metadata_hash": "da037e7bb48707ad369a78309c391e9c152ed51995b15318c37aadfa79dd185e",
+      "metadata_link": "https://gateway.irys.xyz/GHarTukAZgRWJQgw3PxpgoUvcWiqDqvtEa9xiQfrCge3",
+      "onChain": true
+    },
+    "27": {
+      "name": "Tamagotchi #27",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/BuWVVUBUkfTwaJsww6x4nVhHNxcc75ap4j9bVsDnHfw9?ext=png",
+      "metadata_hash": "0cbff4b41589b40104c1b8a2b22fdcf80a9df7c859f1a6b5316c2b5c4ec5da39",
+      "metadata_link": "https://gateway.irys.xyz/ERySNxjM3hpBRTjjvYx9Aty7CPLuU92Bz9ey16vwJnvx",
+      "onChain": true
+    },
+    "28": {
+      "name": "Tamagotchi #28",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/9r7RG6hHAUhawLc2rPA84oj23tWuVjuoJXBJFNVDaK3T?ext=png",
+      "metadata_hash": "ffa9a84014acf5da7b4945e8288b6de50f3cd7d27aebe5668d711862a01a4915",
+      "metadata_link": "https://gateway.irys.xyz/8CqEaXAHDZuDgc1hAxY52ViSSF4xMXf6SbGcex4vSf21",
+      "onChain": true
+    },
+    "29": {
+      "name": "Tamagotchi #29",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/6YF8zQEHBSpc6jGhCVGCQV9Z43LSz7weQYppHWePyih8?ext=png",
+      "metadata_hash": "d7377361a6ca98ede2514c6bd5f618aa093a8383385e8cbe5b944d488dcc12ee",
+      "metadata_link": "https://gateway.irys.xyz/EW81tjiBmdhhrUkUhZwX9S8bxUxJzaQ1utZfmHdZ5MCY",
+      "onChain": true
+    },
+    "30": {
+      "name": "Tamagotchi #30",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/68jkzQ4SZPJWGwfvBPGkkx38rHiMJhpJJF52Zdq9h14w?ext=png",
+      "metadata_hash": "875676e2af61ea3fb20db54453706d5fd28728c3b30366312a9b2e4b6f1e16a8",
+      "metadata_link": "https://gateway.irys.xyz/hxhtzVkQ9xwJocAVjEkDHZv32znpZE84Z1WsX4gDixQ",
+      "onChain": true
+    },
+    "31": {
+      "name": "Tamagotchi #31",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/5T9BaXfJateoV73JCcHC96zStgYCjauhotHDDpHh4uys?ext=png",
+      "metadata_hash": "c50ed1c601676ffb216cc125c7dccde65ddfcc2d06e0d305312fb380d8637196",
+      "metadata_link": "https://gateway.irys.xyz/5HBkVnCuQZuNj9Ah5HuJtDs3bup38agzf8DWYGwuSKzN",
+      "onChain": true
+    },
+    "32": {
+      "name": "Tamagotchi #32",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/9RwZBnSV25zjML1ccS42BVm4JuXx7fnEuTTmq4wCBgTd?ext=png",
+      "metadata_hash": "0e2c5ae2043c1ba68e3d44cea558346cf4f1fa06a3f5373bfd635390057b1154",
+      "metadata_link": "https://gateway.irys.xyz/Fr8SjmwAp7FefxRi5dEKUKjq8J64TcBYdmoerDtNxgET",
+      "onChain": true
+    },
+    "33": {
+      "name": "Tamagotchi #33",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/H6A3qkdzj2uAb4z4zD34YuGFttJuYrJKgQa3dQ6f9dZJ?ext=png",
+      "metadata_hash": "c05c2ef5c9383d9b02929ccab20aab2c57f38d9480e908fd6aedbeb7ff055a7c",
+      "metadata_link": "https://gateway.irys.xyz/GuV8ynxoTmUEptcsVS3RVdvPaW8jHgFV2EodaUrfYNRC",
+      "onChain": true
+    },
+    "34": {
+      "name": "Tamagotchi #34",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/2V9wfGtrWZ9dFLdGsk2w3ik3SmzmFAe6yTsJrXZKy61U?ext=png",
+      "metadata_hash": "3642122285c04973130927cacab84a01e1a81ea8d83a436837ed0ac87b9083a0",
+      "metadata_link": "https://gateway.irys.xyz/3MqLMYmNmNbv3rdKBth4cCgZG3UWsuhtRrHsMKqErTAw",
+      "onChain": true
+    },
+    "35": {
+      "name": "Tamagotchi #35",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/FoENPgSDug5yj64H5V7eLpr5psTy7U8npvyvg2Ybtwgg?ext=png",
+      "metadata_hash": "93aad7c6c8fb75c8a9d56245f1a00d31713219ad25c9622b24bec3fb3526c47e",
+      "metadata_link": "https://gateway.irys.xyz/BgAvTX26jRXbYY2gAENmuFkTD1qKS6RSMnfZxwcPM1og",
+      "onChain": true
+    },
+    "36": {
+      "name": "Tamagotchi #36",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/ECdtAcw1DLbwTGehJhenGjaC8R31WekNC3MNyr5LCyCP?ext=png",
+      "metadata_hash": "c5f02878b6c4aa71248c8bf133ca6b56edd15e6af12b5f45bc440731c1040e49",
+      "metadata_link": "https://gateway.irys.xyz/3M6q5cRrmaqWuTmUdqDAnsAgBLR3FRFLEFdTxybesck9",
+      "onChain": true
+    },
+    "37": {
+      "name": "Tamagotchi #37",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/DX8QBk5pnU7aqzg6t34LCoYJaCx32sCaX5u9MyBTFJh?ext=png",
+      "metadata_hash": "2819b75029833572b0fd115c24c56e2aa1419c78ef3c76aa7105abec7d5af43a",
+      "metadata_link": "https://gateway.irys.xyz/2DSE51xsnwUqu8oRd2wUbwZ4pzUBwGKVTL1bw1TbyxBu",
+      "onChain": true
+    },
+    "38": {
+      "name": "Tamagotchi #38",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/FG72fwhsfzCdo5yoc7YqWcNtnQC8E6F8uV1HT6A2s7xD?ext=png",
+      "metadata_hash": "04cfbd2b5556d840f152278d24b54d4c93662cd144773a5ebc17383acf16d7bd",
+      "metadata_link": "https://gateway.irys.xyz/HjgoAXGWbLGuVrPf68VFKiAhNZA9XUkHYDh6BRCWp6PW",
+      "onChain": true
+    },
+    "39": {
+      "name": "Tamagotchi #39",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/GZcDLqxisfUia8vxrGwmr3ieYpUTVHtgyw5UJc1uhuXf?ext=png",
+      "metadata_hash": "7667ffc417246d0bb1d7b5f5bd2747c0015c33c8d7f95e0852c065649682ef54",
+      "metadata_link": "https://gateway.irys.xyz/5PJF54ACaP155JgGE2VkMxHC3yokMm4YGLKqhiBtp8qE",
+      "onChain": true
+    },
+    "40": {
+      "name": "Tamagotchi #40",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/AdaQWF8XNzbGqkKBKUqGDsRv4EZnohqReV2qTFSGgh1A?ext=png",
+      "metadata_hash": "9d964052215a740498f96b506500afcdf122b09825eaecb3ad2b5fda38f76960",
+      "metadata_link": "https://gateway.irys.xyz/3mqVrgzVPaBdSD2CMZgaixbFXnZDCSiEXtRB9rnnSC1J",
+      "onChain": true
+    },
+    "41": {
+      "name": "Tamagotchi #41",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/Dg4svEjGuGyVEYAzumt5NuqhRWbmvmCjrKU9aam2pywK?ext=png",
+      "metadata_hash": "e2b4ff29c96c9e9001a4f1da8cc37c19451ea01326285982f78626b1144156ec",
+      "metadata_link": "https://gateway.irys.xyz/2QZjWBhdjLkqcpnB7urXtheS8qocDe7JSnGPvMA2nUi5",
+      "onChain": true
+    },
+    "42": {
+      "name": "Tamagotchi #42",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/8fmGGfdfRG2CDDGpHn6xjRxteurWUyzMrkUkZBEEut5c?ext=png",
+      "metadata_hash": "727ea8e2ae60716490be5a0c4665066f49d34361798bb2ba3463d68f1269d765",
+      "metadata_link": "https://gateway.irys.xyz/HYwBnocn3wTRYV4GvnMNdwUxWDctsRigw1EmQoNdPmVA",
+      "onChain": true
+    },
+    "43": {
+      "name": "Tamagotchi #43",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/vjevFnKMuiJhbGyZ1dxE4CCpqkgH31i3UrQUJ997f2H?ext=png",
+      "metadata_hash": "ae0cd11926e760762ea1d63d724935df358686b440098847481e1a38e9795dd4",
+      "metadata_link": "https://gateway.irys.xyz/EX6MvuFpib1pCr1t7nfEtXLXgrCkNnwhxRvr2nhrUHZ",
+      "onChain": true
+    },
+    "44": {
+      "name": "Tamagotchi #44",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/59q421W4FHXLmZh16ZUAXamJmH2cNVotQd4V5syprhD9?ext=png",
+      "metadata_hash": "08acf35878581892ef8c17d109c671e2184ab0ca58bfea6996b13d281761f3c4",
+      "metadata_link": "https://gateway.irys.xyz/2u6R5qbLEQZfmEdEDYtRERAyLTCd3mx8LNj8M3EW62kx",
+      "onChain": true
+    },
+    "45": {
+      "name": "Tamagotchi #45",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/D9yPxTvicXKx6DJVx5kRvtwDC6x1C9ccLy7co1DQYCKU?ext=png",
+      "metadata_hash": "095e42db8c6926aa0b04f2746ac0d7eb4c8c854418bf3421ec0bd26afcd47eee",
+      "metadata_link": "https://gateway.irys.xyz/4etdbyoxMn8HFSuRZRQySwi9fzAtEzWGFLvhkjEFQ6Po",
+      "onChain": true
+    },
+    "46": {
+      "name": "Tamagotchi #46",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/GMAaz63ZmkueHEihXWf5yNFaCcyWqvztJoS1CEWKMtqy?ext=png",
+      "metadata_hash": "82aaf435e3198b11a48c90aa2e73e3493f3c22c4d46b59dc346643fb9b50dc50",
+      "metadata_link": "https://gateway.irys.xyz/AgLMogcE6Byyu7tsGj2PjVT2WWsCDsjLAeNgEeDjHLEZ",
+      "onChain": true
+    },
+    "47": {
+      "name": "Tamagotchi #47",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/8dLdea6MGE4vPDedWjMigZsBcWZrSH56V4xNQzQEzNft?ext=png",
+      "metadata_hash": "96fbaef168701e99090e76dab30fbcc7d33b8016cc4b682310811c7a6aa6bdfc",
+      "metadata_link": "https://gateway.irys.xyz/5faV9hS2bHFETcxCWeLj9Va3XfeHp5aVdBBsRaqHcxJj",
+      "onChain": true
+    },
+    "48": {
+      "name": "Tamagotchi #48",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/BmxqyRWEajn2Db6Sf2Gff5y1zGS5tK59qRM2YEZDTQhu?ext=png",
+      "metadata_hash": "1ca968640b0ca183afd6e82e905b2d8634c0e9b7e8fef693b3bb9eb35b3bca9f",
+      "metadata_link": "https://gateway.irys.xyz/3TYFJ7MAUR788BmDT8D9uDgr1Hjmct4iX7JfvJjWMhLq",
+      "onChain": true
+    },
+    "49": {
+      "name": "Tamagotchi #49",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/APfsppicXw35jUdv5k1F2Wk5awnHxdvNP27M9HotuafV?ext=png",
+      "metadata_hash": "e0303ae012aa2bc14259d1dd5e5b55697bd9810bc31fb4a1eda2e3d4e21d9ec8",
+      "metadata_link": "https://gateway.irys.xyz/BQjKwS68MNXNCDEyxWKW3g3CvtzQDQTo22tqqPjMzU2m",
+      "onChain": true
+    },
+    "50": {
+      "name": "Tamagotchi #50",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/AQNUjJYei9sSipuNgCNFtTgDQhv2Sn7TNo769kPXPBe3?ext=png",
+      "metadata_hash": "8003555c5b94d102fd0aef849e414a8742d15e121254e082a4ce2e205140e1df",
+      "metadata_link": "https://gateway.irys.xyz/6q2k1SE4s3bJ5195Wv8H54qcK69ueZqY9k1fgjhQK4uS",
+      "onChain": true
+    },
+    "51": {
+      "name": "Tamagotchi #51",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/BmZw2CbfaCKayyxKYxU9tyFduuj4WRZZYKu3d6Um7xao?ext=png",
+      "metadata_hash": "be028b70d13543aef79701bdc477178810750c23d54fba126f4c4926f0ac911b",
+      "metadata_link": "https://gateway.irys.xyz/BC2mvwMnXF6u4WU2nborRQwzMGXEHwcryGdw9yaDiXZL",
+      "onChain": true
+    },
+    "52": {
+      "name": "Tamagotchi #52",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/AbB6kKXHZwYHXowz3Vp3TePnARCFSXg6PFUEeh8v8hn4?ext=png",
+      "metadata_hash": "ca742bd4dfb88b319569cbe00d813593559ecc6a52e998c8e922792b62cbf296",
+      "metadata_link": "https://gateway.irys.xyz/HkUbYrt4gBsCujQECRBYeAoz3Vg5eJC1pEZZyAFKqXs2",
+      "onChain": true
+    },
+    "53": {
+      "name": "Tamagotchi #53",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/HPEtDd2h7T7t1HPZGgxvX4WHnpijrMPxD84q2iiy8c4q?ext=png",
+      "metadata_hash": "7fe382bb7beb165452fc20d728248631be01b9b6cd9f33ee06a93b5e0206e622",
+      "metadata_link": "https://gateway.irys.xyz/Ff2AYjPGWVXoU139P53TA2318o2bfzZQV44R3hSqvBU2",
+      "onChain": true
+    },
+    "54": {
+      "name": "Tamagotchi #54",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/GK6wRhw2CjWkLyHyeWhhz1w53SqdLQx5q1W4ashfjXZx?ext=png",
+      "metadata_hash": "20c954dabc14e344b69afa3e3e5a2976fc8834ea5b2206fc8641618b1338c6ae",
+      "metadata_link": "https://gateway.irys.xyz/Cyx4Gsetmfx852FCa4hfeaZYvkQzJGkJeqSExRtEQ6oE",
+      "onChain": true
+    },
+    "55": {
+      "name": "Tamagotchi #55",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/qtGDK55xjL15Zkm33BzbCaVpXHWG9BVPqu4HyETb9Hq?ext=png",
+      "metadata_hash": "c0aad0d1309a5ce3035dbf900fc2fedc76457f0262850a97bd60f290226dbf49",
+      "metadata_link": "https://gateway.irys.xyz/CzGN6fNxdr8ptiB77RCWpvUcKnkrMuW12zsooC8VwzY6",
+      "onChain": true
+    },
+    "56": {
+      "name": "Tamagotchi #56",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/Cbg4Asan4KeJtq6zpRm9sMmTLakw8hbS9dsrk1Kw7AR2?ext=png",
+      "metadata_hash": "1ac0289cd4de1cf5a970c06b9811218804ce09e110ec53011c708bf96f9fee88",
+      "metadata_link": "https://gateway.irys.xyz/5X2ztVSUwX8fvm5jdqHNDefEf5uuvS2DXJLwLWq8zZ2v",
+      "onChain": true
+    },
+    "57": {
+      "name": "Tamagotchi #57",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/2LrJN5Z5APrKxLaKXCaNPERY8fx27SGxpNBMiE7yubFA?ext=png",
+      "metadata_hash": "31c88a38da70a7433847677a61bf1e2211706e45533d6569a0cd52bddd33550b",
+      "metadata_link": "https://gateway.irys.xyz/Gn7ofej5DSMjrujSod1iSRB6gvbKd6XMrMhazwD9M7aX",
+      "onChain": true
+    },
+    "58": {
+      "name": "Tamagotchi #58",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/GgcCzd7mY2WdaWMYUBJSwV31SVP2nghYe4VdnT2BkpJx?ext=png",
+      "metadata_hash": "95fe7e7661338f6bc69cf7b72e4e2843f2703b7895104f60875f475b45b87847",
+      "metadata_link": "https://gateway.irys.xyz/7eWnQK7MzFvDYZ46VQ1SzLeFdv9kw6DgfXKPSxupcDem",
+      "onChain": true
+    },
+    "59": {
+      "name": "Tamagotchi #59",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/F58a4UGPgupXtKYjhDubScQacigkwmmDUtsJtWvDLT8c?ext=png",
+      "metadata_hash": "a83c42385212eb1b1faf097e7e9b37a4d8abe8e4234b8a132e3ce83543b82fa1",
+      "metadata_link": "https://gateway.irys.xyz/5zCPPL7q7TGDUCzdLpmqKCLoWVJnn8VEeeBDReSTtWTB",
+      "onChain": true
+    },
+    "60": {
+      "name": "Tamagotchi #60",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/HNhfWT1Z1jrB6gaMk5Xzck6t9oBKuM1voyUUX2ru8vWG?ext=png",
+      "metadata_hash": "59f770a5bed9f000b47d0c6844ec0bf983ee91678179c0d9a1de9bfdd35c3d77",
+      "metadata_link": "https://gateway.irys.xyz/ABULqLquFfwSzZHS5szJYcC4sjrLj3R4zuqnZyiXaUA5",
+      "onChain": true
+    },
+    "61": {
+      "name": "Tamagotchi #61",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/2KpSX6pQArmPdR2M9jC6UytRc1nsoLrkgd7Zhhr3zv4S?ext=png",
+      "metadata_hash": "07b93c072a4648265b788543efc26b3e4f4b7916d1c3bb944c9e330e99bb9c2b",
+      "metadata_link": "https://gateway.irys.xyz/HMoogeCT4ogZqsBaWs14a1WWd8tCUePF1U9XLweYkrkh",
+      "onChain": true
+    },
+    "62": {
+      "name": "Tamagotchi #62",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/ywjihKPUWt7j9kix8ZFQ6G97PijCGikZMnUpKsJBmH9?ext=png",
+      "metadata_hash": "a1777a393d7d07010b8eb06f6e6ea21237a118fab7b10165f55e3ee6a29d1262",
+      "metadata_link": "https://gateway.irys.xyz/74fdHwQGB7uyi5USHKDSAvmv2kcPf6KGhCa7QRJ6zZc7",
+      "onChain": true
+    },
+    "63": {
+      "name": "Tamagotchi #63",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/HPRVSpiJgSHMtZFQnDqSQGUPRFvxuAwSnXL1SL3z3iRf?ext=png",
+      "metadata_hash": "2c8fb9d04f3694450305d8d02c7d793f0ba99ae6b9a75601468e831468a576f4",
+      "metadata_link": "https://gateway.irys.xyz/8Vj7HgXMGHMEBhuxRuTvXo3knNioKJojBUdRtEgxhRnG",
+      "onChain": true
+    },
+    "64": {
+      "name": "Tamagotchi #64",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/DD42wZi6yL8PgMPkL1sh26sCaukN9R4LUzenxfbnaYr5?ext=png",
+      "metadata_hash": "c12aa398a77dfcfd7f742f923cf9b21a56cbd9e54798ac8dca471b9102879e85",
+      "metadata_link": "https://gateway.irys.xyz/EMZsxBYcTXbu9E8Jc3CZ9amLVFwx3fjN3R1Xs1xQ8zTv",
+      "onChain": true
+    },
+    "65": {
+      "name": "Tamagotchi #65",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/2b9ErYKcU68Ug9wz7r94mBYp6A5MhjQBipM5t9KYt9sp?ext=png",
+      "metadata_hash": "4ceaf082baf5797f11ba03e7af512e2091a4a788c0d4cc03074464e4cd12c1e1",
+      "metadata_link": "https://gateway.irys.xyz/2oErE4NbU3ogtxL1N74gLin5vg87SJvJuJuvu6kdZFuZ",
+      "onChain": true
+    },
+    "66": {
+      "name": "Tamagotchi #66",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/Dx7FtBheAPKFjFJz7cMW3NnGEk625RoPVCTER2wQKT4M?ext=png",
+      "metadata_hash": "b918932a65fab6332d6a3d21ec3de00b36f947e9767b79edfc80262e9d5cce24",
+      "metadata_link": "https://gateway.irys.xyz/AEcNfLHF9QhVnJCkBw33TNAyqXmLznGHfAP6z7MZ8Leo",
+      "onChain": true
+    },
+    "67": {
+      "name": "Tamagotchi #67",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/Cjnh2AE5fsNE9yo1dLvroRxas3tpjXmNSznNY36gr4zn?ext=png",
+      "metadata_hash": "9514e06b852d1d5d9a274231330749e969e4514630bfbd13218e5fed88b3da3c",
+      "metadata_link": "https://gateway.irys.xyz/2n5F9pNwQJrzhARsm6GzGhgnLyPZHNUp1FyvaCUiZQkP",
+      "onChain": true
+    },
+    "68": {
+      "name": "Tamagotchi #68",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/H2yhZZ9uGvWmpSpV94QzG3NGr244E3ppTLALEWo6KnKk?ext=png",
+      "metadata_hash": "b412baada9ee20ed84832dd0a3e0b2c9945d27818412a57b4a6cf8eb28687de6",
+      "metadata_link": "https://gateway.irys.xyz/DQEzY2X8umAXV7YcqCWT8V7ESjaWnWTQSN11yhaGbL7p",
+      "onChain": true
+    },
+    "69": {
+      "name": "Tamagotchi #69",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/7CSBJVk2tSZRrFZ1KxcdAXL8MoN1stt9kNW6zqSmiQpP?ext=png",
+      "metadata_hash": "014b3d39bff7b0ddb248de123f586bb8e1464fa5b1fa8a82bad576dab604eb50",
+      "metadata_link": "https://gateway.irys.xyz/CD4QutAFZP9TYUpDdVw8L3Er3rq5dUy1YtXcQyfJuVsg",
+      "onChain": true
+    },
+    "70": {
+      "name": "Tamagotchi #70",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/AUdb41bL4RuTRttdqi8j96k4iQY1VkS3ru3nMVAmFeSr?ext=png",
+      "metadata_hash": "9701571a2f9fa54cdade6ffc4704412fda67cecd3165fc01714f49d41eabd9a0",
+      "metadata_link": "https://gateway.irys.xyz/CRGD5CM2mvwYnJBWrrWqqEa9dMtGLQXiEsfkyVaPMUys",
+      "onChain": true
+    },
+    "71": {
+      "name": "Tamagotchi #71",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/9brmBAUadEWqu66iJFEhyjfgjwAdxNKqT5wvBPYxxe1Y?ext=png",
+      "metadata_hash": "81895982f927df12e45e2161135e43f964384e98b8a0e71cba3ac0af6d93b1e9",
+      "metadata_link": "https://gateway.irys.xyz/E1cyUsEP4n3hXzQ4yTrB7vL4gKv8Wdsak9yi1xXXc2kA",
+      "onChain": true
+    },
+    "72": {
+      "name": "Tamagotchi #72",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/2u2q2uEeKY3Mpyqxn4pCEcXWwjxBo85HnywbpL8YjcdQ?ext=png",
+      "metadata_hash": "bac7953f45b494eb093f36785b34c035ee0dfa9f79acfc390b8eb61c731de60f",
+      "metadata_link": "https://gateway.irys.xyz/HUYtzPHtRNdnMLcz62rKiVeXSdUmYjPacJW9VnKDWN9b",
+      "onChain": true
+    },
+    "73": {
+      "name": "Tamagotchi #73",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/DYdsGQX7gra2SUrDU8pa9kq6VYVRmVq91tY49GXnmM7?ext=png",
+      "metadata_hash": "d6458fd4b76508ef5080f7420d34511641c269357c3d2538c41ecb19f3a34879",
+      "metadata_link": "https://gateway.irys.xyz/DKjVERjfGVqTpdFK85eXqZdBsW7s7Yqof926r5R25awQ",
+      "onChain": true
+    },
+    "74": {
+      "name": "Tamagotchi #74",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/6YbU8AupDXk6QDcUx8U37VVQUGHq2ER2TJ8Y8wuWGHcN?ext=png",
+      "metadata_hash": "49144c14d89b192dd34036b5de49fa7f9e1c9e237f5890e11f1e6f6c19f0b1cd",
+      "metadata_link": "https://gateway.irys.xyz/BhqZDzdFUiJBhbySUfromXWqJYTS7E6yTGRCfqhYM3ee",
+      "onChain": true
+    },
+    "75": {
+      "name": "Tamagotchi #75",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/9Zjn6vPLrQw28E1bFsCp3D4U9rLdfnNqLQZPtyFggFT9?ext=png",
+      "metadata_hash": "928772075cfb685dccf69a332190c064c990e5ecc298374069752945aa5cc27e",
+      "metadata_link": "https://gateway.irys.xyz/6xP25QamUQL2gdotqtiHwCot16B8w9m3UJVfoiQmJpf2",
+      "onChain": true
+    },
+    "76": {
+      "name": "Tamagotchi #76",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/8wQzymK1mDnNf77xD4c9gVmj1dgKJ5PtDMAicJTnb5Et?ext=png",
+      "metadata_hash": "fbccf88d43af0d10df0dbf9d89988ab6c832904cf1e684a15d06f0c74cb22af0",
+      "metadata_link": "https://gateway.irys.xyz/CU1oG26mAQ86pTeoDssxUPd1PN5Xngbmpe1UNAtYAA8p",
+      "onChain": true
+    },
+    "77": {
+      "name": "Tamagotchi #77",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/5NKsi8A9XzPZWJABLSMXz8rUXdtTSZfQUeSSLDunVgVx?ext=png",
+      "metadata_hash": "c2c2a92a8c310a950ffaa7ef90c14d33bcd4970005d909eafbba411bd4b305cf",
+      "metadata_link": "https://gateway.irys.xyz/BdZvng8VAknzszPUeNwmeCvh7nJR8CA7rvgqoUN74sZS",
+      "onChain": true
+    },
+    "78": {
+      "name": "Tamagotchi #78",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/GUwweB5WeZBFhUmhYZXVBAW7ubd7bC1gTzkPSyxv8X3V?ext=png",
+      "metadata_hash": "e3e2f06cfd5c51fb1f0a33674ebaea33a62a4e89c75fd6118d9b22541fd545f9",
+      "metadata_link": "https://gateway.irys.xyz/Fk5d8c9q5MRcFoxwhoxyT5yupJMxaS2fPwYWEacfyB9h",
+      "onChain": true
+    },
+    "79": {
+      "name": "Tamagotchi #79",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/QXJtrciChGzEHfpNsa5gE4FrrFYZpiziVKvXhFbnG8v?ext=png",
+      "metadata_hash": "5fdeb87204fdf019bce3c18df82f98c4b02b28c61a522c9ddecfa3f4cf196c1e",
+      "metadata_link": "https://gateway.irys.xyz/4y161uDnCBDtPvhg63qxGX9QG8aLuD9jCmqWT9ZXDFzm",
+      "onChain": true
+    },
+    "80": {
+      "name": "Tamagotchi #80",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/5MzBB8e6nJUeNkxiKg3y9VtxWMLx4SiyvN7JENB8QTQG?ext=png",
+      "metadata_hash": "7ba4d4bd02c7cafefa2c06823c4f09ff9d075870e3cc7fd5713598437cbba4ff",
+      "metadata_link": "https://gateway.irys.xyz/V9wBvR1QhcETwPmmbB5e9odRDFehSuUmuTBHbqqcMJ9",
+      "onChain": true
+    },
+    "81": {
+      "name": "Tamagotchi #81",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/7wzFCUzCCzZTZBUaxeMRXEAEyWGyC673hmkMgekFjET8?ext=png",
+      "metadata_hash": "0638eaa33d2dbbb15f5e61c57c0a82162ba1979eff6c30305994e4262ca93c0a",
+      "metadata_link": "https://gateway.irys.xyz/3aLJoGJmsdCqicbdQb5iwqJnEqL4sVLTauRrJwvAzZxP",
+      "onChain": true
+    },
+    "82": {
+      "name": "Tamagotchi #82",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/899sJKDh6vw92rtuXEb5pK1UsFTMBo5sriuoZakuqvGt?ext=png",
+      "metadata_hash": "e1e712a1ac746f22046260c6c42caea02d5bcf0d8a3b945d38f3677bb376878f",
+      "metadata_link": "https://gateway.irys.xyz/AfBgwb3tknAQgiCQuihcGR2howb7vvWRHVmzccz9gAdS",
+      "onChain": true
+    },
+    "83": {
+      "name": "Tamagotchi #83",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/6xnemMgELav6qscdaEfzHff32cH856hMLaxu3Pke3dtX?ext=png",
+      "metadata_hash": "796994d045d4127d63329514dea95edef0a0e9fdf511df12f05ebe4bac922ae3",
+      "metadata_link": "https://gateway.irys.xyz/vxvMMxNH9H7dmx9mFmMyriKnuQ6Ys9E7UevVhqWYojF",
+      "onChain": true
+    },
+    "84": {
+      "name": "Tamagotchi #84",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/EfhPav8EhFof9kwCkbPGTURiyupSPc4sDdmY7bTfzLr?ext=png",
+      "metadata_hash": "a5c4f798ae2ec15ec40fd4e506d107413df87ff5b6a98a0721eea2fbe86422f1",
+      "metadata_link": "https://gateway.irys.xyz/9a7JjPF7LCN37DtyxBYWsPXZzkcTBFtPa3EcizvcLDsN",
+      "onChain": true
+    },
+    "85": {
+      "name": "Tamagotchi #85",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/2kQnYeeRG2zWXpwekFU2kXi7N7CRWJMgghHkif9Ut9tw?ext=png",
+      "metadata_hash": "ca7689ce57a742e04eabdc53b6165e37e7ac07d67cba3f12db9a49fc1097cf61",
+      "metadata_link": "https://gateway.irys.xyz/BKwnjcqSQH2hNidXaqkEsKx9nSPQ2VNtyWPhAJBwZKLJ",
+      "onChain": true
+    },
+    "86": {
+      "name": "Tamagotchi #86",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/7raxuzpmwofjLinvKFYX1JYGnWoCHXBRaDCQZe7YJkFY?ext=png",
+      "metadata_hash": "560cf5e977ecb18af42e0adfe2ebfa911a6ffd6db25f260cf3c468594983eb57",
+      "metadata_link": "https://gateway.irys.xyz/5Z3PBphVjiJLGiXrE7QGSE6kMEa8qRYueF66xv57T3Fx",
+      "onChain": true
+    },
+    "87": {
+      "name": "Tamagotchi #87",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/8CetAzgexTKJ3KTKGyKJqbBKJu7ErD6haAw24Y6FzTeh?ext=png",
+      "metadata_hash": "301b4fd102582ca09716560cf58aa213b88944c4d19acd562c50e5dda78f561b",
+      "metadata_link": "https://gateway.irys.xyz/CcC7a5fieMkvGY36NmfZXPFKenwHvHaFUaH3GLBahJqZ",
+      "onChain": true
+    },
+    "88": {
+      "name": "Tamagotchi #88",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/9TFycrzfVowMVoXVukFxFjzrPsUveeURL2tfibMFy98W?ext=png",
+      "metadata_hash": "aa23a1a358104d854d11699eeab12ee149e15d2a97e1a8deab475f4217a2acc9",
+      "metadata_link": "https://gateway.irys.xyz/Gq8nG7gQPLYKJFmEABgMLEqNCLLuJS6pBCwapC9JsNG6",
+      "onChain": true
+    },
+    "89": {
+      "name": "Tamagotchi #89",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/8HRnFjnhJh6m5eQUarc592XJVXzjGSU7xgGBWMd6Xukf?ext=png",
+      "metadata_hash": "b6078d961684e9630d968a937da36e3225d8ef57b219ed17c3589d83d8221874",
+      "metadata_link": "https://gateway.irys.xyz/7yALbkWpKpWK2FueBxv6s8W446eYCCapgNaGp3agRoYV",
+      "onChain": true
+    },
+    "90": {
+      "name": "Tamagotchi #90",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/FFPPFXtNDzzXTQXHZpVQuhHixnM4cenbDSZcN1VaGJCd?ext=png",
+      "metadata_hash": "8f44d958611b9f76d2617794dd323ace5e8a42ca8c93ec35bdddf71a0a475191",
+      "metadata_link": "https://gateway.irys.xyz/EUsaUpVCVHeVM3QW7C3GtwEvviobRn9urTiVpFHCL56X",
+      "onChain": true
+    },
+    "91": {
+      "name": "Tamagotchi #91",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/FcbxNQEHZhs2q6stAatPuvnuQLzccSaYybc6r6iJseoV?ext=png",
+      "metadata_hash": "e5e2aef5890a661eed0e6ccc677ca50b48c26ffab331805111078c45e74cdda1",
+      "metadata_link": "https://gateway.irys.xyz/75JL5HGZ3YRVM2f62bQH9husFjyZxzhjRAfDeX2ZtsW5",
+      "onChain": true
+    },
+    "92": {
+      "name": "Tamagotchi #92",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/BajfXzah9o5fuHKyCH9fjn445erEMaUc13TuczaE1vXc?ext=png",
+      "metadata_hash": "67950660ed3a8a8ac2e3e13daebf166f3afa6c2acbc352f1cb565a1de23ac2b2",
+      "metadata_link": "https://gateway.irys.xyz/4MA3q4WxucShfj7umwz2JqKRcbkn48B9QsAvMjajo5zL",
+      "onChain": true
+    },
+    "93": {
+      "name": "Tamagotchi #93",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/GVq8ckutazy1B1XfaMPTXMD9VvjSdVmrJ9eYudqFiBE6?ext=png",
+      "metadata_hash": "39d6eb6e9d24c1d4c96f98813465f884b05fff5a3f869a884b7b48bc85b9960f",
+      "metadata_link": "https://gateway.irys.xyz/AdoS3sG847vnzpe2hbqeCaSr1i3bkGSaaSd23abMbjiA",
+      "onChain": true
+    },
+    "94": {
+      "name": "Tamagotchi #94",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/GdYgX79Hx6uK5aTxU8fxnQ3Rkg357TR4LGA477ayhHz2?ext=png",
+      "metadata_hash": "1a386de539089a489acec87b1c61b913b46d382aa327160df6cd35d49120dd67",
+      "metadata_link": "https://gateway.irys.xyz/8KmpshJR75A2VTxJFRXBbXiWUBuU8qmUhtPtyNNe6n41",
+      "onChain": true
+    },
+    "95": {
+      "name": "Tamagotchi #95",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/JCFHni4QR55QBYJqmcZ28XtcMUtudNdRd8f5W6jXqHvy?ext=png",
+      "metadata_hash": "84c68c9ecdf88280a25c149b05a613598160a2358e399adc24e9ecbe89a5208a",
+      "metadata_link": "https://gateway.irys.xyz/5u4gsk8T8CGJ5JjBrvXYCds3ZfohYaBjLszP1b4sseXL",
+      "onChain": true
+    },
+    "96": {
+      "name": "Tamagotchi #96",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/4TECwxPhFTHKffK9sspqVQ1sythdLKMrLoBHLoSQmeF6?ext=png",
+      "metadata_hash": "b1230303306d0f491eedace1c2cd30452e6c2c7c274ac2e82d8fc7f2b09de2bb",
+      "metadata_link": "https://gateway.irys.xyz/ALCFBbn7S3hJriG3g7VH2mZZVBDWe9SEQyCqYwSVaPnK",
+      "onChain": true
+    },
+    "97": {
+      "name": "Tamagotchi #97",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/8yjcQNdNJ5vSEV3UE8AJeqmYc6c5wJGtvbUwWeT4hGgm?ext=png",
+      "metadata_hash": "7020894bd103c2b577e263e790585d045368931295b43c6d6fc5b033277e6f3b",
+      "metadata_link": "https://gateway.irys.xyz/6XuSajADAcDyn6ZiKqhxBQWWNS2skms6SRo9rqCzN3jD",
+      "onChain": true
+    },
+    "98": {
+      "name": "Tamagotchi #98",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/GVuDuAirMwxpPDy99N7nLc9S8bWwqvpnULtpumh1xMYi?ext=png",
+      "metadata_hash": "715c462967e664677e4f2ad658b6e8fdd98eaa83caca109e63ce5f8bd67c619b",
+      "metadata_link": "https://gateway.irys.xyz/64AcfZ32axDnpPmpWGhiMJ8pB8PmErVWTG1S9gF2UZ2L",
+      "onChain": true
+    },
+    "99": {
+      "name": "Tamagotchi #99",
+      "image_hash": "16c04228d04313f80727ee5f7596301b6cf1a8c00b0db91a2da802f2f6603166",
+      "image_link": "https://gateway.irys.xyz/C7n9AqvXiwUhiRpK254BYHQevv691TFzBSbzRopJNVeY?ext=png",
+      "metadata_hash": "3e3779b6bc87f2835772fe66b56c6a0012135072b51f9b7bde2233fa23e6baa0",
+      "metadata_link": "https://gateway.irys.xyz/AncyzRVjWaoRz4xmvPSkno6AdP6RzCJQe8qAJfGvrTRX",
+      "onChain": true
+    }
+  }
+}

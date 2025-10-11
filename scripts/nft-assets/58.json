@@ -1,0 +1,53 @@
+{
+  "name": "Solana Tamagotchi #58",
+  "symbol": "TAMA",
+  "description": "A unique Solana Tamagotchi NFT Pet - Play, Earn, and Evolve! This is a Common Unicorn with Pink Solid pattern.",
+  "seller_fee_basis_points": 500,
+  "image": "58.png",
+  "external_url": "https://tr1h.github.io/solana-tamagotchi-v3/?nft=58",
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Unicorn"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Common"
+    },
+    {
+      "trait_type": "Color",
+      "value": "Pink"
+    },
+    {
+      "trait_type": "Pattern",
+      "value": "Solid"
+    },
+    {
+      "trait_type": "Background",
+      "value": "Sunset"
+    },
+    {
+      "trait_type": "Accessory",
+      "value": "None"
+    },
+    {
+      "trait_type": "Special Ability",
+      "value": "None"
+    }
+  ],
+  "properties": {
+    "files": [
+      {
+        "uri": "58.png",
+        "type": "image/png"
+      }
+    ],
+    "category": "image",
+    "creators": [
+      {
+        "address": "GXvKWk8VierD1H6VXzQz7GxZBMZUxXKqvmHkBRGdPump",
+        "share": 100
+      }
+    ]
+  }
+}

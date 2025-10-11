@@ -1,0 +1,53 @@
+{
+  "name": "Solana Tamagotchi #69",
+  "symbol": "TAMA",
+  "description": "A unique Solana Tamagotchi NFT Pet - Play, Earn, and Evolve! This is a Common Fox with Green Spotted pattern.",
+  "seller_fee_basis_points": 500,
+  "image": "69.png",
+  "external_url": "https://tr1h.github.io/solana-tamagotchi-v3/?nft=69",
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Fox"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Common"
+    },
+    {
+      "trait_type": "Color",
+      "value": "Green"
+    },
+    {
+      "trait_type": "Pattern",
+      "value": "Spotted"
+    },
+    {
+      "trait_type": "Background",
+      "value": "Forest"
+    },
+    {
+      "trait_type": "Accessory",
+      "value": "None"
+    },
+    {
+      "trait_type": "Special Ability",
+      "value": "None"
+    }
+  ],
+  "properties": {
+    "files": [
+      {
+        "uri": "69.png",
+        "type": "image/png"
+      }
+    ],
+    "category": "image",
+    "creators": [
+      {
+        "address": "GXvKWk8VierD1H6VXzQz7GxZBMZUxXKqvmHkBRGdPump",
+        "share": 100
+      }
+    ]
+  }
+}

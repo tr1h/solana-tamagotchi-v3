@@ -1,0 +1,19 @@
+{
+  "price": 0.3,
+  "number": 100,
+  "symbol": "TAMA",
+  "sellerFeeBasisPoints": 500,
+  "solTreasuryAccount": "FHqNWKNyXryz52koqQdWvqxe8zxb4AcaEtD58DneJSb",
+  "goLiveDate": "2024-01-15T00:00:00Z",
+  "uploadMethod": "bundlr",
+  "retainAuthority": true,
+  "isMutable": true,
+  "isSequential": false,
+  "ruleSet": null,
+  "creators": [
+    {
+      "address": "FHqNWKNyXryz52koqQdWvqxe8zxb4AcaEtD58DneJSb",
+      "share": 100
+    }
+  ]
+}
