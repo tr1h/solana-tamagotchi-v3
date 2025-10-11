@@ -453,6 +453,7 @@ const Database = {
                     wallet_address: walletAddress,
                     mint_address: nftData.mintAddress,
                     nft_name: nftData.name || 'My Pet',
+                    pet_name: nftData.petName || nftData.name || 'My Pet',
                     nft_type: nftData.type,
                     nft_rarity: nftData.rarity,
                     mint_price: price,

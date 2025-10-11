@@ -459,7 +459,7 @@ const MintPage = {
             console.log('🔄 Processing mint result...', result);
             
             // Get pet name
-            const petNameInput = document.getElementById('pet-name');
+            const petNameInput = document.getElementById('pet-name-input');
             const petName = petNameInput && petNameInput.value ? petNameInput.value.trim() : '';
             
             // Создаём NFT объект для сохранения
@@ -467,6 +467,7 @@ const MintPage = {
                 mintAddress: result.mintAddress,
                 signature: result.transaction || result.signature,
                 name: result.nftData?.name || petName || 'My Pet',
+                petName: petName || 'My Pet', // Добавляем petName для базы данных
                 type: result.nftData?.type || result.metadata?.gameData?.type,
                 emoji: result.metadata?.gameData?.emoji,
                 rarity: result.nftData?.rarity || result.metadata?.gameData?.rarity,

@@ -89,29 +89,35 @@ const TAMAModule = {
             console.log(`💰 Earning ${amount} TAMA for: ${reason}`);
             
             if (this.CONFIG.USE_DATABASE && window.Database) {
-                // Проверяем дневной лимит
+                // Проверяем дневной лимит (но не блокируем полностью)
                 const dailyEarned = await this.getDailyEarned(walletAddress);
-                if (dailyEarned + amount > this.ECONOMICS.DAILY_EARN_LIMIT) {
-                    console.warn('⚠️ Daily TAMA earning limit reached');
+                if (dailyEarned >= this.ECONOMICS.DAILY_EARN_LIMIT) {
+                    console.warn('⚠️ Daily TAMA earning limit reached - no more TAMA today');
                     return false;
+                }
+                
+                // Если превышаем лимит, даем только до лимита
+                const actualAmount = Math.min(amount, this.ECONOMICS.DAILY_EARN_LIMIT - dailyEarned);
+                if (actualAmount < amount) {
+                    console.warn(`⚠️ Daily limit reached. Giving ${actualAmount} instead of ${amount} TAMA`);
                 }
                 
                 // Обновляем баланс
                 const currentBalance = await this.getBalance(walletAddress);
-                const newBalance = currentBalance + amount;
+                const newBalance = currentBalance + actualAmount;
                 
-                await window.Database.updateTAMA(walletAddress, amount, reason, details);
+                await window.Database.updateTAMA(walletAddress, actualAmount, reason, details);
                 
                 // Записываем в историю
-                await this.recordTransaction(walletAddress, amount, 'earn', reason, details);
+                await this.recordTransaction(walletAddress, actualAmount, 'earn', reason, details);
                 
                 // Обновляем UI
                 this.updateUIBalance(newBalance);
                 
                 // Показываем уведомление
-                this.showEarnNotification(amount, reason);
+                this.showEarnNotification(actualAmount, reason);
                 
-                console.log(`✅ Earned ${amount} TAMA. New balance: ${newBalance}`);
+                console.log(`✅ Earned ${actualAmount} TAMA. New balance: ${newBalance}`);
                 return true;
             }
             

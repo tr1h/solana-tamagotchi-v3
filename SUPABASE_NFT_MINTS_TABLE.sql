@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS nft_mints (
     wallet_address TEXT NOT NULL,
     mint_address TEXT NOT NULL UNIQUE,
     nft_name TEXT NOT NULL,
+    pet_name TEXT NOT NULL,
     nft_type TEXT NOT NULL,
     nft_rarity TEXT NOT NULL,
     mint_price DECIMAL(10,2) NOT NULL,
@@ -26,6 +27,7 @@ COMMENT ON TABLE nft_mints IS 'История всех NFT минтингов и
 COMMENT ON COLUMN nft_mints.wallet_address IS 'Адрес кошелька игрока';
 COMMENT ON COLUMN nft_mints.mint_address IS 'Адрес NFT токена';
 COMMENT ON COLUMN nft_mints.nft_name IS 'Имя NFT питомца';
+COMMENT ON COLUMN nft_mints.pet_name IS 'Имя питомца от пользователя';
 COMMENT ON COLUMN nft_mints.nft_type IS 'Тип питомца (Dragon, Phoenix, etc.)';
 COMMENT ON COLUMN nft_mints.nft_rarity IS 'Редкость (Common, Rare, Epic, Legendary)';
 COMMENT ON COLUMN nft_mints.mint_price IS 'Цена минтинга в SOL';
