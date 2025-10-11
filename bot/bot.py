@@ -8,6 +8,10 @@ import os
 from datetime import datetime, timedelta
 from collections import defaultdict
 from supabase import create_client, Client
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Bot token
 TOKEN = os.getenv('TELEGRAM_BOT_TOKEN', 'YOUR_BOT_TOKEN_HERE')
