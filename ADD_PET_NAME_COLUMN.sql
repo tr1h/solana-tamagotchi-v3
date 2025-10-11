@@ -14,9 +14,14 @@ ALTER TABLE nft_mints
 ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
 
 -- 4. Обновить существующие записи (если есть)
-UPDATE nft_mints 
-SET pet_name = nft_name 
-WHERE pet_name = 'My Pet' OR pet_name IS NULL;
+-- Сначала проверим какие колонки существуют
+SELECT column_name 
+FROM information_schema.columns 
+WHERE table_name = 'nft_mints' 
+ORDER BY ordinal_position;
+
+-- Обновляем pet_name только если есть данные для копирования
+-- (пока оставляем как есть, так как nft_name не существует)
 
 -- 5. Обновить created_at для существующих записей (если NULL)
 UPDATE nft_mints 

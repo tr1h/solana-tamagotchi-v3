@@ -583,12 +583,12 @@
                     .select('*')
                     .order('id', { ascending: false }); // Use id as fallback
                 
-                // If we have created_at column, try to sort by it
-                if (mints && mints.length > 0 && mints[0].created_at) {
+                // If we have mint_timestamp column, try to sort by it
+                if (mints && mints.length > 0 && mints[0].mint_timestamp) {
                     const { data: mintsWithDate, error: dateError } = await supabase
                         .from('nft_mints')
                         .select('*')
-                        .order('created_at', { ascending: false });
+                        .order('mint_timestamp', { ascending: false });
                     
                     if (!dateError && mintsWithDate) {
                         mints = mintsWithDate;
@@ -606,6 +606,7 @@
                                 <th>ID</th>
                                 <th>Wallet</th>
                                 <th>NFT Mint Address</th>
+                                <th>Pet Name</th>
                                 <th>Type</th>
                                 <th>Rarity</th>
                                 <th>Price</th>
@@ -627,21 +628,22 @@
                                         </a>
                                     </td>
                                     <td>
-                                        ${mint.nft_mint_address ? `
-                                            <a href="https://explorer.solana.com/address/${mint.nft_mint_address}?cluster=devnet" 
+                                        ${mint.mint_address ? `
+                                            <a href="https://explorer.solana.com/address/${mint.mint_address}?cluster=devnet" 
                                                target="_blank" 
                                                class="link"
-                                               title="${mint.nft_mint_address}">
-                                                ${mint.nft_mint_address.slice(0, 4)}...${mint.nft_mint_address.slice(-4)}
+                                               title="${mint.mint_address}">
+                                                ${mint.mint_address.slice(0, 4)}...${mint.mint_address.slice(-4)}
                                             </a>
                                         ` : '-'}
                                     </td>
-                                    <td>${mint.nft_type ? mint.nft_type.charAt(0).toUpperCase() + mint.nft_type.slice(1) : '-'}</td>
-                                    <td>${mint.nft_rarity ? `<span class="badge badge-${mint.nft_rarity}">${mint.nft_rarity.toUpperCase()}</span>` : '-'}</td>
+                                    <td><strong>${mint.pet_name || '-'}</strong></td>
+                                    <td>${mint.pet_type ? mint.pet_type.charAt(0).toUpperCase() + mint.pet_type.slice(1) : '-'}</td>
+                                    <td>${mint.pet_traits?.rarity ? `<span class="badge badge-${mint.pet_traits.rarity}">${mint.pet_traits.rarity.toUpperCase()}</span>` : '-'}</td>
                                     <td><strong>${mint.mint_price || 0} SOL</strong></td>
-                                    <td>Phase ${mint.mint_phase || 1}</td>
+                                    <td>Phase ${mint.pet_traits?.phase || 1}</td>
                                     <td id="blockchain-${mint.id}">-</td>
-                                    <td>${mint.created_at ? new Date(mint.created_at).toLocaleString() : 'N/A'}</td>
+                                    <td>${mint.mint_timestamp ? new Date(mint.mint_timestamp).toLocaleString() : 'N/A'}</td>
                                 </tr>
                             `).join('')}
                         </tbody>

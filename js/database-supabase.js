@@ -452,12 +452,17 @@ const Database = {
                 .insert({
                     wallet_address: walletAddress,
                     mint_address: nftData.mintAddress,
-                    nft_name: nftData.name || 'My Pet',
                     pet_name: nftData.petName || nftData.name || 'My Pet',
-                    nft_type: nftData.type,
-                    nft_rarity: nftData.rarity,
+                    pet_type: nftData.type,
+                    pet_traits: {
+                        rarity: nftData.rarity,
+                        name: nftData.name || 'My Pet',
+                        phase: phase
+                    },
                     mint_price: price,
-                    mint_phase: phase
+                    mint_timestamp: new Date().toISOString(),
+                    transaction_signature: nftData.signature,
+                    status: 'minted'
                 })
                 .select();
             
