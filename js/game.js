@@ -912,7 +912,7 @@ const Game = {
                     .from('nft_mints')
                     .select('*')
                     .eq('wallet_address', walletAddress)
-                    .order('created_at', { ascending: false })
+                    .order('mint_timestamp', { ascending: false })
                     .limit(1);
                 
                 if (error) {
@@ -924,9 +924,9 @@ const Game = {
                     // Создаём pet из NFT данных
                     const petData = {
                         id: `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-                        name: nft.nft_name,
-                        type: nft.nft_type,
-                        rarity: nft.nft_rarity,
+                        name: nft.pet_name || 'My Pet',
+                        type: nft.pet_type,
+                        rarity: nft.pet_traits?.rarity || 'Common',
                         level: 1,
                         xp: 0,
                         happiness: 100,
@@ -934,7 +934,7 @@ const Game = {
                         energy: 100,
                         health: 100,
                         mintAddress: nft.mint_address,
-                        createdAt: new Date(nft.created_at).getTime(),
+                        createdAt: new Date(nft.mint_timestamp).getTime(),
                         lastFed: Date.now(),
                         lastPlayed: Date.now(),
                         lastSlept: Date.now()

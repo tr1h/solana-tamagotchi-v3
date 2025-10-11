@@ -92,6 +92,7 @@ const SimpleRealMint = {
                 mintAddress: mintAddress,
                 nftData: nftData,
                 transaction: transferSignature,
+                signature: transferSignature, // Добавляем signature для совместимости
                 solTransfer: {
                     signature: transferSignature,
                     amount: mintPrice,
