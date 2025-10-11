@@ -183,6 +183,19 @@
             text-decoration: underline;
         }
         
+        /* Status indicators */
+        .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+        .status-loading { background: #f39c12; color: white; }
+        .status-error { background: #e74c3c; color: white; }
+        .status-success { background: #27ae60; color: white; }
+        .status-empty { background: #95a5a6; color: white; }
+        
         .loading { 
             text-align: center; 
             color: #666; 
@@ -318,11 +331,78 @@
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         const connection = new solanaWeb3.Connection('https://api.devnet.solana.com', 'confirmed');
         
-        // Initialize Database object for ranking system
-        window.Database.supabase = supabase;
+        // Test connection first
+        console.log('🔗 Testing Supabase connection in Database Viewer...');
+        supabase.from('players').select('count').then(result => {
+            if (result.error) {
+                console.error('❌ Database Viewer: Supabase connection failed:', result.error);
+                showError('Database connection failed: ' + result.error.message);
+            } else {
+                console.log('✅ Database Viewer: Supabase connection successful');
+                // Initialize Database object for ranking system
+                window.Database.supabase = supabase;
+                // Load data after successful connection
+                loadData();
+            }
+        }).catch(error => {
+            console.error('❌ Database Viewer: Connection error:', error);
+            showError('Connection error: ' + error.message);
+        });
+
+        // Add manual refresh button functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const refreshBtn = document.getElementById('refresh-btn');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', function() {
+                    console.log('🔄 Manual refresh triggered');
+                    loadData();
+                });
+            }
+        });
 
         let playersData = [];
         let mintsData = [];
+
+        // Show error message
+        function showError(message) {
+            console.error('❌ Database Viewer Error:', message);
+            
+            // Show error in stats cards
+            document.querySelectorAll('.stat-number').forEach(el => {
+                el.textContent = 'ERROR';
+                el.style.color = '#e74c3c';
+            });
+            
+            // Show error in tables
+            document.querySelectorAll('.table-container').forEach(container => {
+                const table = container.querySelector('table tbody');
+                if (table) {
+                    table.innerHTML = `
+                        <tr>
+                            <td colspan="100%" style="text-align: center; color: #e74c3c; padding: 20px;">
+                                ❌ ${message}
+                                <br><small>Check browser console for details</small>
+                            </td>
+                        </tr>
+                    `;
+                }
+            });
+        }
+
+        // Enhanced status update function
+        function updateStatus(section, status) {
+            const statusElement = document.querySelector(`#${section}-status`);
+            if (statusElement) {
+                const statusText = {
+                    'loading': '🔄 Loading...',
+                    'error': '❌ Error',
+                    'success': '✅ Loaded',
+                    'empty': '📭 No data'
+                };
+                statusElement.textContent = statusText[status] || status;
+                statusElement.className = `status status-${status}`;
+            }
+        }
 
         async function loadData() {
             console.log('🔄 Loading database data...');
@@ -340,6 +420,7 @@
                 console.log('✅ All data loaded');
             } catch (error) {
                 console.error('❌ Error loading data:', error);
+                showError('Failed to load data: ' + error.message);
             }
             
             refreshBtn.disabled = false;
@@ -377,6 +458,7 @@
                 
             } catch (error) {
                 console.error('Error loading stats:', error);
+                showError('Failed to load stats: ' + error.message);
             }
         }
 
