@@ -266,22 +266,11 @@ def send_welcome(message):
         types.InlineKeyboardButton("🎮 Play Game", url=game_url),
         types.InlineKeyboardButton("🎨 Mint NFT", url=mint_url)
     )
-    # Create referral button - working link if wallet linked, otherwise callback
-    if wallet_address:
-        # User has wallet - create working referral link
-        ref_code = generate_referral_code(wallet_address, user_id)
-        short_link = f"https://tama.game/ref/{ref_code}"
-        referral_button = types.InlineKeyboardButton("🔗 Share Referral", url=short_link)
-    else:
-        # No wallet - use callback to prompt linking
-        referral_button = types.InlineKeyboardButton("🔗 Get Referral", callback_data="get_referral")
-    
     keyboard.row(
-        referral_button,
-        types.InlineKeyboardButton("📊 My Stats", callback_data="my_stats")
+        types.InlineKeyboardButton("📊 My Stats", callback_data="my_stats"),
+        types.InlineKeyboardButton("🏆 Leaderboard", callback_data="leaderboard")
     )
     keyboard.row(
-        types.InlineKeyboardButton("🏆 Leaderboard", callback_data="leaderboard"),
         types.InlineKeyboardButton("📋 Rules", callback_data="rules")
     )
     
