@@ -304,6 +304,10 @@
                         <button id="tama-history-btn-main" class="action-btn secondary" style="width: 100%; margin-top: 10px;">
                             📜 View TAMA History
                         </button>
+                        <button id="minigame-btn" class="action-btn primary" style="width: 100%; margin-top: 10px;">
+                            🎮 TAMA CATCH
+                            <small>Mini-game for extra TAMA!</small>
+                        </button>
                         <!-- Pet revival removed - pets don't die, they go into critical state -->
                     </div>
                 </div>
@@ -672,6 +676,7 @@
     <script src="js/shop.js?v=2"></script>
     <script src="js/referral-system.js?v=2"></script>
     <script src="js/achievements.js?v=2"></script>
+    <script src="js/minigame.js?v=2"></script>
     <script src="js/ui.js?v=2"></script>
     
     <script>
@@ -791,6 +796,17 @@
             const historyBtnMain = document.getElementById('tama-history-btn-main');
             if (historyBtnMain) {
                 historyBtnMain.addEventListener('click', showTAMAHistory);
+            }
+            
+            // Mini-game button
+            const minigameBtn = document.getElementById('minigame-btn');
+            if (minigameBtn) {
+                minigameBtn.addEventListener('click', () => {
+                    if (window.TAMACatchGame) {
+                        const game = new window.TAMACatchGame();
+                        game.show();
+                    }
+                });
             }
             
             // TAMA hover functionality
