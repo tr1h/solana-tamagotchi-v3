@@ -515,7 +515,7 @@ const MintPage = {
                 type: result.nftData?.type || result.metadata?.gameData?.type,
                 emoji: result.metadata?.gameData?.emoji,
                 rarity: result.nftData?.rarity || result.metadata?.gameData?.rarity,
-                tamaBonus: this.phases[this.getCurrentPhase()].tamaBonus,
+                tamaBonus: 500, // Will be calculated properly below
                 mintedAt: Date.now(),
                 owner: this.publicKey.toString(),
                 metadata: result.metadata,
@@ -545,7 +545,8 @@ const MintPage = {
             await this.savePetToDB(nft);
             
             // Начисляем TAMA токены
-            const tamaAmount = this.phases[phaseIndex].tamaBonus;
+            const currentPhase = await this.getCurrentPhase();
+            const tamaAmount = this.phases[currentPhase]?.tamaBonus || 500; // Fallback to 500
             console.log(`🪙 Rewarding ${tamaAmount} TAMA for minting...`);
             
             // Use new TAMA Module
