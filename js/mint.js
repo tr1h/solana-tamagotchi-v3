@@ -544,23 +544,24 @@ const MintPage = {
             // Сохраняем питомца в базу данных
             await this.savePetToDB(nft);
             
-            // Начисляем TAMA токены
+            // Начисляем TAMA токены ИЗ TREASURY (фиксированный supply!)
             const currentPhase = await this.getCurrentPhase();
             const tamaAmount = parseInt(this.phases[currentPhase]?.tamaBonus) || 1000; // Fallback to 1000
             console.log(`🪙 Rewarding ${tamaAmount} TAMA for minting...`);
             
-            // Use new TAMA Module
-            if (window.TAMAModule) {
-                await window.TAMAModule.earnTAMA(this.publicKey.toString(), tamaAmount, 'Mint NFT', `NFT Mint - ${nft.name}`);
-            } else if (window.TamaToken && window.TamaToken.rewardTama) {
-                // Fallback to old system
-                await window.TamaToken.rewardTama(this.publicKey.toString(), tamaAmount, 'mint', `NFT Mint - ${nft.name}`);
-            } else if (window.TAMASystem && window.TAMASystem.awardTAMA) {
-                // Fallback to old system
-                await window.TAMASystem.awardTAMA(this.publicKey.toString(), tamaAmount, 'NFT Minting Bonus');
-            } else if (window.Database && window.Database.updateTAMA) {
-                // Direct database update
-                await window.Database.updateTAMA(this.publicKey.toString(), tamaAmount, 'NFT Minting Bonus');
+            // ИСПОЛЬЗУЕМ НОВУЮ СИСТЕМУ - TAMA ИЗ TREASURY!
+            if (window.SimpleTAMASystem) {
+                await window.SimpleTAMASystem.addTAMAFromTreasury(
+                    this.publicKey.toString(), 
+                    tamaAmount, 
+                    `NFT Mint Reward - ${nft.name}`
+                );
+                console.log(`✅ ${tamaAmount} TAMA awarded from Treasury for NFT mint`);
+            } else if (window.TreasurySystem) {
+                await window.TreasurySystem.awardMintReward(this.publicKey.toString());
+                console.log(`✅ Mint reward awarded via TreasurySystem`);
+            } else {
+                console.error('❌ No TAMA system available for mint reward!');
             }
             
             // Обновляем статистику

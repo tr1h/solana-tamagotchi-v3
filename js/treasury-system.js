@@ -101,9 +101,9 @@ const TreasurySystem = {
                 return false;
             }
 
-            // Начисляем бонус новому пользователю
+            // Начисляем бонус новому пользователю ИЗ TREASURY
             if (window.SimpleTAMASystem) {
-                const success = await window.SimpleTAMASystem.addTAMA(
+                const success = await window.SimpleTAMASystem.addTAMAFromTreasury(
                     walletAddress, 
                     this.CONFIG.NEW_USER_BONUS, 
                     'New User Welcome Bonus'
@@ -142,7 +142,7 @@ const TreasurySystem = {
             }
 
             if (window.SimpleTAMASystem) {
-                const success = await window.SimpleTAMASystem.addTAMA(
+                const success = await window.SimpleTAMASystem.addTAMAFromTreasury(
                     walletAddress, 
                     this.CONFIG.MINT_REWARD, 
                     'NFT Mint Reward'
@@ -174,7 +174,7 @@ const TreasurySystem = {
             console.log(`🏦 Awarding daily reward to ${walletAddress}`);
 
             if (window.SimpleTAMASystem) {
-                const success = await window.SimpleTAMASystem.addTAMA(
+                const success = await window.SimpleTAMASystem.addTAMAFromTreasury(
                     walletAddress, 
                     this.CONFIG.DAILY_BONUS, 
                     'Daily Login Reward'

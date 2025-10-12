@@ -174,10 +174,10 @@ class TAMALotteryV2 {
             });
         });
 
-        // Выплачиваем выигрыши
+        // Выплачиваем выигрыши ИЗ TREASURY (фиксированный supply!)
         if (totalWinnings > 0 && window.SimpleTAMASystem && window.WalletManager.publicKey) {
             try {
-                await window.SimpleTAMASystem.addTAMA(
+                await window.SimpleTAMASystem.addTAMAFromTreasury(
                     window.WalletManager.publicKey.toString(),
                     totalWinnings,
                     `Lottery Winnings: ${totalWinnings} TAMA`
