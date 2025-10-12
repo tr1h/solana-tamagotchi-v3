@@ -6,12 +6,12 @@ const AntiCheat = {
     
     // Конфигурация
     CONFIG: {
-        MAX_XP_PER_ACTION: 100,          // Максимум XP за одно действие
+        MAX_XP_PER_ACTION: 50,           // Максимум XP за одно действие (было 100)
         MAX_TAMA_PER_ACTION: 1000,       // Максимум TAMA за одно действие (1000 для минта!)
-        MIN_ACTION_INTERVAL: 1000,       // Минимум 1 секунда между действиями
-        MAX_LEVEL_PER_SESSION: 10,       // Максимум 10 левелов за сессию
+        MIN_ACTION_INTERVAL: 500,        // Минимум 0.5 секунды между действиями (было 1000)
+        MAX_LEVEL_PER_SESSION: 20,       // Максимум 20 левелов за сессию (было 10)
         SESSION_DURATION: 3600000,       // 1 час = 1 сессия
-        MAX_ABILITY_USES_PER_HOUR: 20,   // Максимум 20 использований способностей в час
+        MAX_ABILITY_USES_PER_HOUR: 50,   // Максимум 50 использований способностей в час (было 20)
         HASH_SALT: 'SOLANA_TAMA_2024'    // Соль для хеширования
     },
     
