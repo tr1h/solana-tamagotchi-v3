@@ -679,8 +679,25 @@ const Game = {
     
     // Get animated pet emoji based on state
     getAnimatedPetEmoji() {
-        // Просто возвращаем базовый эмодзи без дополнительных символов
-        return Utils.getPetEmoji(this.pet.type, this.pet.evolution);
+        if (!this.pet) return '🐾'; // Fallback to paws if no pet
+        
+        // Получаем эмодзи питомца с учетом эволюции
+        const emoji = Utils.getPetEmoji(this.pet.type, this.pet.evolution + 1);
+        
+        // Добавляем анимацию в зависимости от состояния
+        if (this.pet.isDead) {
+            return '💀';
+        } else if (this.pet.isCritical) {
+            return '🆘' + emoji;
+        } else if (this.pet.stats.happy > 80) {
+            return emoji + '✨';
+        } else if (this.pet.stats.hunger < 30) {
+            return emoji + '😢';
+        } else if (this.pet.stats.energy < 30) {
+            return emoji + '😴';
+        } else {
+            return emoji;
+        }
     },
     
     // Add floating particle effect
@@ -874,21 +891,67 @@ const Game = {
     async autoLoadPet() {
         if (!WalletManager.isConnected()) return;
         
-        // Load from Supabase first
-        if (window.Database && window.Database.loadPlayerData) {
-            const playerData = await Database.loadPlayerData(WalletManager.getAddress());
-            if (playerData && playerData.pet_data) {
-                // pet_data contains the full pet object
-                this.pet = playerData.pet_data;
-                Utils.saveLocal('petData', this.pet);
-                console.log('✅ Pet loaded from database');
+        // ИСПРАВЛЕНО: Загружаем питомца из nft_mints таблицы
+        if (window.Database && window.Database.supabase) {
+            try {
+                const { data } = await window.Database.supabase
+                    .from('nft_mints')
+                    .select('*')
+                    .eq('wallet_address', WalletManager.getAddress())
+                    .eq('status', 'minted')
+                    .single();
+                
+                if (data) {
+                    // Преобразуем данные из базы в формат питомца
+                    this.pet = {
+                        id: data.id,
+                        name: data.pet_name,
+                        type: data.pet_type,
+                        rarity: data.pet_traits?.rarity || 'common',
+                        traits: data.pet_traits || {},
+                        stats: data.stats || {
+                            hunger: 100,
+                            energy: 100,
+                            happy: 100,
+                            health: 100
+                        },
+                        level: data.level || 1,
+                        xp: data.xp || 0,
+                        evolution: data.evolution || 0,
+                        abilities: data.abilities || [],
+                        abilityCooldowns: data.ability_cooldowns || {},
+                        attributes: data.attributes || {},
+                        tamaMultiplier: data.tama_multiplier || 1.0,
+                        mintAddress: data.mint_address,
+                        createdAt: new Date(data.created_at).getTime(),
+                        lastUpdate: new Date(data.updated_at).getTime(),
+                        lastFed: new Date(data.last_fed).getTime(),
+                        lastPlayed: new Date(data.last_played).getTime(),
+                        lastSlept: new Date(data.last_slept).getTime(),
+                        isDead: data.is_dead || false,
+                        isCritical: data.is_critical || false,
+                        isHibernating: data.is_hibernating || false,
+                        isStealthed: data.is_stealthed || false
+                    };
+                    
+                    Utils.saveLocal('petData', this.pet);
+                    console.log('✅ Pet loaded from nft_mints database');
+                }
+            } catch (error) {
+                console.error('❌ Error loading pet from database:', error);
             }
         }
         
-        // No fallback to localStorage - NFT required!
+        // Fallback to localStorage if database fails
         if (!this.pet) {
-            console.log('❌ No pet data found - NFT required');
-            return;
+            const localPet = Utils.loadLocal('petData');
+            if (localPet) {
+                this.pet = localPet;
+                console.log('✅ Pet loaded from localStorage');
+            } else {
+                console.log('❌ No pet data found - NFT required');
+                return;
+            }
         }
         
         if (this.pet) {

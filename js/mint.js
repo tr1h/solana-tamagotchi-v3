@@ -640,27 +640,40 @@ const MintPage = {
     },
     
     createPetAfterMint(nft) {
-        // Save pet data to localStorage for game to load
-        const petData = {
-            id: `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-            name: `My ${nft.type.charAt(0).toUpperCase() + nft.type.slice(1)}`,
-            type: nft.type,
-            rarity: nft.rarity,
-            traits: nft.traits,
-            stats: {
-                hunger: 100,
-                energy: 100,
-                happy: 100,
-                health: 100
-            },
-            level: 1,
-            xp: 0,
-            evolution: 0,
-            createdAt: Date.now(),
-            lastUpdate: Date.now(),
-            isDead: false,
-            isCritical: false
-        };
+        // ИСПРАВЛЕНО: Используем правильную систему создания питомца
+        let petData;
+        
+        if (window.PetSystem) {
+            // Используем новую систему питомцев
+            petData = window.PetSystem.createPet(nft.type, nft.rarity, nft.name);
+        } else {
+            // Fallback к старой системе
+            petData = {
+                id: `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                name: nft.name || `My ${nft.type.charAt(0).toUpperCase() + nft.type.slice(1)}`,
+                type: nft.type,
+                rarity: nft.rarity,
+                traits: nft.traits,
+                stats: {
+                    hunger: 100,
+                    energy: 100,
+                    happy: 100,
+                    health: 100
+                },
+                level: 1,
+                xp: 0,
+                evolution: 0,
+                createdAt: Date.now(),
+                lastUpdate: Date.now(),
+                isDead: false,
+                isCritical: false
+            };
+        }
+        
+        // Добавляем mintAddress для связи с NFT
+        if (nft.mintAddress) {
+            petData.mintAddress = nft.mintAddress;
+        }
         
         localStorage.setItem('currentPet', JSON.stringify(petData));
         localStorage.setItem('hasPetFromMint', 'true');
