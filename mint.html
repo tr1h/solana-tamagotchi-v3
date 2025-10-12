@@ -271,7 +271,7 @@
     <script src="js/utils.js?v=5"></script>
     <script src="js/database-supabase.js?v=5"></script>
     <script src="js/simple-nft-mint.js?v=5"></script>
-    <script src="js/mint.js?v=6"></script>
+    <script src="js/mint.js?v=7"></script>
     
     <!-- Script loading diagnostics -->
     <script>
@@ -282,9 +282,46 @@
         console.log('Solana Web3:', typeof window.solanaWeb3);
         console.log('Supabase:', typeof window.supabase);
         
-        // Load current price from database
+        // Get real-time SOL price in USD
+        async function getSOLPrice() {
+            try {
+                // Try CoinGecko API first
+                const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd');
+                const data = await response.json();
+                
+                if (data.solana && data.solana.usd) {
+                    console.log('✅ SOL price from CoinGecko:', data.solana.usd, 'USD');
+                    return data.solana.usd;
+                }
+            } catch (error) {
+                console.warn('CoinGecko API failed, trying alternative...');
+            }
+            
+            try {
+                // Try alternative API
+                const response = await fetch('https://api.binance.com/api/v3/ticker/price?symbol=SOLUSDT');
+                const data = await response.json();
+                
+                if (data.price) {
+                    const price = parseFloat(data.price);
+                    console.log('✅ SOL price from Binance:', price, 'USD');
+                    return price;
+                }
+            } catch (error) {
+                console.warn('Binance API failed, using fallback...');
+            }
+            
+            // Fallback price
+            console.log('⚠️ Using fallback SOL price: 150 USD');
+            return 150;
+        }
+        
+        // Load current price from database with real USD conversion
         async function loadCurrentPrice() {
             try {
+                // Get real SOL price
+                const solPriceUSD = await getSOLPrice();
+                
                 if (window.Database && window.Database.supabase) {
                     const { data } = await window.Database.supabase
                         .from('game_settings')
@@ -294,8 +331,10 @@
                     
                     if (data) {
                         const price = parseFloat(data.value);
+                        const usdPrice = (price * solPriceUSD).toFixed(2);
+                        
                         document.getElementById('mint-price').textContent = `${price} SOL`;
-                        document.getElementById('price-usd').textContent = `≈ $${(price * 150).toFixed(0)} USD`;
+                        document.getElementById('price-usd').textContent = `≈ $${usdPrice} USD`;
                         
                         // Update mint button
                         const mintBtn = document.getElementById('mint-btn');
@@ -303,7 +342,7 @@
                             mintBtn.querySelector('.btn-text').textContent = `MINT NOW - ${price} SOL`;
                         }
                         
-                        console.log('✅ Price loaded from database:', price, 'SOL');
+                        console.log('✅ Price loaded from database:', price, 'SOL = $', usdPrice, 'USD');
                         return price;
                     }
                 }
@@ -313,8 +352,11 @@
             
             // Fallback
             const fallbackPrice = 0.1;
+            const solPriceUSD = await getSOLPrice();
+            const usdPrice = (fallbackPrice * solPriceUSD).toFixed(2);
+            
             document.getElementById('mint-price').textContent = `${fallbackPrice} SOL`;
-            document.getElementById('price-usd').textContent = `≈ $${(fallbackPrice * 150).toFixed(0)} USD`;
+            document.getElementById('price-usd').textContent = `≈ $${usdPrice} USD`;
             
             const mintBtn = document.getElementById('mint-btn');
             if (mintBtn) {
@@ -330,6 +372,12 @@
             
             // Load current price
             loadCurrentPrice();
+            
+            // Auto-refresh price every 30 seconds
+            setInterval(async () => {
+                console.log('🔄 Refreshing SOL price...');
+                await loadCurrentPrice();
+            }, 30000);
             
             // Initialize wallet connection
             if (window.WalletManager) {
