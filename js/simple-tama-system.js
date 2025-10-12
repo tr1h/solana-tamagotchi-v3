@@ -33,8 +33,8 @@ const SimpleTAMASystem = {
                 }
             }
 
-            // Потом пробуем получить из базы данных (кроме Treasury)
-            if (this.CONFIG.USE_DATABASE && window.Database && window.Database.supabase && walletAddress !== 'TREASURY_MAIN_ACCOUNT') {
+            // Потом пробуем получить из базы данных
+            if (this.CONFIG.USE_DATABASE && window.Database && window.Database.supabase) {
                 const { data, error } = await window.Database.supabase
                     .from('leaderboard')
                     .select('tama')

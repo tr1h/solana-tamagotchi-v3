@@ -454,17 +454,13 @@ const MintPage = {
                     await this.processMintResult(result);
                     return;
                 } else {
-                    console.warn('⚠️ SimpleRealMint failed, falling back to SimpleNFTMint');
+                    console.error('❌ SimpleRealMint failed - No fallback, user must retry');
+                    throw new Error('Mint failed - Please try again');
                 }
             }
             
-            // Fallback to SimpleNFTMint
-            if (!window.SimpleNFTMint) {
-                throw new Error('No minting system available');
-            }
-            
-            console.log('🎨 Using SimpleNFTMint (demo mode)...');
-            const result = await window.SimpleNFTMint.mintNFT();
+            // DEMO MODE DISABLED - NO FALLBACK!
+            throw new Error('All minting systems failed - Please try again');
             
             if (!result.success) {
                 throw new Error(result.error || 'Mint failed');
