@@ -649,6 +649,17 @@
         
         <div class="data-section">
             <h2 class="section-title">👥 Manage Admins</h2>
+            
+            <!-- Quick Add Current User -->
+            <div style="margin-bottom: 20px; padding: 15px; background: rgba(46, 204, 113, 0.1); border: 2px solid #2ECC71; border-radius: 8px;">
+                <h4 style="color: #2ECC71; margin-bottom: 10px;">🚀 Quick Add Current User</h4>
+                <p style="color: #F5F5F5; margin-bottom: 10px;">If you're the owner and need admin access:</p>
+                <button onclick="addCurrentUserAsAdmin()" 
+                    style="padding: 12px 20px; background: linear-gradient(135deg, #2ECC71, #27AE60); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">
+                    Add My Wallet as Admin
+                </button>
+            </div>
+            
             <div style="margin-bottom: 20px;">
                 <input type="text" id="new-admin-wallet" placeholder="Wallet Address" 
                     style="padding: 12px; width: 60%; border: 2px solid #FFCA3A; background: rgba(0,0,0,0.3); color: white; border-radius: 8px; margin-right: 10px;">
@@ -680,17 +691,37 @@
                 const resp = await wallet.connect();
                 adminWallet = resp.publicKey.toString();
                 
-                const response = await fetch(`${API_URL}/admin.php?action=check`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ wallet: adminWallet })
-                });
+                // Список админов (fallback если API недоступен)
+                const adminWallets = [
+                    '8bJixyhkqKJtGDEwrc9xLb2MPpL4yGjDNmiXWhCq86KA', // Твой кошелек
+                    '2eyQycA4d4zu3FbbwdvHuJ1fVDcfQsz78qGdKGYa8NXw', // Treasury
+                    // Добавь сюда другие админские кошельки
+                ];
                 
-                const result = await response.json();
-                
-                if (result.success && result.data.isAdmin) {
+                // Проверяем локально
+                if (adminWallets.includes(adminWallet)) {
+                    console.log('✅ Admin access granted locally');
                     showAdminPanel();
-                } else {
+                    return;
+                }
+                
+                // Проверяем через API
+                try {
+                    const response = await fetch(`${API_URL}/admin.php?action=check`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ wallet: adminWallet })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success && result.data.isAdmin) {
+                        showAdminPanel();
+                    } else {
+                        showAccessDenied();
+                    }
+                } catch (apiError) {
+                    console.warn('API check failed, using local admin list');
                     showAccessDenied();
                 }
             } catch (error) {
@@ -1230,6 +1261,48 @@
         
         function viewTransactionDetails(transactionId) {
             alert(`Transaction Details for: ${transactionId}\n\nThis would show detailed transaction information.`);
+        }
+        
+        // Quick add current user as admin
+        async function addCurrentUserAsAdmin() {
+            if (!adminWallet) {
+                alert('❌ Please connect your wallet first!');
+                return;
+            }
+            
+            if (!confirm(`Are you sure you want to add ${adminWallet} as admin?`)) {
+                return;
+            }
+            
+            try {
+                // Try to add via API first
+                const response = await fetch(`${API_URL}/admin.php?action=add`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        requester: adminWallet, // Self-request
+                        newAdmin: adminWallet,
+                        name: 'Main Admin'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✅ Admin added successfully via API!');
+                    location.reload(); // Reload to check admin status
+                } else {
+                    throw new Error(result.message || 'API failed');
+                }
+            } catch (error) {
+                console.error('API add failed:', error);
+                
+                // Fallback: Show instructions for manual database update
+                alert(`❌ API failed: ${error.message}\n\n` +
+                      `To add admin manually, run this SQL in your database:\n\n` +
+                      `INSERT INTO admins (wallet_address, name, permissions, created_at, updated_at) VALUES ('${adminWallet}', 'Main Admin', 'all', NOW(), NOW());\n\n` +
+                      `Or use the SQL file: ADD_ADMIN_WALLET.sql`);
+            }
         }
         
         // Load TAMA data when admin panel loads
