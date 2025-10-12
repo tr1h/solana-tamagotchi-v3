@@ -41,7 +41,7 @@ const SimpleTAMASystem = {
                     .eq('wallet_address', walletAddress)
                     .single();
 
-                if (!error && data && data.tama !== null && data.tama > 0) {
+                if (!error && data && data.tama !== null) {
                     console.log(`💰 Balance from database: ${data.tama} TAMA`);
                     return data.tama || 0;
                 } else {
@@ -367,7 +367,15 @@ const SimpleTAMASystem = {
                     .from('leaderboard')
                     .upsert({
                         wallet_address: walletAddress,
+                        pet_name: 'My Pet', // Default pet name
+                        level: 1, // Default level
+                        xp: 0, // Default XP
+                        total_xp: 0, // Default total XP
                         tama: amount,
+                        pet_type: 'Unknown', // Default pet type
+                        pet_rarity: 'common', // Default rarity
+                        pet_data: {}, // Default pet data
+                        created_at: new Date().toISOString(),
                         updated_at: new Date().toISOString()
                     }, {
                         onConflict: 'wallet_address'
