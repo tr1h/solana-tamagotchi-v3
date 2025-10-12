@@ -199,7 +199,7 @@ const TAMAToken = {
             
             // Update UI
             if (window.WalletManager) {
-                window.WalletManager.updateBalanceDisplay();
+                await window.WalletManager.updateBalanceDisplay();
             }
             
             // Show notification

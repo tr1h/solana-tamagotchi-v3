@@ -284,7 +284,7 @@ const Achievements = {
             }
             
             Utils.saveLocal('playerData', playerData);
-            WalletManager.updateBalanceDisplay();
+            await WalletManager.updateBalanceDisplay();
             
             if (achievement.reward.xp && Game.pet) {
                 Game.addXP(achievement.reward.xp);

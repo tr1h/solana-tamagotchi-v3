@@ -180,14 +180,14 @@ const WalletManager = {
             this.balance = balance; // Keep in lamports for consistency
             
             // Update UI
-            this.updateBalanceDisplay();
+            await this.updateBalanceDisplay();
             
             return balance;
         } catch (error) {
             console.error('Failed to fetch balance:', error);
             // Set balance to 0 if can't fetch (CORS or network issue)
             this.balance = 0;
-            this.updateBalanceDisplay();
+            await this.updateBalanceDisplay();
             return 0;
         }
     },
@@ -274,7 +274,7 @@ const WalletManager = {
     },
     
     // Update balance display
-    updateBalanceDisplay() {
+    async updateBalanceDisplay() {
         const balanceSol = document.querySelector('.balance-sol');
         const balanceTama = document.querySelector('.balance-tama');
         
@@ -282,10 +282,23 @@ const WalletManager = {
             balanceSol.textContent = Utils.formatSOL(this.balance);
         }
         
-        if (balanceTama) {
-            const playerData = Utils.loadLocal('playerData');
-            const tama = playerData?.tama || 0;
-            balanceTama.textContent = `${tama} TAMA`;
+        if (balanceTama && this.publicKey) {
+            // ИСПРАВЛЕНО: Используем единую систему TAMA из базы данных
+            let tamaBalance = 0;
+            
+            if (window.TAMAModule) {
+                tamaBalance = await window.TAMAModule.getBalance(this.publicKey.toString());
+            } else if (window.Database) {
+                const { data } = await window.Database.supabase
+                    .from('leaderboard')
+                    .select('tama')
+                    .eq('wallet_address', this.publicKey.toString())
+                    .single();
+                
+                tamaBalance = data?.tama || 0;
+            }
+            
+            balanceTama.textContent = `${tamaBalance} TAMA`;
         }
     },
     

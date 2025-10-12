@@ -798,13 +798,20 @@ const Game = {
             await TAMASystem.awardDailyLogin(WalletManager.getAddress());
         }
         
-        // Give local reward too
+        // Give reward through unified TAMA system
         const reward = 50;
-        playerData.tama = (playerData.tama || 0) + reward;
         playerData.lastDaily = Date.now();
         
         Utils.saveLocal('playerData', playerData);
-        WalletManager.updateBalanceDisplay();
+        
+        // Use unified TAMA system
+        if (window.TAMAModule && WalletManager.isConnected()) {
+            await window.TAMAModule.earnTAMA(WalletManager.getAddress(), reward, 'Daily Login');
+        } else if (window.Database && WalletManager.isConnected()) {
+            await window.Database.updateTAMA(WalletManager.getAddress(), reward, 'Daily Login');
+        }
+        
+        await WalletManager.updateBalanceDisplay();
         
         // Reward referrers
         if (window.Database && WalletManager.isConnected()) {

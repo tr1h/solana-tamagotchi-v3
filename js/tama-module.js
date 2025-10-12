@@ -67,8 +67,14 @@ const TAMAModule = {
             }
             
             if (this.CONFIG.USE_DATABASE && window.Database) {
-                const playerData = await window.Database.loadPlayerData(walletAddress);
-                return playerData?.tama_balance || 0;
+                // ИСПРАВЛЕНО: Используем правильное поле 'tama' из leaderboard
+                const { data } = await window.Database.supabase
+                    .from('leaderboard')
+                    .select('tama')
+                    .eq('wallet_address', walletAddress)
+                    .single();
+                
+                return data?.tama || 0;
             }
             
             return 0;
