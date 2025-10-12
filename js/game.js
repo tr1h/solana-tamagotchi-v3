@@ -503,13 +503,15 @@ const Game = {
         
         try {
             // Списываем TAMA
-            if (window.TAMAAccounting) {
-                await window.TAMAAccounting.spendTAMA(
+            if (window.SimpleTAMASystem) {
+                const success = await window.SimpleTAMASystem.spendTAMA(
                     WalletManager.getAddress(),
                     healingCost,
-                    'Pet Healing',
-                    window.TAMAAccounting.OPERATION_TYPES.HEALING_COST
+                    'Pet Healing'
                 );
+                if (!success) {
+                    throw new Error('Failed to spend TAMA for healing');
+                }
             } else if (window.TAMAModule) {
                 await window.TAMAModule.spendTAMA(WalletManager.getAddress(), healingCost, 'Pet Healing');
             }

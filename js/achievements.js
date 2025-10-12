@@ -262,7 +262,7 @@ const Achievements = {
     },
     
     // Unlock achievement
-    unlock(achievementId) {
+    async unlock(achievementId) {
         const achievement = this.achievements[achievementId];
         
         if (!achievement || achievement.unlocked) return;
