@@ -306,8 +306,8 @@ const TAMAShop = {
             if (window.TAMAModule) {
                 balance = await window.TAMAModule.getBalance(window.WalletManager.publicKey.toString());
             } else if (window.Database) {
-                const playerData = await window.Database.loadPlayerData(window.WalletManager.publicKey.toString());
-                balance = playerData?.tama_balance || 0;
+                const walletAddress = window.WalletManager?.publicKey?.toString();
+                balance = await window.TAMAModule.getBalance(walletAddress);
             }
             
             const balanceElement = document.getElementById('shop-balance');

@@ -939,17 +939,30 @@ const Game = {
                         name: nft.pet_name || 'My Pet',
                         type: nft.pet_type,
                         rarity: nft.pet_traits?.rarity || 'Common',
-                        level: 1,
-                        xp: 0,
-                        happiness: 100,
-                        hunger: 100,
-                        energy: 100,
-                        health: 100,
+                        level: nft.level || 1,
+                        xp: nft.xp || 0,
+                        total_xp: nft.total_xp || 0,
+                        evolution: nft.evolution || 0,
+                        stats: nft.stats || {
+                            hunger: 100,
+                            energy: 100,
+                            happy: 100,
+                            health: 100
+                        },
+                        attributes: nft.attributes || {
+                            intelligence: 50,
+                            strength: 50,
+                            speed: 50,
+                            magic: 50
+                        },
+                        abilities: nft.abilities || [],
+                        abilityCooldowns: nft.ability_cooldowns || {},
+                        tamaMultiplier: nft.tama_multiplier || 1.0,
                         mintAddress: nft.mint_address,
                         createdAt: new Date(nft.mint_timestamp).getTime(),
-                        lastFed: Date.now(),
-                        lastPlayed: Date.now(),
-                        lastSlept: Date.now()
+                        lastFed: nft.last_fed ? new Date(nft.last_fed).getTime() : Date.now(),
+                        lastPlayed: nft.last_played ? new Date(nft.last_played).getTime() : Date.now(),
+                        lastSlept: nft.last_slept ? new Date(nft.last_slept).getTime() : Date.now()
                     };
                     
                     this.pet = petData;
