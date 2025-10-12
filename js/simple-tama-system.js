@@ -41,12 +41,20 @@ const SimpleTAMASystem = {
                     .eq('wallet_address', walletAddress)
                     .limit(1);
 
-                if (!error && data && data.length > 0 && data[0].tama !== null) {
+                console.log(`🔍 getBalance result:`, { data, error, wallet: walletAddress });
+                
+                if (error) {
+                    console.error('❌ Database query error:', error);
+                } else if (!data || data.length === 0) {
+                    console.log('⚠️ No records found in database for wallet:', walletAddress);
+                } else if (data[0].tama === null) {
+                    console.log('⚠️ TAMA is NULL in database for wallet:', walletAddress);
+                } else {
                     console.log(`💰 Balance from database: ${data[0].tama} TAMA`);
                     return data[0].tama || 0;
-                } else {
-                    console.log('⚠️ No valid database balance, using localStorage fallback');
                 }
+                
+                console.log('⚠️ No valid database balance, using localStorage fallback');
             }
 
             // Финальный fallback к localStorage
