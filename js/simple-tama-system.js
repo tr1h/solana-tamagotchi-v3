@@ -59,6 +59,19 @@ const SimpleTAMASystem = {
 
             console.log(`💰 Adding ${amount} TAMA for: ${reason}`);
 
+            // УМЕНЬШАЕМ TREASURY если это не Treasury сам себе
+            if (walletAddress !== 'TREASURY_MAIN_ACCOUNT') {
+                const treasuryBalance = parseInt(localStorage.getItem('tama_balance_TREASURY_MAIN_ACCOUNT') || '0');
+                if (treasuryBalance >= amount) {
+                    const newTreasuryBalance = treasuryBalance - amount;
+                    localStorage.setItem('tama_balance_TREASURY_MAIN_ACCOUNT', newTreasuryBalance.toString());
+                    console.log(`🏦 Treasury decreased: ${treasuryBalance} → ${newTreasuryBalance} TAMA`);
+                } else {
+                    console.warn('⚠️ Treasury insufficient funds!');
+                    return false;
+                }
+            }
+
             const currentBalance = await this.getBalance(walletAddress);
             const newBalance = currentBalance + amount;
 

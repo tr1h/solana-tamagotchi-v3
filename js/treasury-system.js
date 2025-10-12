@@ -8,7 +8,7 @@ const TreasurySystem = {
         TREASURY_WALLET: 'TREASURY_MAIN_ACCOUNT',
         INITIAL_SUPPLY: 1000000000, // 1 миллиард TAMA
         NEW_USER_BONUS: 1000, // 1000 TAMA новым пользователям
-        MINT_BONUS: 1000, // 1000 TAMA за минт NFT
+        MINT_REWARD: 1000, // 1000 TAMA за минт NFT
         DAILY_BONUS: 50, // 50 TAMA ежедневно
     },
 
@@ -142,12 +142,12 @@ const TreasurySystem = {
             if (window.SimpleTAMASystem) {
                 const success = await window.SimpleTAMASystem.addTAMA(
                     walletAddress, 
-                    this.CONFIG.MINT_BONUS, 
+                    this.CONFIG.MINT_REWARD, 
                     'NFT Mint Reward'
                 );
                 
                 if (success) {
-                    console.log(`✅ Mint reward awarded: ${this.CONFIG.MINT_BONUS} TAMA`);
+                    console.log(`✅ Mint reward awarded: ${this.CONFIG.MINT_REWARD} TAMA`);
                     return true;
                 }
             }
@@ -235,7 +235,7 @@ const TreasurySystem = {
                 distributed,
                 distributionPercent: distributionPercent.toFixed(2),
                 newUserBonus: this.CONFIG.NEW_USER_BONUS,
-                mintBonus: this.CONFIG.MINT_BONUS,
+                mintReward: this.CONFIG.MINT_REWARD,
                 dailyBonus: this.CONFIG.DAILY_BONUS
             };
         } catch (error) {
