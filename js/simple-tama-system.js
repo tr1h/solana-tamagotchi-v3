@@ -104,10 +104,16 @@ const SimpleTAMASystem = {
             }
 
             // Добавляем TAMA игроку
+            console.log(`🔍 Getting current balance for: ${walletAddress}`);
             const currentBalance = await this.getBalance(walletAddress);
+            console.log(`🔍 Current balance: ${currentBalance} TAMA`);
             const newBalance = currentBalance + amount;
+            console.log(`🔍 New balance will be: ${newBalance} TAMA`);
             
-            return await this.setBalance(walletAddress, newBalance);
+            console.log(`🔍 Calling setBalance with: ${walletAddress}, ${newBalance}`);
+            const result = await this.setBalance(walletAddress, newBalance);
+            console.log(`🔍 setBalance result: ${result}`);
+            return result;
         } catch (error) {
             console.error('❌ Error adding TAMA from Treasury:', error);
             return false;
@@ -354,6 +360,7 @@ const SimpleTAMASystem = {
     // Установить баланс TAMA
     async setBalance(walletAddress, amount) {
         try {
+            console.log(`🔍 setBalance called with: ${walletAddress}, ${amount}`);
             if (!walletAddress || amount < 0) {
                 console.warn('⚠️ Invalid parameters for setting TAMA balance');
                 return false;
