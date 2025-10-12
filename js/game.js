@@ -903,7 +903,11 @@ const Game = {
         Utils.saveLocal('playerData', playerData);
         
         // Use unified TAMA system
-        if (window.TAMAModule && WalletManager.isConnected()) {
+        if (window.TreasurySystem && WalletManager.isConnected()) {
+            await window.TreasurySystem.awardDailyReward(WalletManager.getAddress());
+        } else if (window.SimpleTAMASystem && WalletManager.isConnected()) {
+            await window.SimpleTAMASystem.addTAMA(WalletManager.getAddress(), reward, 'Daily Login');
+        } else if (window.TAMAModule && WalletManager.isConnected()) {
             await window.TAMAModule.earnTAMA(WalletManager.getAddress(), reward, 'Daily Login');
         } else if (window.Database && WalletManager.isConnected()) {
             await window.Database.updateTAMA(WalletManager.getAddress(), reward, 'Daily Login');

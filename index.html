@@ -157,7 +157,7 @@
                     </button>
                     <div id="balance-display" class="balance-display hidden">
                         <span class="balance-sol" data-tooltip="Your Solana wallet balance" data-tooltip-position="bottom" data-tooltip-animation="fadeIn">0 SOL</span>
-                        <span class="balance-tama" style="cursor: pointer; position: relative; display: inline-block;" data-tooltip="Your TAMA token balance - hover for details!" data-tooltip-position="bottom" data-tooltip-animation="slideUp" data-tooltip-type="info">0 TAMA
+                        <span class="balance-tama" style="cursor: pointer; position: relative; display: inline-block;" onclick="showTAMADetails()" data-tooltip="Click to view TAMA details!" data-tooltip-position="bottom" data-tooltip-animation="slideUp" data-tooltip-type="info">0 TAMA
                             <!-- TAMA Hover Dropdown -->
                             <div class="tama-header-dropdown" style="position: absolute; top: 100%; right: 0; background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); padding: 20px; margin-top: 15px; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.3s ease; z-index: 1000; color: #333; min-width: 300px;">
                                 <div style="font-size: 12px; margin-bottom: 15px;">
@@ -470,6 +470,70 @@
         </div>
     </div>
 
+    <!-- TAMA Details Modal -->
+    <div id="tama-details-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>💰 TAMA Token Details</h2>
+                <span class="modal-close" onclick="closeTAMADetails()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="tama-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Balance:</span>
+                        <span class="stat-value" id="tama-detail-balance">0 TAMA</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Daily Earned:</span>
+                        <span class="stat-value" id="tama-daily-earned">0 TAMA</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Daily Limit:</span>
+                        <span class="stat-value success">UNLIMITED! 🚀</span>
+                    </div>
+                </div>
+                
+                <div class="tama-section">
+                    <h3>💰 How to Earn TAMA:</h3>
+                    <ul class="tama-list">
+                        <li>Feed Pet: +5 TAMA</li>
+                        <li>Play with Pet: +10 TAMA</li>
+                        <li>Train Pet: +15 TAMA</li>
+                        <li>Level Up: +50 TAMA</li>
+                        <li>Daily Login: +25 TAMA</li>
+                    </ul>
+                </div>
+                
+                <div class="tama-section">
+                    <h3>💸 How to Spend TAMA:</h3>
+                    <ul class="tama-list">
+                        <li>Buy Food: -20 TAMA</li>
+                        <li>Buy Toy: -30 TAMA</li>
+                        <li>Heal Pet: -10 TAMA</li>
+                        <li>Evolve Pet: -50 TAMA</li>
+                    </ul>
+                </div>
+                
+                <div class="tama-section">
+                    <h3>🏦 Treasury Status:</h3>
+                    <div class="treasury-info" id="treasury-info">
+                        <div class="treasury-item">
+                            <span class="treasury-label">Treasury Balance:</span>
+                            <span class="treasury-value" id="treasury-balance">Loading...</span>
+                        </div>
+                        <div class="treasury-item">
+                            <span class="treasury-label">Total Distributed:</span>
+                            <span class="treasury-value" id="treasury-distributed">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" onclick="closeTAMADetails()">Close</button>
+            </div>
+        </div>
+    </div>
+
     <!-- NFT Required Modal -->
     <div id="nft-required-modal" class="modal hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 10000;">
         <div class="modal-content" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 3rem; border-radius: 20px; text-align: center; max-width: 500px; border: 3px solid #FFD700;">
@@ -668,6 +732,7 @@
     <script src="js/anti-cheat.js?v=5"></script>
     <script src="js/animated-tooltips.js?v=2"></script>
     <script src="js/simple-tama-system.js?v=1"></script>
+    <script src="js/treasury-system.js?v=1"></script>
     <script src="js/utils.js?v=2"></script>
     <script src="js/telegram.js?v=2"></script>
     <script src="js/umi-candy-machine.js?v=2"></script>
@@ -686,6 +751,51 @@
     <script src="js/ui.js?v=2"></script>
     
     <script>
+        // TAMA Details Modal Functions
+        async function showTAMADetails() {
+            const modal = document.getElementById('tama-details-modal');
+            if (!modal) return;
+            
+            // Get current balance
+            let currentBalance = 0;
+            if (window.WalletManager && window.WalletManager.isConnected()) {
+                const walletAddress = window.WalletManager.getAddress();
+                if (window.SimpleTAMASystem) {
+                    currentBalance = await window.SimpleTAMASystem.getBalance(walletAddress);
+                }
+            }
+            
+            // Update modal content
+            document.getElementById('tama-detail-balance').textContent = `${currentBalance} TAMA`;
+            
+            // Load Treasury stats
+            if (window.TreasurySystem) {
+                const treasuryStats = await window.TreasurySystem.getTreasuryStats();
+                if (treasuryStats) {
+                    document.getElementById('treasury-balance').textContent = `${treasuryStats.treasuryBalance.toLocaleString()} TAMA`;
+                    document.getElementById('treasury-distributed').textContent = `${treasuryStats.distributed.toLocaleString()} TAMA (${treasuryStats.distributionPercent}%)`;
+                }
+            }
+            
+            // Show modal
+            modal.classList.remove('hidden');
+        }
+        
+        function closeTAMADetails() {
+            const modal = document.getElementById('tama-details-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+        }
+        
+        // Close modal when clicking outside
+        document.addEventListener('click', (e) => {
+            const modal = document.getElementById('tama-details-modal');
+            if (e.target === modal) {
+                closeTAMADetails();
+            }
+        });
+
         // TAMA History Functions
         async function showTAMAHistory() {
             if (!WalletManager.publicKey) {

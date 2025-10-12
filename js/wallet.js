@@ -286,7 +286,9 @@ const WalletManager = {
             // ИСПРАВЛЕНО: Используем единую систему TAMA из базы данных
             let tamaBalance = 0;
             
-            if (window.TAMAModule) {
+            if (window.SimpleTAMASystem) {
+                tamaBalance = await window.SimpleTAMASystem.getBalance(this.publicKey.toString());
+            } else if (window.TAMAModule) {
                 tamaBalance = await window.TAMAModule.getBalance(this.publicKey.toString());
             } else if (window.Database) {
                 const { data } = await window.Database.supabase

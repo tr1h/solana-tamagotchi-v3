@@ -725,6 +725,110 @@
     transform: scale(1.05);
 }
 
+/* TAMA Details Modal Styles */
+.tama-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 25px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    border: 2px solid #FFD700;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.stat-item:last-child {
+    border-bottom: none;
+}
+
+.stat-label {
+    font-weight: bold;
+    color: #FFD700;
+    font-size: 1.1rem;
+}
+
+.stat-value {
+    font-weight: bold;
+    color: #2ECC71;
+    font-size: 1.2rem;
+}
+
+.stat-value.success {
+    color: #2ECC71;
+    background: rgba(46, 204, 113, 0.2);
+    padding: 5px 10px;
+    border-radius: 8px;
+}
+
+.tama-section {
+    margin-bottom: 25px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border-left: 4px solid #FFD700;
+}
+
+.tama-section h3 {
+    color: #FFD700;
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.tama-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.tama-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: #F5F5F5;
+    font-size: 1.1rem;
+}
+
+.tama-list li:last-child {
+    border-bottom: none;
+}
+
+.treasury-info {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.treasury-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: rgba(52, 152, 219, 0.1);
+    border-radius: 8px;
+    border: 1px solid #3498DB;
+}
+
+.treasury-label {
+    font-weight: bold;
+    color: #3498DB;
+}
+
+.treasury-value {
+    font-weight: bold;
+    color: #2ECC71;
+    font-size: 1.1rem;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .shop-items {

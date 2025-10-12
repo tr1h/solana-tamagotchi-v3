@@ -678,6 +678,13 @@ const MintPage = {
         localStorage.setItem('currentPet', JSON.stringify(petData));
         localStorage.setItem('hasPetFromMint', 'true');
         
+        // Награждаем TAMA за минт через Treasury
+        if (window.TreasurySystem && this.publicKey) {
+            window.TreasurySystem.awardMintReward(this.publicKey.toString());
+        } else if (window.SimpleTAMASystem && this.publicKey) {
+            window.SimpleTAMASystem.addTAMA(this.publicKey.toString(), 1000, 'NFT Mint Reward');
+        }
+        
         // Save to database
         this.savePetToDB(petData);
     },
