@@ -52,8 +52,8 @@
                 <h1 class="hero-title">SOLANA TAMAGOTCHI</h1>
                 <p class="hero-subtitle">The Ultimate Blockchain Pet Game on Solana! Play, Earn & Collect NFT Pets 🚀</p>
                 <div class="hero-buttons">
-                    <button id="landing-connect-btn" class="btn-connect">CONNECT WALLET</button>
-                    <button onclick="document.getElementById('features-section').scrollIntoView({behavior:'smooth'})" class="btn-secondary">Learn More</button>
+                    <button id="landing-connect-btn" class="btn-connect" data-tooltip="Connect your Solana wallet to start playing!" data-tooltip-position="bottom" data-tooltip-animation="bounce">CONNECT WALLET</button>
+                    <button onclick="document.getElementById('features-section').scrollIntoView({behavior:'smooth'})" class="btn-secondary" data-tooltip="Learn more about game features!" data-tooltip-position="bottom" data-tooltip-animation="slideUp">Learn More</button>
                 </div>
             </div>
         </section>
@@ -99,11 +99,11 @@
         <section class="pets-section">
             <h2 class="section-title">🎨 CHOOSE YOUR PET</h2>
             <div class="pets-grid">
-                <div class="pet-preview" title="Cat">😺</div>
-                <div class="pet-preview" title="Dog">🐶</div>
-                <div class="pet-preview" title="Dragon">🐉</div>
-                <div class="pet-preview" title="Fox">🦊</div>
-                <div class="pet-preview" title="Bear">🐻</div>
+                <div class="pet-preview" data-tooltip="Cat - Loyal and playful companion!" data-tooltip-position="top" data-tooltip-animation="fadeIn">😺</div>
+                <div class="pet-preview" data-tooltip="Dog - Faithful friend with high energy!" data-tooltip-position="top" data-tooltip-animation="slideUp">🐶</div>
+                <div class="pet-preview" data-tooltip="Dragon - Powerful and mystical creature!" data-tooltip-position="top" data-tooltip-animation="scaleIn" data-tooltip-type="warning">🐉</div>
+                <div class="pet-preview" data-tooltip="Fox - Clever and agile hunter!" data-tooltip-position="top" data-tooltip-animation="bounce">🦊</div>
+                <div class="pet-preview" data-tooltip="Bear - Strong and protective guardian!" data-tooltip-position="top" data-tooltip-animation="pulse">🐻</div>
             </div>
         </section>
 
@@ -134,9 +134,9 @@
         <footer class="landing-footer">
             <div class="footer-content">
                 <div class="social-links">
-                    <a href="https://x.com/GotchiGame" target="_blank" class="social-link" title="Twitter">🐦</a>
-                    <a href="#" class="social-link" title="Discord">💬</a>
-                    <a href="https://t.me/solana_tamagotchi" target="_blank" class="social-link" title="Telegram">📱</a>
+                    <a href="https://x.com/GotchiGame" target="_blank" class="social-link" data-tooltip="Follow us on Twitter for updates!" data-tooltip-position="top" data-tooltip-animation="fadeIn">🐦</a>
+                    <a href="#" class="social-link" data-tooltip="Join our Discord community!" data-tooltip-position="top" data-tooltip-animation="slideUp">💬</a>
+                    <a href="https://t.me/solana_tamagotchi" target="_blank" class="social-link" data-tooltip="Join our Telegram channel!" data-tooltip-position="top" data-tooltip-animation="bounce">📱</a>
                 </div>
                 <p class="footer-text">Made with ❤️ on Solana | Powered by Phantom Wallet</p>
             </div>
@@ -156,8 +156,8 @@
                         <span class="wallet-text">Connect Wallet</span>
                     </button>
                     <div id="balance-display" class="balance-display hidden">
-                        <span class="balance-sol">0 SOL</span>
-                        <span class="balance-tama" style="cursor: pointer; position: relative; display: inline-block;">0 TAMA
+                        <span class="balance-sol" data-tooltip="Your Solana wallet balance" data-tooltip-position="bottom" data-tooltip-animation="fadeIn">0 SOL</span>
+                        <span class="balance-tama" style="cursor: pointer; position: relative; display: inline-block;" data-tooltip="Your TAMA token balance - hover for details!" data-tooltip-position="bottom" data-tooltip-animation="slideUp" data-tooltip-type="info">0 TAMA
                             <!-- TAMA Hover Dropdown -->
                             <div class="tama-header-dropdown" style="position: absolute; top: 100%; right: 0; background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); padding: 20px; margin-top: 15px; opacity: 0; visibility: hidden; transform: translateY(-10px); transition: all 0.3s ease; z-index: 1000; color: #333; min-width: 300px;">
                                 <div style="font-size: 12px; margin-bottom: 15px;">
@@ -214,7 +214,7 @@
                     <div class="device-screen">
                         <!-- Pet Display -->
                         <div id="pet-display" class="pet-display">
-                            <canvas id="pet-canvas" class="pet-canvas"></canvas>
+                            <canvas id="pet-canvas" class="pet-canvas" data-tooltip="Click your pet to gain XP and make it happy! 🐾" data-tooltip-position="top" data-tooltip-animation="pulse" data-tooltip-type="success"></canvas>
                             <div id="pet-info" class="pet-info">
                                 <h2 id="pet-name" class="pet-name">No Pet</h2>
                                 <p id="pet-type" class="pet-type">Select or create a pet</p>
@@ -224,28 +224,28 @@
 
                         <!-- Stats Display -->
                         <div class="stats-display">
-                            <div class="stat-bar">
+                            <div class="stat-bar" data-tooltip="Hunger level - feed your pet when low!" data-tooltip-position="left" data-tooltip-animation="slideUp">
                                 <span class="stat-icon">🍔</span>
                                 <div class="stat-bar-bg">
                                     <div id="hunger-bar" class="stat-bar-fill hunger" style="width: 100%"></div>
                                 </div>
                                 <span id="hunger-value" class="stat-value">100</span>
                             </div>
-                            <div class="stat-bar">
+                            <div class="stat-bar" data-tooltip="Energy level - let your pet sleep when tired!" data-tooltip-position="left" data-tooltip-animation="fadeIn">
                                 <span class="stat-icon">⚡</span>
                                 <div class="stat-bar-bg">
                                     <div id="energy-bar" class="stat-bar-fill energy" style="width: 100%"></div>
                                 </div>
                                 <span id="energy-value" class="stat-value">100</span>
                             </div>
-                            <div class="stat-bar">
+                            <div class="stat-bar" data-tooltip="Happiness level - play with your pet to keep it happy!" data-tooltip-position="left" data-tooltip-animation="scaleIn">
                                 <span class="stat-icon">😊</span>
                                 <div class="stat-bar-bg">
                                     <div id="happy-bar" class="stat-bar-fill happy" style="width: 100%"></div>
                                 </div>
                                 <span id="happy-value" class="stat-value">100</span>
                             </div>
-                            <div class="stat-bar">
+                            <div class="stat-bar" data-tooltip="Health level - heal your pet when injured!" data-tooltip-position="left" data-tooltip-animation="pulse" data-tooltip-type="warning">
                                 <span class="stat-icon">❤️</span>
                                 <div class="stat-bar-bg">
                                     <div id="health-bar" class="stat-bar-fill health" style="width: 100%"></div>
@@ -255,7 +255,7 @@
                         </div>
 
                         <!-- XP Bar -->
-                        <div class="xp-display">
+                        <div class="xp-display" data-tooltip="Experience points - click your pet to gain XP!" data-tooltip-position="bottom" data-tooltip-animation="bounce" data-tooltip-type="success">
                             <div class="xp-bar-bg">
                                 <div id="xp-bar" class="xp-bar-fill" style="width: 0%"></div>
                             </div>
@@ -265,16 +265,16 @@
 
                     <!-- Device Buttons -->
                     <div class="device-buttons">
-                        <button id="feed-btn" class="device-btn" title="Feed">
+                        <button id="feed-btn" class="device-btn" data-tooltip="Feed your pet to increase hunger!" data-tooltip-position="top" data-tooltip-animation="fadeIn">
                             <span class="btn-icon">🍔</span>
                         </button>
-                        <button id="play-btn" class="device-btn" title="Play">
+                        <button id="play-btn" class="device-btn" data-tooltip="Play with your pet to increase happiness!" data-tooltip-position="top" data-tooltip-animation="slideUp">
                             <span class="btn-icon">🎮</span>
                         </button>
-                        <button id="sleep-btn" class="device-btn" title="Sleep">
+                        <button id="sleep-btn" class="device-btn" data-tooltip="Let your pet sleep to restore energy!" data-tooltip-position="top" data-tooltip-animation="scaleIn">
                             <span class="btn-icon">😴</span>
                         </button>
-                        <button id="heal-btn" class="device-btn" title="Heal">
+                        <button id="heal-btn" class="device-btn" data-tooltip="Heal your pet to restore health!" data-tooltip-position="top" data-tooltip-animation="pulse" data-tooltip-type="info">
                             <span class="btn-icon">💊</span>
                         </button>
                     </div>
@@ -289,22 +289,22 @@
                 <div class="control-panel">
                     <h3 class="panel-title">🐾 Pet Management</h3>
                     <div class="button-group">
-                        <button id="shop-btn" class="action-btn primary">
+                        <button id="shop-btn" class="action-btn primary" data-tooltip="Buy food, toys, and items for your pet!" data-tooltip-position="top" data-tooltip-animation="scaleIn">
                             <span>🛒 TAMA Shop</span>
                             <small>Buy items with TAMA</small>
                         </button>
-                        <button id="referral-btn" class="action-btn secondary">
+                        <button id="referral-btn" class="action-btn secondary" data-tooltip="Invite friends and earn TAMA rewards!" data-tooltip-position="top" data-tooltip-animation="slideUp">
                             <span>🔗 Referrals</span>
                             <small>Earn 100+50 TAMA per friend</small>
                         </button>
-                        <button id="evolve-pet-btn" class="action-btn secondary">
+                        <button id="evolve-pet-btn" class="action-btn secondary" data-tooltip="Evolve your pet to unlock new abilities!" data-tooltip-position="top" data-tooltip-animation="pulse">
                             <span>Evolve Pet</span>
                             <small>50 TAMA (Level 10+)</small>
                         </button>
                         <button id="tama-history-btn-main" class="action-btn secondary" style="width: 100%; margin-top: 10px;">
                             📜 View TAMA History
                         </button>
-                        <button id="minigame-btn" class="action-btn primary" style="width: 100%; margin-top: 10px;">
+                        <button id="minigame-btn" class="action-btn primary" style="width: 100%; margin-top: 10px;" data-tooltip="Play the TAMA Catch minigame to earn unlimited TAMA!" data-tooltip-position="top" data-tooltip-animation="bounce" data-tooltip-type="success">
                             🎮 TAMA CATCH
                             <small>Unlimited TAMA earning! 🚀</small>
                         </button>
@@ -358,7 +358,7 @@
                 <!-- Daily Rewards -->
                 <div class="control-panel">
                     <h3 class="panel-title">🎁 Daily Rewards</h3>
-                    <button id="claim-daily-btn" class="action-btn reward" disabled>
+                    <button id="claim-daily-btn" class="action-btn reward" disabled data-tooltip="Claim your daily TAMA reward - available every 24 hours!" data-tooltip-position="top" data-tooltip-animation="bounce" data-tooltip-type="success">
                         <span>Claim Daily Reward</span>
                         <small id="daily-timer">Connect wallet</small>
                     </button>
@@ -371,9 +371,9 @@
         <footer class="game-footer">
             <div class="footer-content">
                 <div class="social-links">
-                    <a href="https://x.com/GotchiGame" target="_blank" class="social-link" title="Twitter">🐦</a>
-                    <a href="#" class="social-link" title="Discord">💬</a>
-                    <a href="https://t.me/solana_tamagotchi" target="_blank" class="social-link" title="Telegram">📱</a>
+                    <a href="https://x.com/GotchiGame" target="_blank" class="social-link" data-tooltip="Follow us on Twitter for updates!" data-tooltip-position="top" data-tooltip-animation="fadeIn">🐦</a>
+                    <a href="#" class="social-link" data-tooltip="Join our Discord community!" data-tooltip-position="top" data-tooltip-animation="slideUp">💬</a>
+                    <a href="https://t.me/solana_tamagotchi" target="_blank" class="social-link" data-tooltip="Join our Telegram channel!" data-tooltip-position="top" data-tooltip-animation="bounce">📱</a>
                 </div>
                 <p class="footer-text">
                     Made with ❤️ on Solana | 
@@ -666,6 +666,7 @@
     <!-- Scripts -->
     <!-- 🛡️ Anti-Cheat должен быть первым! -->
     <script src="js/anti-cheat.js?v=5"></script>
+    <script src="js/animated-tooltips.js?v=2"></script>
     <script src="js/utils.js?v=2"></script>
     <script src="js/telegram.js?v=2"></script>
     <script src="js/umi-candy-machine.js?v=2"></script>
