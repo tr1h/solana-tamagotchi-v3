@@ -1367,19 +1367,42 @@ body::before {
 .pet-display {
     text-align: center;
     margin-bottom: var(--spacing-lg);
-    min-height: 200px;
+    min-height: 250px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    padding: 20px;
+    position: relative;
 }
 
 .pet-canvas {
-    width: 120px;
-    height: 120px;
+    width: 140px;
+    height: 140px;
     margin: 0 auto var(--spacing-sm);
     image-rendering: pixelated;
     image-rendering: crisp-edges;
+    position: relative;
+    z-index: 2;
+}
+
+/* Красивые эффекты для питомца */
+.pet-canvas::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: -1;
+    animation: petGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes petGlow {
+    0% { opacity: 0.3; transform: scale(1); }
+    100% { opacity: 0.6; transform: scale(1.1); }
 }
 
 .pet-info {

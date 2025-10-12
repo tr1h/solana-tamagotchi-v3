@@ -338,7 +338,7 @@ const Game = {
         this.savePetData();
     },
     
-    // Feed pet
+    // Feed pet (ПЛАТНОЕ!)
     async feed() {
         if (!this.pet) {
             Utils.showNotification('❌ No active pet');
@@ -350,21 +350,63 @@ const Game = {
             return;
         }
         
-        this.pet.stats.hunger = Math.min(100, this.pet.stats.hunger + 25);
-        this.pet.stats.energy = Math.max(0, this.pet.stats.energy - 5);
-        this.addXP(10);
-        
-        // Award TAMA for feeding
-        if (window.TAMASystem && WalletManager.isConnected()) {
-            await TAMASystem.awardFeeding(WalletManager.getAddress());
+        // Проверяем подключение кошелька
+        if (!WalletManager.isConnected()) {
+            Utils.showNotification('❌ Connect wallet to feed pet!');
+            return;
         }
         
-        this.updatePetDisplay();
-        this.savePetData();
+        // Стоимость кормления
+        const feedingCost = 10; // 10 TAMA за кормление
         
-        Utils.showNotification('🍔 Fed pet!');
-        Utils.createParticle(this.canvas.offsetLeft + 75, this.canvas.offsetTop + 75, '🍔');
-        this.animatePet('eating');
+        // Проверяем баланс TAMA
+        if (window.TAMAAccounting) {
+            const canAfford = await window.TAMAAccounting.canAfford(WalletManager.getAddress(), feedingCost);
+            if (!canAfford) {
+                Utils.showNotification(`❌ Not enough TAMA! Need: ${feedingCost} TAMA`);
+                return;
+            }
+        } else if (window.TAMAModule) {
+            const balance = await window.TAMAModule.getBalance(WalletManager.getAddress());
+            if (balance < feedingCost) {
+                Utils.showNotification(`❌ Not enough TAMA! Need: ${feedingCost} TAMA`);
+                return;
+            }
+        }
+        
+        try {
+            // Списываем TAMA
+            if (window.TAMAAccounting) {
+                await window.TAMAAccounting.spendTAMA(
+                    WalletManager.getAddress(),
+                    feedingCost,
+                    'Pet Feeding',
+                    window.TAMAAccounting.OPERATION_TYPES.FEEDING_COST
+                );
+            } else if (window.TAMAModule) {
+                await window.TAMAModule.spendTAMA(WalletManager.getAddress(), feedingCost, 'Pet Feeding');
+            }
+            
+            this.pet.stats.hunger = Math.min(100, this.pet.stats.hunger + 25);
+            this.pet.stats.energy = Math.max(0, this.pet.stats.energy - 5);
+            this.addXP(10);
+            
+            this.updatePetDisplay();
+            this.savePetData();
+            
+            Utils.showNotification(`🍔 Fed pet! (Cost: ${feedingCost} TAMA)`);
+            Utils.createParticle(this.canvas.offsetLeft + 75, this.canvas.offsetTop + 75, '🍔');
+            this.animatePet('eating');
+            
+            // Обновляем баланс
+            if (window.WalletManager) {
+                await window.WalletManager.updateBalanceDisplay();
+            }
+            
+        } catch (error) {
+            console.error('Error feeding pet:', error);
+            Utils.showNotification('❌ Error feeding pet!');
+        }
     },
     
     // Play with pet
@@ -421,7 +463,7 @@ const Game = {
         this.animatePet('sleeping');
     },
     
-    // Heal pet
+    // Heal pet (ПЛАТНОЕ!)
     async heal() {
         if (!this.pet) {
             Utils.showNotification('❌ No active pet');
@@ -433,21 +475,58 @@ const Game = {
             return;
         }
         
-        // Cost: 0.01 SOL or 10 TAMA
-        const playerData = Utils.loadLocal('playerData');
+        // Проверяем подключение кошелька
+        if (!WalletManager.isConnected()) {
+            Utils.showNotification('❌ Connect wallet to heal pet!');
+            return;
+        }
         
-        if (playerData && playerData.tama >= 10) {
-            playerData.tama -= 10;
-            Utils.saveLocal('playerData', playerData);
+        // Стоимость лечения
+        const healingCost = 15; // 15 TAMA за лечение
+        
+        // Проверяем баланс TAMA
+        if (window.TAMAAccounting) {
+            const canAfford = await window.TAMAAccounting.canAfford(WalletManager.getAddress(), healingCost);
+            if (!canAfford) {
+                Utils.showNotification(`❌ Not enough TAMA! Need: ${healingCost} TAMA`);
+                return;
+            }
+        } else if (window.TAMAModule) {
+            const balance = await window.TAMAModule.getBalance(WalletManager.getAddress());
+            if (balance < healingCost) {
+                Utils.showNotification(`❌ Not enough TAMA! Need: ${healingCost} TAMA`);
+                return;
+            }
+        }
+        
+        try {
+            // Списываем TAMA
+            if (window.TAMAAccounting) {
+                await window.TAMAAccounting.spendTAMA(
+                    WalletManager.getAddress(),
+                    healingCost,
+                    'Pet Healing',
+                    window.TAMAAccounting.OPERATION_TYPES.HEALING_COST
+                );
+            } else if (window.TAMAModule) {
+                await window.TAMAModule.spendTAMA(WalletManager.getAddress(), healingCost, 'Pet Healing');
+            }
             
             this.pet.stats.health = 100;
             this.updatePetDisplay();
             this.savePetData();
             
-            Utils.showNotification('💊 Pet healed with TAMA!');
+            Utils.showNotification(`💊 Pet healed! (Cost: ${healingCost} TAMA)`);
             Utils.createParticle(this.canvas.offsetLeft + 75, this.canvas.offsetTop + 75, '💚', 'sparkle');
-        } else {
-            Utils.showNotification('❌ Need 10 TAMA to heal');
+            
+            // Обновляем баланс
+            if (window.WalletManager) {
+                await window.WalletManager.updateBalanceDisplay();
+            }
+            
+        } catch (error) {
+            console.error('Error healing pet:', error);
+            Utils.showNotification('❌ Error healing pet!');
         }
     },
     

@@ -84,7 +84,7 @@ const TAMAModule = {
         }
     },
     
-    // Заработать TAMA
+    // Заработать TAMA (через новую систему учета)
     async earnTAMA(walletAddress, amount, reason, details = '') {
         try {
             if (!walletAddress || !amount || amount <= 0) {
@@ -97,6 +97,13 @@ const TAMAModule = {
             console.log('🛡️ TAMA gain allowed (anti-cheat disabled):', amount, 'for:', reason);
             
             console.log(`💰 Earning ${amount} TAMA for: ${reason}`);
+            
+            // Используем новую систему учета, если доступна
+            if (window.TAMAAccounting) {
+                await window.TAMAAccounting.earnTAMA(walletAddress, amount, reason, { details });
+                console.log(`✅ TAMA: Earned ${amount} TAMA for ${reason} (accounting system)`);
+                return true;
+            }
             
             if (this.CONFIG.USE_DATABASE && window.Database) {
                 // 🚀 БЕЗ ЛИМИТОВ! Зарабатывай сколько хочешь!
@@ -128,7 +135,7 @@ const TAMAModule = {
         }
     },
     
-    // Потратить TAMA
+    // Потратить TAMA (через новую систему учета)
     async spendTAMA(walletAddress, amount, reason, details = '') {
         try {
             if (!walletAddress || !amount || amount <= 0) {
@@ -136,16 +143,30 @@ const TAMAModule = {
                 return false;
             }
             
-            const currentBalance = await this.getBalance(walletAddress);
-            if (currentBalance < amount) {
-                console.warn('⚠️ Insufficient TAMA balance');
-                this.showInsufficientBalanceNotification();
-                return false;
+            console.log(`💰 Spending ${amount} TAMA for: ${reason}`);
+            
+            // Используем новую систему учета, если доступна
+            if (window.TAMAAccounting) {
+                await window.TAMAAccounting.spendTAMA(
+                    walletAddress,
+                    amount,
+                    reason,
+                    window.TAMAAccounting.OPERATION_TYPES.SHOP_PURCHASE,
+                    { details }
+                );
+                console.log(`✅ TAMA: Spent ${amount} TAMA for ${reason} (accounting system)`);
+                return true;
             }
             
-            console.log(`💸 Spending ${amount} TAMA for: ${reason}`);
-            
+            // Fallback к старой системе
             if (this.CONFIG.USE_DATABASE && window.Database) {
+                const currentBalance = await this.getBalance(walletAddress);
+                
+                if (currentBalance < amount) {
+                    console.warn(`⚠️ Insufficient TAMA balance. Required: ${amount}, Available: ${currentBalance}`);
+                    return false;
+                }
+                
                 const newBalance = currentBalance - amount;
                 
                 await window.Database.updateTAMA(walletAddress, -amount, reason, details);
@@ -155,9 +176,6 @@ const TAMAModule = {
                 
                 // Обновляем UI
                 this.updateUIBalance(newBalance);
-                
-                // Показываем уведомление
-                this.showSpendNotification(amount, reason);
                 
                 console.log(`✅ Spent ${amount} TAMA. New balance: ${newBalance}`);
                 return true;
@@ -342,5 +360,5 @@ const TAMAModule = {
 // Экспорт для глобального использования
 window.TAMAModule = TAMAModule;
 
-console.log('✅ TAMA Module loaded');
+console.log('✅ TAMA Module loaded v2');
 
