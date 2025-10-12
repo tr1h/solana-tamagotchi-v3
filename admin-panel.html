@@ -459,26 +459,55 @@
             <!-- NFT Management Tab -->
             <div id="nft-tab" class="tab-content active">
                 <div class="section">
-                    <h3>🎨 NFT Pricing & Phases</h3>
+                    <h3>💰 NFT Price Management</h3>
                     <div class="grid-2">
-                        <div class="form-group">
-                            <label>Phase 1 Price (SOL)</label>
-                            <input type="number" id="phase1-price" value="0.3" step="0.1">
+                        <div class="stat-card">
+                            <div class="stat-icon">💰</div>
+                            <div class="stat-info">
+                                <div class="stat-label">Current Price</div>
+                                <div class="stat-value" id="current-price">0.1 SOL</div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label>Phase 1 Limit</label>
-                            <input type="number" id="phase1-limit" value="100">
-                        </div>
-                        <div class="form-group">
-                            <label>Phase 2 Price (SOL)</label>
-                            <input type="number" id="phase2-price" value="0.5" step="0.1">
-                        </div>
-                        <div class="form-group">
-                            <label>Phase 2 Limit</label>
-                            <input type="number" id="phase2-limit" value="500">
+                        <div class="stat-card">
+                            <div class="stat-icon">📊</div>
+                            <div class="stat-info">
+                                <div class="stat-label">Current Phase</div>
+                                <div class="stat-value" id="current-phase">Phase 1</div>
+                            </div>
                         </div>
                     </div>
-                    <button class="btn btn-primary" onclick="savePricing()">💾 Save Pricing</button>
+                    
+                    <div style="margin-top: 20px; padding: 20px; background: #f8fafc; border-radius: 12px;">
+                        <h4>🎯 Change NFT Price</h4>
+                        <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap; margin-top: 15px;">
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; font-weight: 500;">New Price (SOL):</label>
+                                <input type="number" id="new-price" step="0.01" min="0.01" max="10" value="0.1" 
+                                       style="padding: 8px 12px; border: 2px solid #e5e7eb; border-radius: 8px; width: 120px;">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; font-weight: 500;">Phase:</label>
+                                <select id="new-phase" style="padding: 8px 12px; border: 2px solid #e5e7eb; border-radius: 8px; width: 120px;">
+                                    <option value="1">Phase 1</option>
+                                    <option value="2">Phase 2</option>
+                                    <option value="3">Phase 3</option>
+                                    <option value="4">Phase 4</option>
+                                    <option value="5">Phase 5</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 5px; font-weight: 500;">TAMA Bonus:</label>
+                                <input type="number" id="new-tama-bonus" step="10" min="0" max="2000" value="500" 
+                                       style="padding: 8px 12px; border: 2px solid #e5e7eb; border-radius: 8px; width: 120px;">
+                            </div>
+                            <button class="btn btn-success" onclick="updateNFTPrice()" style="margin-top: 20px;">
+                                💰 Update Price
+                            </button>
+                        </div>
+                        <div style="margin-top: 15px; padding: 10px; background: #fef3c7; border-radius: 8px; font-size: 14px;">
+                            ⚠️ <strong>Warning:</strong> This will update the price across the entire game (mint page, game, database)
+                        </div>
+                    </div>
                 </div>
 
                 <div class="section">
@@ -921,6 +950,16 @@
                     return acc;
                 }, {});
                 
+                // Get current price from database
+                const { data: priceData } = await supabase
+                    .from('game_settings')
+                    .select('*')
+                    .eq('key', 'nft_price')
+                    .single();
+                
+                const currentPrice = priceData?.value || 0.1;
+                const currentPhase = priceData?.phase || 1;
+                
                 const html = `
                     <div class="alert alert-info">
                         <strong>Phase Statistics:</strong><br>
@@ -928,11 +967,88 @@
                             `Phase ${phase}: ${count} NFTs`
                         ).join(' | ')}
                     </div>
+                    <div class="grid-3" style="margin-top: 20px;">
+                        <div class="stat-card">
+                            <div class="stat-icon">🎨</div>
+                            <div class="stat-info">
+                                <div class="stat-label">Total Mints</div>
+                                <div class="stat-value">${nfts.length}</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">📊</div>
+                            <div class="stat-info">
+                                <div class="stat-label">Current Phase</div>
+                                <div class="stat-value">Phase ${currentPhase}</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">💰</div>
+                            <div class="stat-info">
+                                <div class="stat-label">Current Price</div>
+                                <div class="stat-value">${currentPrice} SOL</div>
+                            </div>
+                        </div>
+                    </div>
                 `;
                 
                 document.getElementById('phase-status').innerHTML = html;
+                document.getElementById('current-price').textContent = `${currentPrice} SOL`;
+                document.getElementById('current-phase').textContent = `Phase ${currentPhase}`;
             } catch (error) {
                 console.error('Error loading phase status:', error);
+            }
+        }
+        
+        // Update NFT Price
+        async function updateNFTPrice() {
+            const newPrice = parseFloat(document.getElementById('new-price').value);
+            const newPhase = parseInt(document.getElementById('new-phase').value);
+            const newTamaBonus = parseInt(document.getElementById('new-tama-bonus').value);
+            
+            if (!newPrice || newPrice <= 0) {
+                alert('❌ Please enter a valid price!');
+                return;
+            }
+            
+            if (!confirm(`Are you sure you want to change the NFT price to ${newPrice} SOL (Phase ${newPhase})?`)) {
+                return;
+            }
+            
+            try {
+                // Update price in database
+                const { error } = await supabase
+                    .from('game_settings')
+                    .upsert({
+                        key: 'nft_price',
+                        value: newPrice,
+                        phase: newPhase,
+                        tama_bonus: newTamaBonus,
+                        updated_at: new Date().toISOString()
+                    });
+                
+                if (error) throw error;
+                
+                // Log price change
+                await supabase
+                    .from('price_history')
+                    .insert({
+                        old_price: document.getElementById('current-price').textContent.replace(' SOL', ''),
+                        new_price: newPrice,
+                        phase: newPhase,
+                        tama_bonus: newTamaBonus,
+                        changed_at: new Date().toISOString(),
+                        changed_by: 'admin'
+                    });
+                
+                alert(`✅ Price updated to ${newPrice} SOL (Phase ${newPhase})!`);
+                
+                // Reload status
+                await loadPhaseStatus();
+                
+            } catch (error) {
+                console.error('Error updating price:', error);
+                alert('❌ Error updating price: ' + error.message);
             }
         }
 

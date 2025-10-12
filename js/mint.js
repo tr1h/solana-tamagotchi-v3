@@ -271,7 +271,25 @@ const MintPage = {
         return this.phases[this.phases.length - 1].price;
     },
     
-    getCurrentPhase() {
+    async getCurrentPhase() {
+        try {
+            // Пытаемся получить из базы данных
+            if (window.Database && window.Database.supabase) {
+                const { data } = await window.Database.supabase
+                    .from('game_settings')
+                    .select('phase')
+                    .eq('key', 'nft_price')
+                    .single();
+                
+                if (data) {
+                    return data.phase - 1; // Convert to 0-based index
+                }
+            }
+        } catch (error) {
+            console.warn('Could not get phase from database, using fallback');
+        }
+        
+        // Fallback логика
         for (let i = 0; i < this.phases.length; i++) {
             if (this.currentMinted < this.phases[i].max) {
                 return i;
@@ -280,8 +298,8 @@ const MintPage = {
         return this.phases.length - 1;
     },
     
-    updateMintProgress() {
-        const phaseIndex = this.getCurrentPhase();
+    async updateMintProgress() {
+        const phaseIndex = await this.getCurrentPhase();
         const phase = this.phases[phaseIndex];
         const prevMax = phaseIndex > 0 ? this.phases[phaseIndex - 1].max : 0;
         const progress = this.currentMinted - prevMax;
