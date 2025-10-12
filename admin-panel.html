@@ -1016,30 +1016,53 @@
             }
             
             try {
-                // Update price in database
-                const { error } = await supabase
+                // Get old price first
+                const oldPrice = document.getElementById('current-price').textContent.replace(' SOL', '');
+                
+                // Update price in database (simple approach)
+                const { error: updateError } = await supabase
                     .from('game_settings')
-                    .upsert({
-                        key: 'nft_price',
+                    .update({
                         value: newPrice,
                         phase: newPhase,
                         tama_bonus: newTamaBonus,
-                        updated_at: new Date().toISOString()
-                    });
+                        updated_at: new Date().toISOString(),
+                        updated_by: 'admin'
+                    })
+                    .eq('key', 'nft_price');
                 
-                if (error) throw error;
+                // If update failed, try insert
+                if (updateError) {
+                    const { error: insertError } = await supabase
+                        .from('game_settings')
+                        .insert({
+                            key: 'nft_price',
+                            value: newPrice,
+                            phase: newPhase,
+                            tama_bonus: newTamaBonus,
+                            description: 'Current NFT mint price in SOL',
+                            updated_at: new Date().toISOString(),
+                            updated_by: 'admin'
+                        });
+                    
+                    if (insertError) throw insertError;
+                }
                 
-                // Log price change
-                await supabase
-                    .from('price_history')
-                    .insert({
-                        old_price: document.getElementById('current-price').textContent.replace(' SOL', ''),
-                        new_price: newPrice,
-                        phase: newPhase,
-                        tama_bonus: newTamaBonus,
-                        changed_at: new Date().toISOString(),
-                        changed_by: 'admin'
-                    });
+                // Log price change (optional)
+                try {
+                    await supabase
+                        .from('price_history')
+                        .insert({
+                            old_price: parseFloat(oldPrice),
+                            new_price: newPrice,
+                            phase: newPhase,
+                            tama_bonus: newTamaBonus,
+                            changed_at: new Date().toISOString(),
+                            changed_by: 'admin'
+                        });
+                } catch (logError) {
+                    console.warn('Could not log price change:', logError);
+                }
                 
                 alert(`✅ Price updated to ${newPrice} SOL (Phase ${newPhase})!`);
                 
