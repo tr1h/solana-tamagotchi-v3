@@ -314,18 +314,20 @@ const TAMAShop = {
             // Получаем баланс из TAMA Module или Database
             const walletAddress = window.WalletManager?.publicKey?.toString();
             
-            if (window.TAMAModule) {
-                balance = await window.TAMAModule.getBalance(walletAddress);
-            } else if (window.Database) {
-                // Получаем баланс из leaderboard таблицы
-                const { data } = await window.Database.supabase
-                    .from('leaderboard')
-                    .select('tama')
-                    .eq('wallet_address', walletAddress)
-                    .single();
-                
-                balance = data?.tama || 0;
-            }
+        if (window.SimpleTAMASystem) {
+            balance = await window.SimpleTAMASystem.getBalance(walletAddress);
+        } else if (window.TAMAModule) {
+            balance = await window.TAMAModule.getBalance(walletAddress);
+        } else if (window.Database) {
+            // Получаем баланс из leaderboard таблицы
+            const { data } = await window.Database.supabase
+                .from('leaderboard')
+                .select('tama')
+                .eq('wallet_address', walletAddress)
+                .single();
+            
+            balance = data?.tama || 0;
+        }
             
             const balanceElement = document.getElementById('shop-balance');
             if (balanceElement) {
@@ -419,18 +421,20 @@ const TAMAShop = {
             let balance = 0;
             const walletAddress = window.WalletManager.publicKey.toString();
             
-            if (window.TAMAModule) {
-                balance = await window.TAMAModule.getBalance(walletAddress);
-            } else if (window.Database) {
-                // Получаем баланс из leaderboard таблицы
-                const { data } = await window.Database.supabase
-                    .from('leaderboard')
-                    .select('tama')
-                    .eq('wallet_address', walletAddress)
-                    .single();
-                
-                balance = data?.tama || 0;
-            }
+        if (window.SimpleTAMASystem) {
+            balance = await window.SimpleTAMASystem.getBalance(walletAddress);
+        } else if (window.TAMAModule) {
+            balance = await window.TAMAModule.getBalance(walletAddress);
+        } else if (window.Database) {
+            // Получаем баланс из leaderboard таблицы
+            const { data } = await window.Database.supabase
+                .from('leaderboard')
+                .select('tama')
+                .eq('wallet_address', walletAddress)
+                .single();
+            
+            balance = data?.tama || 0;
+        }
             
             if (balance < item.price) {
                 alert(`Недостаточно TAMA! У вас: ${balance} TAMA, нужно: ${item.price} TAMA`);

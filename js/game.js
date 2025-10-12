@@ -376,13 +376,15 @@ const Game = {
         
         try {
             // Списываем TAMA
-            if (window.TAMAAccounting) {
-                await window.TAMAAccounting.spendTAMA(
+            if (window.SimpleTAMASystem) {
+                const success = await window.SimpleTAMASystem.spendTAMA(
                     WalletManager.getAddress(),
                     feedingCost,
-                    'Pet Feeding',
-                    window.TAMAAccounting.OPERATION_TYPES.FEEDING_COST
+                    'Pet Feeding'
                 );
+                if (!success) {
+                    throw new Error('Failed to spend TAMA for feeding');
+                }
             } else if (window.TAMAModule) {
                 await window.TAMAModule.spendTAMA(WalletManager.getAddress(), feedingCost, 'Pet Feeding');
             }

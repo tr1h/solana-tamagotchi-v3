@@ -422,20 +422,22 @@ const AnimatedTooltips = {
     setupAutoTooltips() {
         document.addEventListener('mouseenter', (e) => {
             const element = e.target;
-            const tooltipText = element.getAttribute('data-tooltip');
-            
-            if (tooltipText) {
-                const position = element.getAttribute('data-tooltip-position') || 'top';
-                const animation = element.getAttribute('data-tooltip-animation') || 'fadeIn';
-                const type = element.getAttribute('data-tooltip-type') || 'default';
+            if (element && element.getAttribute) {
+                const tooltipText = element.getAttribute('data-tooltip');
                 
-                this.show(element, tooltipText, { position, animation, type });
+                if (tooltipText) {
+                    const position = element.getAttribute('data-tooltip-position') || 'top';
+                    const animation = element.getAttribute('data-tooltip-animation') || 'fadeIn';
+                    const type = element.getAttribute('data-tooltip-type') || 'default';
+                    
+                    this.show(element, tooltipText, { position, animation, type });
+                }
             }
         }, true);
         
         document.addEventListener('mouseleave', (e) => {
             const element = e.target;
-            if (element.getAttribute('data-tooltip')) {
+            if (element && element.getAttribute && element.getAttribute('data-tooltip')) {
                 this.hide(element);
             }
         }, true);
