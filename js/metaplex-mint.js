@@ -81,7 +81,7 @@ const MetaplexMint = {
             }
             
             // Get pet name
-            const petNameInput = document.getElementById('pet-name');
+            const petNameInput = document.getElementById('pet-name-input-field');
             const customName = petNameInput && petNameInput.value ? petNameInput.value.trim() : '';
             
             // Generate NFT data

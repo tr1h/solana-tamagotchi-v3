@@ -503,7 +503,7 @@ const MintPage = {
             console.log('🔄 Processing mint result...', result);
             
             // Get pet name
-            const petNameInput = document.getElementById('pet-name-input');
+            const petNameInput = document.getElementById('pet-name-input-field');
             const petName = petNameInput && petNameInput.value ? petNameInput.value.trim() : '';
             
             // Создаём NFT объект для сохранения

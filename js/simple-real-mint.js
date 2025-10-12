@@ -33,7 +33,7 @@ const SimpleRealMint = {
             console.log('🎨 Starting simple real NFT mint...');
             
             // Get pet name
-            const petNameInput = document.getElementById('pet-name');
+            const petNameInput = document.getElementById('pet-name-input-field');
             const customName = petNameInput && petNameInput.value ? petNameInput.value.trim() : '';
             
             // Generate NFT data
