@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Testing - Solana Tamagotchi</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1D3557 0%, #2D4564 100%);
+            color: #F5F5F5;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .test-header h1 {
+            color: #FFCA3A;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .test-step {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #3498DB;
+        }
+        
+        .test-step h3 {
+            color: #3498DB;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .test-step.completed {
+            border-color: #2ECC71;
+            background: rgba(46, 204, 113, 0.1);
+        }
+        
+        .test-step.completed h3 {
+            color: #2ECC71;
+        }
+        
+        .test-step.failed {
+            border-color: #E74C3C;
+            background: rgba(231, 76, 60, 0.1);
+        }
+        
+        .test-step.failed h3 {
+            color: #E74C3C;
+        }
+        
+        .test-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #3498DB, #2980B9);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: linear-gradient(135deg, #2980B9, #1F618D);
+            transform: translateY(-2px);
+        }
+        
+        .btn.success {
+            background: linear-gradient(135deg, #2ECC71, #27AE60);
+        }
+        
+        .btn.success:hover {
+            background: linear-gradient(135deg, #27AE60, #229954);
+        }
+        
+        .btn.danger {
+            background: linear-gradient(135deg, #E74C3C, #C0392B);
+        }
+        
+        .btn.danger:hover {
+            background: linear-gradient(135deg, #C0392B, #A93226);
+        }
+        
+        .btn.warning {
+            background: linear-gradient(135deg, #F39C12, #E67E22);
+        }
+        
+        .btn.warning:hover {
+            background: linear-gradient(135deg, #E67E22, #D35400);
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .status.pending {
+            background: rgba(52, 152, 219, 0.2);
+            color: #3498DB;
+        }
+        
+        .status.completed {
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ECC71;
+        }
+        
+        .status.failed {
+            background: rgba(231, 76, 60, 0.2);
+            color: #E74C3C;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #2ECC71, #27AE60);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .test-results {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 30px;
+        }
+        
+        .test-results h3 {
+            color: #FFCA3A;
+            margin-bottom: 15px;
+        }
+        
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="test-header">
+            <h1>🎮 GAME TESTING</h1>
+            <p>Интерактивное тестирование Solana Tamagotchi</p>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        
+        <div class="test-step" id="step-1">
+            <h3>🔗 Шаг 1: Подключение кошелька <span class="status pending" id="status-1">Ожидает</span></h3>
+            <p>Подключи Phantom кошелек к игре</p>
+            <div class="test-actions">
+                <button class="btn" onclick="openGame()">Открыть игру</button>
+                <button class="btn success" onclick="markStep(1, true)">✅ Работает</button>
+                <button class="btn danger" onclick="markStep(1, false)">❌ Не работает</button>
+            </div>
+        </div>
+        
+        <div class="test-step" id="step-2">
+            <h3>💰 Шаг 2: Получение SOL <span class="status pending" id="status-2">Ожидает</span></h3>
+            <p>Получи SOL на Devnet для тестирования</p>
+            <div class="test-actions">
+                <button class="btn" onclick="openFaucet()">Открыть Faucet</button>
+                <button class="btn success" onclick="markStep(2, true)">✅ Работает</button>
+                <button class="btn danger" onclick="markStep(2, false)">❌ Не работает</button>
+            </div>
+        </div>
+        
+        <div class="test-step" id="step-3">
+            <h3>🐾 Шаг 3: Минт NFT питомца <span class="status pending" id="status-3">Ожидает</span></h3>
+            <p>Заминтить NFT питомца и получить 1000 TAMA</p>
+            <div class="test-actions">
+                <button class="btn success" onclick="markStep(3, true)">✅ Работает</button>
+                <button class="btn danger" onclick="markStep(3, false)">❌ Не работает</button>
+            </div>
+        </div>
+        
+        <div class="test-step" id="step-4">
+            <h3>🎮 Шаг 4: Игра с питомцем <span class="status pending" id="status-4">Ожидает</span></h3>
+            <p>Клики, кормление, игра, сон, лечение</p>
+            <div class="test-actions">
+                <button class="btn success" onclick="markStep(4, true)">✅ Работает</button>
+                <button class="btn danger" onclick="markStep(4, false)">❌ Не работает</button>
+            </div>
+        </div>
+        
+        <div class="test-step" id="step-5">
+            <h3>🛒 Шаг 5: TAMA система <span class="status pending" id="status-5">Ожидает</span></h3>
+            <p>Баланс TAMA, магазин, транзакции</p>
+            <div class="test-actions">
+                <button class="btn success" onclick="markStep(5, true)">✅ Работает</button>
+                <button class="btn danger" onclick="markStep(5, false)">❌ Не работает</button>
+            </div>
+        </div>
+        
+        <div class="test-step" id="step-6">
+            <h3>🎯 Шаг 6: Мини-игра <span class="status pending" id="status-6">Ожидает</span></h3>
+            <p>TAMA Catch мини-игра</p>
+            <div class="test-actions">
+                <button class="btn success" onclick="markStep(6, true)">✅ Работает</button>
+                <button class="btn danger" onclick="markStep(6, false)">❌ Не работает</button>
+            </div>
+        </div>
+        
+        <div class="test-step" id="step-7">
+            <h3>🛡️ Шаг 7: Админка <span class="status pending" id="status-7">Ожидает</span></h3>
+            <p>Доступ к админ панели и управление TAMA</p>
+            <div class="test-actions">
+                <button class="btn" onclick="openAdmin()">Открыть админку</button>
+                <button class="btn success" onclick="markStep(7, true)">✅ Работает</button>
+                <button class="btn danger" onclick="markStep(7, false)">❌ Не работает</button>
+            </div>
+        </div>
+        
+        <div class="test-results" id="test-results" style="display: none;">
+            <h3>📊 Результаты тестирования</h3>
+            <div id="results-content"></div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="btn warning" onclick="resetTest()">🔄 Сбросить тест</button>
+            <button class="btn" onclick="generateReport()">📋 Создать отчет</button>
+        </div>
+    </div>
+
+    <script>
+        let testResults = {};
+        let totalSteps = 7;
+        
+        function markStep(step, success) {
+            const stepElement = document.getElementById(`step-${step}`);
+            const statusElement = document.getElementById(`status-${step}`);
+            
+            testResults[step] = success;
+            
+            if (success) {
+                stepElement.classList.remove('failed');
+                stepElement.classList.add('completed');
+                statusElement.textContent = '✅ Пройден';
+                statusElement.className = 'status completed';
+            } else {
+                stepElement.classList.remove('completed');
+                stepElement.classList.add('failed');
+                statusElement.textContent = '❌ Провален';
+                statusElement.className = 'status failed';
+            }
+            
+            updateProgress();
+            checkCompletion();
+        }
+        
+        function updateProgress() {
+            const completed = Object.values(testResults).filter(r => r === true).length;
+            const progress = (completed / totalSteps) * 100;
+            document.getElementById('progress-fill').style.width = `${progress}%`;
+        }
+        
+        function checkCompletion() {
+            const completed = Object.keys(testResults).length;
+            if (completed === totalSteps) {
+                showResults();
+            }
+        }
+        
+        function showResults() {
+            const resultsDiv = document.getElementById('test-results');
+            const contentDiv = document.getElementById('results-content');
+            
+            const passed = Object.values(testResults).filter(r => r === true).length;
+            const failed = Object.values(testResults).filter(r => r === false).length;
+            
+            let html = `
+                <div class="result-item">
+                    <span>Всего тестов:</span>
+                    <span>${totalSteps}</span>
+                </div>
+                <div class="result-item">
+                    <span>✅ Пройдено:</span>
+                    <span style="color: #2ECC71;">${passed}</span>
+                </div>
+                <div class="result-item">
+                    <span>❌ Провалено:</span>
+                    <span style="color: #E74C3C;">${failed}</span>
+                </div>
+                <div class="result-item">
+                    <span>📊 Успешность:</span>
+                    <span style="color: ${passed === totalSteps ? '#2ECC71' : '#F39C12'};">
+                        ${Math.round((passed / totalSteps) * 100)}%
+                    </span>
+                </div>
+            `;
+            
+            if (passed === totalSteps) {
+                html += `
+                    <div style="text-align: center; margin-top: 20px; padding: 20px; background: rgba(46, 204, 113, 0.1); border-radius: 8px; border: 2px solid #2ECC71;">
+                        <h3 style="color: #2ECC71; margin: 0;">🎉 ВСЕ ТЕСТЫ ПРОЙДЕНЫ!</h3>
+                        <p style="margin: 10px 0 0 0;">Игра готова к запуску!</p>
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div style="text-align: center; margin-top: 20px; padding: 20px; background: rgba(231, 76, 60, 0.1); border-radius: 8px; border: 2px solid #E74C3C;">
+                        <h3 style="color: #E74C3C; margin: 0;">⚠️ ЕСТЬ ПРОБЛЕМЫ</h3>
+                        <p style="margin: 10px 0 0 0;">Нужно исправить проваленные тесты</p>
+                    </div>
+                `;
+            }
+            
+            contentDiv.innerHTML = html;
+            resultsDiv.style.display = 'block';
+        }
+        
+        function resetTest() {
+            testResults = {};
+            
+            for (let i = 1; i <= totalSteps; i++) {
+                const stepElement = document.getElementById(`step-${i}`);
+                const statusElement = document.getElementById(`status-${i}`);
+                
+                stepElement.classList.remove('completed', 'failed');
+                statusElement.textContent = 'Ожидает';
+                statusElement.className = 'status pending';
+            }
+            
+            document.getElementById('progress-fill').style.width = '0%';
+            document.getElementById('test-results').style.display = 'none';
+        }
+        
+        function openGame() {
+            window.open('https://tr1h.github.io/solana-tamagotchi-v3/', '_blank');
+        }
+        
+        function openFaucet() {
+            window.open('https://faucet.solana.com/', '_blank');
+        }
+        
+        function openAdmin() {
+            window.open('https://tr1h.github.io/solana-tamagotchi-v3/admin.html', '_blank');
+        }
+        
+        function generateReport() {
+            const report = {
+                timestamp: new Date().toISOString(),
+                results: testResults,
+                summary: {
+                    total: totalSteps,
+                    passed: Object.values(testResults).filter(r => r === true).length,
+                    failed: Object.values(testResults).filter(r => r === false).length
+                }
+            };
+            
+            const reportText = `
+ТЕСТИРОВАНИЕ SOLANA TAMAGOTCHI
+Дата: ${new Date().toLocaleString()}
+
+РЕЗУЛЬТАТЫ:
+${Object.entries(testResults).map(([step, result]) => 
+    `Шаг ${step}: ${result ? '✅ ПРОЙДЕН' : '❌ ПРОВАЛЕН'}`
+).join('\n')}
+
+ИТОГО: ${report.summary.passed}/${report.summary.total} тестов пройдено
+УСПЕШНОСТЬ: ${Math.round((report.summary.passed / report.summary.total) * 100)}%
+
+${report.summary.passed === report.summary.total ? 
+    '🎉 ВСЕ ТЕСТЫ ПРОЙДЕНЫ! ИГРА ГОТОВА К ЗАПУСКУ!' : 
+    '⚠️ ЕСТЬ ПРОБЛЕМЫ, ТРЕБУЕТСЯ ИСПРАВЛЕНИЕ'
+}
+            `;
+            
+            // Создаем и скачиваем файл отчета
+            const blob = new Blob([reportText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `test-report-${new Date().toISOString().split('T')[0]}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
