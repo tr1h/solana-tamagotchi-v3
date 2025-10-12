@@ -57,9 +57,9 @@ const AnimatedTooltips = {
     
     // Инициализация
     init() {
-        console.log('🎨 Animated Tooltips System initialized');
-        this.setupGlobalStyles();
-        this.setupEventListeners();
+        console.log('🎨 Animated Tooltips System initialized (DISABLED)');
+        // this.setupGlobalStyles(); // ОТКЛЮЧЕНО - слишком много подсказок
+        // this.setupEventListeners(); // ОТКЛЮЧЕНО - слишком много подсказок
     },
     
     // Настройка глобальных стилей
@@ -457,7 +457,7 @@ window.AnimatedTooltips = AnimatedTooltips;
 // Автоинициализация
 document.addEventListener('DOMContentLoaded', () => {
     AnimatedTooltips.init();
-    AnimatedTooltips.setupAutoTooltips();
+    // AnimatedTooltips.setupAutoTooltips(); // ОТКЛЮЧЕНО - слишком много подсказок
 });
 
 console.log('🎨 Animated Tooltips System loaded');
