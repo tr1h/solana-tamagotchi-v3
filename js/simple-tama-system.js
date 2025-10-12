@@ -39,11 +39,11 @@ const SimpleTAMASystem = {
                     .from('leaderboard')
                     .select('tama')
                     .eq('wallet_address', walletAddress)
-                    .single();
+                    .limit(1);
 
-                if (!error && data && data.tama !== null) {
-                    console.log(`💰 Balance from database: ${data.tama} TAMA`);
-                    return data.tama || 0;
+                if (!error && data && data.length > 0 && data[0].tama !== null) {
+                    console.log(`💰 Balance from database: ${data[0].tama} TAMA`);
+                    return data[0].tama || 0;
                 } else {
                     console.log('⚠️ No valid database balance, using localStorage fallback');
                 }
