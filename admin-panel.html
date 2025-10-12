@@ -1509,6 +1509,47 @@
             }
         }
 
+        // Admin access check
+        async function checkAdminAccess() {
+            try {
+                if (typeof window.solana === 'undefined') {
+                    alert('❌ Phantom wallet not found. Please install Phantom wallet.');
+                    return false;
+                }
+
+                const wallet = window.solana;
+                if (!wallet.isConnected) {
+                    const resp = await wallet.connect();
+                    if (!resp.publicKey) {
+                        alert('❌ Failed to connect wallet');
+                        return false;
+                    }
+                }
+
+                const adminWallet = wallet.publicKey.toString();
+                
+                // Список админов
+                const adminWallets = [
+                    '8bJixyhkqKJtGDEwrc9xLb2MPpL4yGjDNmiXWhCq86KA',
+                    'G8vpUg12KQUXkv7JfRxfSxYPUDwW9jtZ8CiL8KB5aXK2',
+                    'FVqqbyFMDysBjoMUgUDp5fGXhPwR9P82t1mNd4GJmBZK',
+                    '2eyQycA4d4zu3FbbwdvHuJ1fVDcfQsz78qGdKGYa8NXw'
+                ];
+
+                if (adminWallets.includes(adminWallet)) {
+                    console.log('✅ Admin access granted');
+                    return true;
+                } else {
+                    alert('❌ Access denied. You are not authorized to access this admin panel.');
+                    return false;
+                }
+            } catch (error) {
+                console.error('❌ Admin check error:', error);
+                alert('❌ Failed to check admin access');
+                return false;
+            }
+        }
+
         // Show score breakdown
         function showScoreBreakdown(walletAddress) {
             // Find player data
@@ -1560,13 +1601,23 @@
         }
 
         // Initialize
-        loadStats();
-        loadPhaseStatus();
-        
-        // Initialize network configuration display
-        setTimeout(() => {
-            updateNetworkDisplay();
-        }, 1000);
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Check admin access first
+            const isAdmin = await checkAdminAccess();
+            if (!isAdmin) {
+                document.body.innerHTML = '<div style="text-align: center; padding: 50px; color: white; font-size: 24px;">🚫 ACCESS DENIED</div>';
+                return;
+            }
+            
+            // Load data if admin
+            loadStats();
+            loadPhaseStatus();
+            
+            // Initialize network configuration display
+            setTimeout(() => {
+                updateNetworkDisplay();
+            }, 1000);
+        });
     </script>
 </body>
 </html>
