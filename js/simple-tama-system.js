@@ -23,8 +23,8 @@ const SimpleTAMASystem = {
                 return 0;
             }
 
-            // Пробуем получить из базы данных
-            if (this.CONFIG.USE_DATABASE && window.Database && window.Database.supabase) {
+            // Пробуем получить из базы данных (кроме Treasury)
+            if (this.CONFIG.USE_DATABASE && window.Database && window.Database.supabase && walletAddress !== 'TREASURY_MAIN_ACCOUNT') {
                 const { data, error } = await window.Database.supabase
                     .from('leaderboard')
                     .select('tama')
@@ -57,11 +57,12 @@ const SimpleTAMASystem = {
                 return false;
             }
 
-            console.log(`💰 Adding ${amount} TAMA for: ${reason}`);
+            console.log(`💰 Adding ${amount} TAMA for: ${reason} to wallet: ${walletAddress}`);
 
             // УМЕНЬШАЕМ TREASURY если это не Treasury сам себе
             if (walletAddress !== 'TREASURY_MAIN_ACCOUNT') {
                 const treasuryBalance = parseInt(localStorage.getItem('tama_balance_TREASURY_MAIN_ACCOUNT') || '0');
+                console.log(`🏦 Current Treasury balance: ${treasuryBalance} TAMA`);
                 if (treasuryBalance >= amount) {
                     const newTreasuryBalance = treasuryBalance - amount;
                     localStorage.setItem('tama_balance_TREASURY_MAIN_ACCOUNT', newTreasuryBalance.toString());
@@ -74,6 +75,7 @@ const SimpleTAMASystem = {
 
             const currentBalance = await this.getBalance(walletAddress);
             const newBalance = currentBalance + amount;
+            console.log(`💰 User balance: ${currentBalance} → ${newBalance} TAMA`);
 
             // Обновляем в базе данных
             if (this.CONFIG.USE_DATABASE && window.Database && window.Database.supabase) {

@@ -87,18 +87,11 @@ const TreasurySystem = {
 
             console.log(`🏦 Awarding new user bonus to ${walletAddress}`);
 
-            // Проверяем что пользователь новый (нет записей в leaderboard)
-            if (window.Database) {
-                const { data } = await window.Database.supabase
-                    .from('leaderboard')
-                    .select('wallet_address')
-                    .eq('wallet_address', walletAddress)
-                    .single();
-
-                if (data) {
-                    console.log('👤 User already exists, skipping new user bonus');
-                    return false;
-                }
+            // Проверяем что пользователь новый (нет TAMA в localStorage)
+            const existingBalance = localStorage.getItem(`tama_balance_${walletAddress}`);
+            if (existingBalance && parseInt(existingBalance) > 0) {
+                console.log('👤 User already has TAMA balance, skipping new user bonus');
+                return false;
             }
 
             // Проверяем что Treasury может начислить
@@ -129,7 +122,7 @@ const TreasurySystem = {
         }
     },
 
-    // Начислить TAMA за минт NFT
+    // Начислить TAMA за минт NFT (только если пользователь новый)
     async awardMintReward(walletAddress) {
         try {
             if (!walletAddress) {
@@ -139,11 +132,18 @@ const TreasurySystem = {
 
             console.log(`🏦 Awarding mint reward to ${walletAddress}`);
 
+            // Проверяем что пользователь новый (нет TAMA в localStorage)
+            const existingBalance = localStorage.getItem(`tama_balance_${walletAddress}`);
+            if (existingBalance && parseInt(existingBalance) > 0) {
+                console.log('👤 User already has TAMA balance, skipping mint reward (already got new user bonus)');
+                return false;
+            }
+
             if (window.SimpleTAMASystem) {
                 const success = await window.SimpleTAMASystem.addTAMA(
                     walletAddress, 
                     this.CONFIG.MINT_REWARD, 
-                    'NFT Mint Reward'
+                    'NFT Mint Reward (New User)'
                 );
                 
                 if (success) {
