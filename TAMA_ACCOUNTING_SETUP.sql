@@ -310,4 +310,4 @@ COMMENT ON FUNCTION verify_tama_balance_integrity IS 'Проверяет цел�
 -- Проверить целостность:
 -- SELECT * FROM verify_tama_balance_integrity();
 
-PRINT '✅ TAMA Double-Entry Accounting System setup completed!';
+-- ✅ TAMA Double-Entry Accounting System setup completed!

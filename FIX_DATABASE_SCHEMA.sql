@@ -193,4 +193,4 @@ ON CONFLICT (wallet_address) DO UPDATE SET
     tama = EXCLUDED.tama,
     updated_at = NOW();
 
-PRINT '✅ Database schema fixes completed!';
+-- ✅ Database schema fixes completed!

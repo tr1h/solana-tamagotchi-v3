@@ -21,4 +21,4 @@ SELECT * FROM admins WHERE wallet_address = '8bJixyhkqKJtGDEwrc9xLb2MPpL4yGjDNmi
 -- Показываем всех админов
 SELECT wallet_address, name, permissions, created_at FROM admins ORDER BY created_at DESC;
 
-PRINT '✅ Admin wallet added successfully!';
+-- ✅ Admin wallet added successfully!
