@@ -546,7 +546,7 @@ const MintPage = {
             
             // Начисляем TAMA токены
             const currentPhase = await this.getCurrentPhase();
-            const tamaAmount = this.phases[currentPhase]?.tamaBonus || 500; // Fallback to 500
+            const tamaAmount = parseInt(this.phases[currentPhase]?.tamaBonus) || 1000; // Fallback to 1000
             console.log(`🪙 Rewarding ${tamaAmount} TAMA for minting...`);
             
             // Use new TAMA Module
@@ -600,7 +600,7 @@ const MintPage = {
         
         // TAMA bonus
         const phaseIndex = this.getCurrentPhase();
-        const tamaBonus = this.phases[phaseIndex].tamaBonus;
+        const tamaBonus = parseInt(this.phases[phaseIndex].tamaBonus) || 1000;
         
         return {
             type: types[typeIndex],
@@ -714,7 +714,7 @@ const MintPage = {
                         level: petData.level,
                         xp: petData.xp,
                         total_xp: petData.total_xp || 0,
-                        tama: this.phases[this.getCurrentPhase()].tamaBonus, // Bonus from mint
+                        tama: parseInt(this.phases[this.getCurrentPhase()].tamaBonus) || 1000, // Bonus from mint
                         pet_data: petData,
                         created_at: new Date().toISOString(),
                         updated_at: new Date().toISOString()
