@@ -752,7 +752,7 @@
     <script src="js/shop.js?v=3"></script>
     <script src="js/referral-system.js?v=2"></script>
     <script src="js/achievements.js?v=3"></script>
-    <script src="js/minigame.js?v=2"></script>
+    <script src="js/tama-catch-v2.js?v=1"></script>
     <script src="js/simple-lottery.js?v=1"></script>
     <script src="js/ui.js?v=2"></script>
     
@@ -930,8 +930,8 @@
             const minigameBtn = document.getElementById('minigame-btn');
             if (minigameBtn) {
                 minigameBtn.addEventListener('click', () => {
-                    if (window.TAMACatchGame) {
-                        const game = new window.TAMACatchGame();
+                    if (window.TAMACatchGameV2) {
+                        const game = new window.TAMACatchGameV2();
                         game.show();
                     }
                 });
