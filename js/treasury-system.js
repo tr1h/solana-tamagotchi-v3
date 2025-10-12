@@ -23,22 +23,43 @@ const TreasurySystem = {
         return this;
     },
 
-    // Убедиться что Treasury существует
+    // Убедиться что Treasury существует (ТОЛЬКО 1 РАЗ!)
     async ensureTreasuryExists() {
         try {
             if (window.SimpleTAMASystem) {
-                const treasuryBalance = await window.SimpleTAMASystem.getBalance(this.CONFIG.TREASURY_WALLET);
+                // Проверяем существует ли Treasury в базе данных
+                const treasuryExists = await this.checkTreasuryExists();
                 
-                if (treasuryBalance === 0) {
-                    console.log('🏦 Creating Treasury with initial supply...');
+                if (!treasuryExists) {
+                    console.log('🏦 Creating Treasury with initial supply (FIRST TIME ONLY)...');
                     await window.SimpleTAMASystem.setBalance(this.CONFIG.TREASURY_WALLET, this.CONFIG.INITIAL_SUPPLY);
-                    console.log(`✅ Treasury created with ${this.CONFIG.INITIAL_SUPPLY} TAMA`);
+                    console.log(`✅ Treasury created ONCE with ${this.CONFIG.INITIAL_SUPPLY} TAMA`);
                 } else {
-                    console.log(`🏦 Treasury exists with ${treasuryBalance} TAMA`);
+                    const treasuryBalance = await window.SimpleTAMASystem.getBalance(this.CONFIG.TREASURY_WALLET);
+                    console.log(`🏦 Treasury already exists with ${treasuryBalance} TAMA`);
                 }
             }
         } catch (error) {
             console.error('❌ Error ensuring treasury exists:', error);
+        }
+    },
+
+    // Проверить существует ли Treasury в базе данных
+    async checkTreasuryExists() {
+        try {
+            if (window.Database && window.Database.supabase) {
+                const { data, error } = await window.Database.supabase
+                    .from('leaderboard')
+                    .select('wallet_address')
+                    .eq('wallet_address', this.CONFIG.TREASURY_WALLET)
+                    .single();
+                
+                return !error && data !== null;
+            }
+            return false;
+        } catch (error) {
+            console.error('❌ Error checking treasury existence:', error);
+            return false;
         }
     },
 
@@ -77,6 +98,13 @@ const TreasurySystem = {
                     console.log('👤 User already exists, skipping new user bonus');
                     return false;
                 }
+            }
+
+            // Проверяем что Treasury может начислить
+            const canAward = await this.canAward(this.CONFIG.NEW_USER_BONUS);
+            if (!canAward) {
+                console.warn('⚠️ Treasury insufficient funds for new user bonus');
+                return false;
             }
 
             // Начисляем бонус новому пользователю
