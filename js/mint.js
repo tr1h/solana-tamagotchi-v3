@@ -682,8 +682,8 @@ const MintPage = {
         if (window.TreasurySystem && this.publicKey) {
             await window.TreasurySystem.awardMintReward(this.publicKey.toString());
         } else if (window.SimpleTAMASystem && this.publicKey) {
-            // Используем SimpleTAMASystem для правильного учета Treasury
-            await window.SimpleTAMASystem.addTAMA(this.publicKey.toString(), 1000, 'NFT Mint Reward');
+            // Используем addTAMAFromTreasury для правильного учета Treasury
+            await window.SimpleTAMASystem.addTAMAFromTreasury(this.publicKey.toString(), 1000, 'NFT Mint Reward');
         }
         
         // Save to database

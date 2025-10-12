@@ -64,7 +64,57 @@ const SimpleTAMASystem = {
         }
     },
 
-    // Добавить TAMA
+    // Добавить TAMA из Treasury (для минта NFT)
+    async addTAMAFromTreasury(walletAddress, amount, reason = 'Unknown') {
+        try {
+            if (!walletAddress || !amount || amount <= 0) {
+                console.warn('⚠️ Invalid parameters for adding TAMA');
+                return false;
+            }
+
+            console.log(`💰 Adding ${amount} TAMA from Treasury for: ${reason} to wallet: ${walletAddress}`);
+
+            // УМЕНЬШАЕМ TREASURY
+            const treasuryBalance = parseInt(localStorage.getItem('tama_balance_TREASURY_MAIN_ACCOUNT') || '0');
+            console.log(`🏦 Current Treasury balance: ${treasuryBalance} TAMA`);
+            if (treasuryBalance >= amount) {
+                const newTreasuryBalance = treasuryBalance - amount;
+                localStorage.setItem('tama_balance_TREASURY_MAIN_ACCOUNT', newTreasuryBalance.toString());
+                console.log(`🏦 Treasury decreased: ${treasuryBalance} → ${newTreasuryBalance} TAMA`);
+                
+                // Синхронизируем Treasury в базе данных (UPDATE ONLY)
+                if (this.CONFIG.USE_DATABASE && window.Database && window.Database.supabase) {
+                    const { error } = await window.Database.supabase
+                        .from('leaderboard')
+                        .update({
+                            tama: newTreasuryBalance,
+                            updated_at: new Date().toISOString()
+                        })
+                        .eq('wallet_address', 'TREASURY_MAIN_ACCOUNT');
+                    
+                    if (error) {
+                        console.error('❌ Treasury sync error:', error);
+                    } else {
+                        console.log(`✅ Treasury synced to database: ${newTreasuryBalance} TAMA`);
+                    }
+                }
+            } else {
+                console.warn('⚠️ Treasury insufficient funds!');
+                return false;
+            }
+
+            // Добавляем TAMA игроку
+            const currentBalance = await this.getBalance(walletAddress);
+            const newBalance = currentBalance + amount;
+            
+            return await this.setBalance(walletAddress, newBalance);
+        } catch (error) {
+            console.error('❌ Error adding TAMA from Treasury:', error);
+            return false;
+        }
+    },
+
+    // Добавить TAMA (БЕЗ Treasury - для бесплатных наград)
     async addTAMA(walletAddress, amount, reason = 'Unknown') {
         try {
             if (!walletAddress || !amount || amount <= 0) {
@@ -72,39 +122,9 @@ const SimpleTAMASystem = {
                 return false;
             }
 
-            console.log(`💰 Adding ${amount} TAMA for: ${reason} to wallet: ${walletAddress}`);
+            console.log(`💰 Adding ${amount} TAMA (FREE REWARD) for: ${reason} to wallet: ${walletAddress}`);
 
-            // УМЕНЬШАЕМ TREASURY если это не Treasury сам себе
-            if (walletAddress !== 'TREASURY_MAIN_ACCOUNT') {
-                const treasuryBalance = parseInt(localStorage.getItem('tama_balance_TREASURY_MAIN_ACCOUNT') || '0');
-                console.log(`🏦 Current Treasury balance: ${treasuryBalance} TAMA`);
-                if (treasuryBalance >= amount) {
-                    const newTreasuryBalance = treasuryBalance - amount;
-                    localStorage.setItem('tama_balance_TREASURY_MAIN_ACCOUNT', newTreasuryBalance.toString());
-                    console.log(`🏦 Treasury decreased: ${treasuryBalance} → ${newTreasuryBalance} TAMA`);
-                    
-                    // Синхронизируем Treasury в базе данных (UPDATE ONLY)
-                    if (this.CONFIG.USE_DATABASE && window.Database && window.Database.supabase) {
-                        const { error } = await window.Database.supabase
-                            .from('leaderboard')
-                            .update({
-                                tama: newTreasuryBalance,
-                                updated_at: new Date().toISOString()
-                            })
-                            .eq('wallet_address', 'TREASURY_MAIN_ACCOUNT');
-                        
-                        if (error) {
-                            console.error('❌ Treasury sync error:', error);
-                        } else {
-                            console.log(`✅ Treasury synced to database: ${newTreasuryBalance} TAMA`);
-                        }
-                    }
-                } else {
-                    console.warn('⚠️ Treasury insufficient funds!');
-                    return false;
-                }
-            }
-
+            // НЕ уменьшаем Treasury - это бесплатная награда за игру!
             const currentBalance = await this.getBalance(walletAddress);
             const newBalance = currentBalance + amount;
             console.log(`💰 User balance: ${currentBalance} → ${newBalance} TAMA`);
