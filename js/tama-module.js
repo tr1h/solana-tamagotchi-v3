@@ -86,6 +86,12 @@ const TAMAModule = {
                 return false;
             }
             
+            // 🛡️ Anti-Cheat валидация
+            if (window.AntiCheat && !window.AntiCheat.validateTAMAGain(amount, reason)) {
+                console.warn('🚨 TAMA gain blocked by anti-cheat');
+                return false;
+            }
+            
             console.log(`💰 Earning ${amount} TAMA for: ${reason}`);
             
             if (this.CONFIG.USE_DATABASE && window.Database) {

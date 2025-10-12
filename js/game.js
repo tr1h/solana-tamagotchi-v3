@@ -455,6 +455,12 @@ const Game = {
     addXP(amount) {
         if (!this.pet) return;
         
+        // 🛡️ Anti-Cheat валидация
+        if (window.AntiCheat && !window.AntiCheat.validateXPGain(amount, 'game_action')) {
+            console.warn('🚨 XP gain blocked by anti-cheat');
+            return;
+        }
+        
         this.pet.xp += amount;
         
         // Initialize total_xp if not exists
@@ -493,6 +499,12 @@ const Game = {
     
     // Level up
     async levelUp() {
+        // 🛡️ Anti-Cheat валидация
+        if (window.AntiCheat && !window.AntiCheat.validateLevelUp(this.pet.level, this.pet.level + 1)) {
+            console.warn('🚨 Level up blocked by anti-cheat');
+            return;
+        }
+        
         this.pet.level++;
         this.pet.xp = 0; // Reset current level XP, but keep total_xp
         

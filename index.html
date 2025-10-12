@@ -664,6 +664,8 @@
     </div>
 
     <!-- Scripts -->
+    <!-- 🛡️ Anti-Cheat должен быть первым! -->
+    <script src="js/anti-cheat.js?v=2"></script>
     <script src="js/utils.js?v=2"></script>
     <script src="js/telegram.js?v=2"></script>
     <script src="js/umi-candy-machine.js?v=2"></script>
@@ -780,6 +782,12 @@
         
         // Add event listener for TAMA history button and hover
         document.addEventListener('DOMContentLoaded', function() {
+            // 🛡️ Initialize Anti-Cheat FIRST
+            if (window.AntiCheat) {
+                window.AntiCheat.init();
+                console.log('🛡️ Anti-Cheat System activated!');
+            }
+            
             // Initialize TAMA Shop
             if (window.TAMAShop) {
                 window.TAMAShop.init();
