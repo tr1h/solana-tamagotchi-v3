@@ -86,11 +86,9 @@ const TAMAModule = {
                 return false;
             }
             
-            // 🛡️ Anti-Cheat валидация
-            if (window.AntiCheat && !window.AntiCheat.validateTAMAGain(amount, reason)) {
-                console.warn('🚨 TAMA gain blocked by anti-cheat');
-                return false;
-            }
+            // 🛡️ Anti-Cheat валидация - ОТКЛЮЧЕНО ДЛЯ КОМФОРТНОЙ ИГРЫ! 🎮
+            // НЕ БЛОКИРУЕМ ПОЛУЧЕНИЕ TAMA - ИГРАЕМ БЕЗ ОГРАНИЧЕНИЙ!
+            console.log('🛡️ TAMA gain allowed (anti-cheat disabled):', amount, 'for:', reason);
             
             console.log(`💰 Earning ${amount} TAMA for: ${reason}`);
             

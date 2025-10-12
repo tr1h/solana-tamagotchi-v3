@@ -292,8 +292,12 @@ const AntiCheat = {
         }
     },
     
-    // Показать предупреждение
+    // Показать предупреждение - ОТКЛЮЧЕНО ДЛЯ КОМФОРТНОЙ ИГРЫ! 🎮
     showWarning(type) {
+        // НЕ ПОКАЗЫВАЕМ ПРЕДУПРЕЖДЕНИЯ - ИГРАЕМ БЕЗ ОГРАНИЧЕНИЙ!
+        console.log('🛡️ Anti-cheat warning suppressed:', type);
+        return;
+        
         const messages = {
             xp_too_high: '⚠️ Подозрительная активность: слишком много XP за одно действие',
             tama_too_high: '⚠️ Подозрительная активность: слишком много TAMA за одно действие',
@@ -342,31 +346,22 @@ const AntiCheat = {
     
     // Защита игровых функций
     protectGameFunctions() {
-        // Защита Game.levelUp()
+        // Защита Game.levelUp() - ОТКЛЮЧЕНО ДЛЯ КОМФОРТНОЙ ИГРЫ! 🎮
         if (window.Game && window.Game.levelUp) {
             const originalLevelUp = window.Game.levelUp;
             window.Game.levelUp = async function() {
-                const currentLevel = this.pet?.level || 1;
-                const newLevel = currentLevel + 1;
-                
-                if (!window.AntiCheat.validateLevelUp(currentLevel, newLevel)) {
-                    console.error('🚨 Level up blocked by anti-cheat');
-                    return;
-                }
-                
+                // НЕ БЛОКИРУЕМ ПОВЫШЕНИЕ УРОВНЯ - ИГРАЕМ БЕЗ ОГРАНИЧЕНИЙ!
+                console.log('🛡️ Level up allowed (anti-cheat disabled)');
                 return originalLevelUp.call(this);
             };
         }
         
-        // Защита Game.addXP()
+        // Защита Game.addXP() - ОТКЛЮЧЕНО ДЛЯ КОМФОРТНОЙ ИГРЫ! 🎮
         if (window.Game && window.Game.addXP) {
             const originalAddXP = window.Game.addXP;
             window.Game.addXP = function(amount) {
-                if (!window.AntiCheat.validateXPGain(amount, 'game_action')) {
-                    console.error('🚨 XP gain blocked by anti-cheat');
-                    return;
-                }
-                
+                // НЕ БЛОКИРУЕМ ПОЛУЧЕНИЕ XP - ИГРАЕМ БЕЗ ОГРАНИЧЕНИЙ!
+                console.log('🛡️ XP gain allowed (anti-cheat disabled):', amount);
                 return originalAddXP.call(this, amount);
             };
         }
