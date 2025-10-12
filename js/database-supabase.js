@@ -42,7 +42,8 @@ const Database = {
         if (!walletAddress) return Utils.saveLocal('petData', petData);
         
         try {
-            const { error } = await this.supabase
+            // Обновляем в leaderboard
+            const { error: leaderboardError } = await this.supabase
                 .from('leaderboard')
                 .upsert({
                     wallet_address: walletAddress,
@@ -55,7 +56,38 @@ const Database = {
                     updated_at: new Date().toISOString()
                 }, { onConflict: 'wallet_address' });
             
-            if (error) throw error;
+            if (leaderboardError) throw leaderboardError;
+            
+            // Обновляем в nft_mints (если есть mintAddress)
+            if (petData.mintAddress) {
+                const { error: nftError } = await this.supabase
+                    .from('nft_mints')
+                    .update({
+                        pet_name: petData.name,
+                        evolution: petData.evolution || 0,
+                        level: petData.level || 1,
+                        xp: petData.xp || 0,
+                        total_xp: petData.total_xp || petData.xp || 0,
+                        abilities: petData.abilities || [],
+                        ability_cooldowns: petData.abilityCooldowns || {},
+                        attributes: petData.attributes || {},
+                        stats: petData.stats || {},
+                        tama_multiplier: petData.tamaMultiplier || 1.0,
+                        last_fed: petData.lastFed ? new Date(petData.lastFed).toISOString() : new Date().toISOString(),
+                        last_played: petData.lastPlayed ? new Date(petData.lastPlayed).toISOString() : new Date().toISOString(),
+                        last_slept: petData.lastSlept ? new Date(petData.lastSlept).toISOString() : new Date().toISOString(),
+                        is_dead: petData.isDead || false,
+                        is_critical: petData.isCritical || false,
+                        is_hibernating: petData.isHibernating || false,
+                        is_stealthed: petData.isStealthed || false
+                    })
+                    .eq('mint_address', petData.mintAddress);
+                
+                if (nftError) {
+                    console.warn('⚠️ Could not update nft_mints:', nftError);
+                }
+            }
+            
             Utils.saveLocal('petData', petData);
         } catch (error) {
             console.error('Failed to save pet data:', error);
@@ -447,6 +479,16 @@ const Database = {
                 phase: phase
             });
             
+            // Создаем полный объект питомца с помощью PetSystem
+            let fullPetData = null;
+            if (window.PetSystem) {
+                fullPetData = window.PetSystem.createPet(
+                    nftData.type, 
+                    nftData.rarity, 
+                    nftData.petName || nftData.name || 'My Pet'
+                );
+            }
+            
             const { data, error } = await this.supabase
                 .from('nft_mints')
                 .insert({
@@ -462,7 +504,33 @@ const Database = {
                     mint_price: price,
                     mint_timestamp: new Date().toISOString(),
                     transaction_signature: nftData.signature,
-                    status: 'minted'
+                    status: 'minted',
+                    // Новые поля для Pet System
+                    evolution: fullPetData?.evolution || 0,
+                    level: fullPetData?.level || 1,
+                    xp: fullPetData?.xp || 0,
+                    total_xp: fullPetData?.total_xp || 0,
+                    abilities: fullPetData?.abilities || [],
+                    ability_cooldowns: fullPetData?.abilityCooldowns || {},
+                    attributes: fullPetData?.attributes || {
+                        intelligence: 50,
+                        strength: 50,
+                        speed: 50,
+                        magic: 50
+                    },
+                    stats: fullPetData?.stats || {
+                        hunger: 100,
+                        energy: 100,
+                        happy: 100,
+                        health: 100
+                    },
+                    tama_multiplier: fullPetData?.tamaMultiplier || 1.0,
+                    category: fullPetData?.category || 'common',
+                    last_fed: new Date().toISOString(),
+                    last_played: new Date().toISOString(),
+                    last_slept: new Date().toISOString(),
+                    is_dead: false,
+                    is_critical: false
                 })
                 .select();
             

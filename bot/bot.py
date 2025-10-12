@@ -11,7 +11,13 @@ from supabase import create_client, Client
 from dotenv import load_dotenv
 
 # Load environment variables
-load_dotenv()
+import codecs
+with codecs.open('../.env', 'r', encoding='utf-8-sig') as f:
+    env_content = f.read()
+    for line in env_content.strip().split('\n'):
+        if '=' in line and not line.startswith('#'):
+            key, value = line.split('=', 1)
+            os.environ[key.strip()] = value.strip()
 
 # Bot token
 TOKEN = os.getenv('TELEGRAM_BOT_TOKEN', 'YOUR_BOT_TOKEN_HERE')
