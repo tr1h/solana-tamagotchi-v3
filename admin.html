@@ -703,6 +703,8 @@
                 if (adminWallets.includes(adminWallet)) {
                     console.log('✅ Admin access granted locally');
                     showAdminPanel();
+                    // Загружаем данные
+                    refreshStats();
                     return;
                 }
                 
@@ -831,8 +833,8 @@
         setInterval(refreshStats, 30000);
         
         // Initialize Supabase
-        const supabaseUrl = 'https://your-project.supabase.co';
-        const supabaseKey = 'your-anon-key';
+        const supabaseUrl = 'https://zfrazyupameidxpjihrh.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpmcmF6eXVwYW1laWR4cGppaHJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5Mzc1NTAsImV4cCI6MjA3NTUxMzU1MH0.1EkMDqCNJoAjcJDh3Dd3yPfus-JpdcwE--z2dhjh7wU';
         const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
         
         // Initialize
