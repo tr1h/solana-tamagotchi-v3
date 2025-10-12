@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🗑️ Clear Test Data</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(0,0,0,0.3);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #00ff88;
+        }
+        h1 {
+            text-align: center;
+            color: #00ff88;
+            text-shadow: 0 0 10px #00ff88;
+            margin-bottom: 30px;
+        }
+        .warning {
+            background: rgba(255,0,0,0.2);
+            border: 2px solid #ff4444;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .button {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s;
+            font-family: 'Courier New', monospace;
+        }
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255,107,107,0.4);
+        }
+        .button.safe {
+            background: linear-gradient(45deg, #00ff88, #00d4aa);
+        }
+        .button.safe:hover {
+            box-shadow: 0 5px 15px rgba(0,255,136,0.4);
+        }
+        .info {
+            background: rgba(0,255,136,0.1);
+            border: 1px solid #00ff88;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        .result {
+            background: rgba(0,0,0,0.5);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗑️ DATABASE CLEAR TOOL</h1>
+        
+        <div class="warning">
+            <h3>⚠️ WARNING!</h3>
+            <p>This will delete ALL test data from the database!</p>
+            <p><strong>Table structure will be preserved.</strong></p>
+        </div>
+
+        <div class="info">
+            <h3>📊 What will be cleared:</h3>
+            <ul>
+                <li>All player data (leaderboard)</li>
+                <li>All NFT mints</li>
+                <li>All transaction history</li>
+                <li>All referrals</li>
+                <li>All evolution history</li>
+                <li>All anti-cheat logs</li>
+            </ul>
+            <p><strong>✅ Treasury will be reset to 1,000,000,000 TAMA</strong></p>
+        </div>
+
+        <div style="text-align: center;">
+            <button class="button safe" onclick="quickClear()">
+                🚀 QUICK CLEAR (Recommended)
+            </button>
+            <button class="button" onclick="fullClear()">
+                🗑️ FULL CLEAR (Everything)
+            </button>
+        </div>
+
+        <div id="result" class="result" style="display: none;"></div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="admin.html" style="color: #00ff88; text-decoration: none;">
+                ← Back to Admin Panel
+            </a>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script>
+        // Supabase configuration
+        const supabaseUrl = 'https://zfrazyupameidxpjihrh.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpmcmF6eXVwYW1laWR4cGppaHJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5Mzc1NTAsImV4cCI6MjA3NTUxMzU1MH0.1EkMDqCNJoAjcJDh3Dd3yPfus-JpdcwE--z2dhjh7wU';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+        async function quickClear() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = '🔄 Clearing data...';
+
+            try {
+                // Clear transaction history
+                const { error: txError } = await supabase
+                    .from('tama_transactions')
+                    .delete()
+                    .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all
+
+                if (txError) throw txError;
+
+                // Clear leaderboard (except Treasury)
+                const { error: lbError } = await supabase
+                    .from('leaderboard')
+                    .delete()
+                    .neq('wallet_address', 'TREASURY_MAIN_ACCOUNT');
+
+                if (lbError) throw lbError;
+
+                // Clear NFT mints
+                const { error: nftError } = await supabase
+                    .from('nft_mints')
+                    .delete()
+                    .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all
+
+                if (nftError) throw nftError;
+
+                // Reset Treasury balance
+                const { error: treasuryError } = await supabase
+                    .from('leaderboard')
+                    .upsert({
+                        wallet_address: 'TREASURY_MAIN_ACCOUNT',
+                        pet_name: 'Treasury',
+                        level: 1,
+                        xp: 0,
+                        tama: 1000000000,
+                        pet_type: 'Treasury',
+                        pet_rarity: 'legendary',
+                        created_at: new Date().toISOString(),
+                        updated_at: new Date().toISOString()
+                    });
+
+                if (treasuryError) throw treasuryError;
+
+                resultDiv.textContent = '✅ QUICK CLEAR COMPLETED!\n\n' +
+                    '• Transaction history: CLEARED\n' +
+                    '• Player data: CLEARED\n' +
+                    '• NFT mints: CLEARED\n' +
+                    '• Treasury: RESET to 1,000,000,000 TAMA\n\n' +
+                    '🎉 Ready for fresh testing!';
+
+            } catch (error) {
+                resultDiv.textContent = '❌ ERROR: ' + error.message;
+                console.error('Clear error:', error);
+            }
+        }
+
+        async function fullClear() {
+            if (!confirm('⚠️ Are you sure you want to delete ALL data?\n\nThis includes:\n• All players\n• All transactions\n• All referrals\n• All logs\n\nThis action cannot be undone!')) {
+                return;
+            }
+
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = '🔄 Full clearing...';
+
+            try {
+                // Clear all tables
+                const tables = [
+                    'tama_transactions',
+                    'leaderboard',
+                    'nft_mints',
+                    'referrals',
+                    'evolution_history',
+                    'ability_usage',
+                    'anti_cheat_logs',
+                    'banned_users',
+                    'player_actions',
+                    'price_history'
+                ];
+
+                for (const table of tables) {
+                    const { error } = await supabase
+                        .from(table)
+                        .delete()
+                        .neq('id', '00000000-0000-0000-0000-000000000000');
+                    
+                    if (error) throw error;
+                }
+
+                // Reset Treasury
+                const { error: treasuryError } = await supabase
+                    .from('leaderboard')
+                    .upsert({
+                        wallet_address: 'TREASURY_MAIN_ACCOUNT',
+                        pet_name: 'Treasury',
+                        level: 1,
+                        xp: 0,
+                        tama: 1000000000,
+                        pet_type: 'Treasury',
+                        pet_rarity: 'legendary',
+                        created_at: new Date().toISOString(),
+                        updated_at: new Date().toISOString()
+                    });
+
+                if (treasuryError) throw treasuryError;
+
+                // Reset game settings
+                const { error: settingsError } = await supabase
+                    .from('game_settings')
+                    .upsert([
+                        { key: 'nft_mint_price', value: '0.01', description: 'NFT mint price in SOL', updated_at: new Date().toISOString() },
+                        { key: 'mint_phase', value: 'active', description: 'Current mint phase', updated_at: new Date().toISOString() },
+                        { key: 'tama_bonus_multiplier', value: '1.0', description: 'TAMA bonus multiplier', updated_at: new Date().toISOString() }
+                    ]);
+
+                if (settingsError) throw settingsError;
+
+                resultDiv.textContent = '✅ FULL CLEAR COMPLETED!\n\n' +
+                    '• All tables: CLEARED\n' +
+                    '• Treasury: RESET to 1,000,000,000 TAMA\n' +
+                    '• Game settings: RESET to defaults\n\n' +
+                    '🎉 Database is completely fresh!';
+
+            } catch (error) {
+                resultDiv.textContent = '❌ ERROR: ' + error.message;
+                console.error('Full clear error:', error);
+            }
+        }
+    </script>
+</body>
+</html>
