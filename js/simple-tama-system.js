@@ -122,9 +122,10 @@ const SimpleTAMASystem = {
                     console.error('❌ Error fetching existing data:', fetchError);
                 }
 
-                // Подготавливаем данные для upsert (БЕЗ TAMA - только для создания записи)
+                // Подготавливаем данные для upsert (С TAMA - сохраняем баланс)
                 const upsertData = {
                     wallet_address: walletAddress,
+                    tama: newBalance,
                     updated_at: new Date().toISOString()
                 };
 
@@ -155,7 +156,7 @@ const SimpleTAMASystem = {
                 if (error) {
                     console.error('❌ Database error, using local storage:', error);
                 } else {
-                    console.log(`✅ Database updated (without TAMA field)`);
+                    console.log(`✅ Database updated with TAMA balance: ${newBalance}`);
                 }
                 
                 // ВСЕГДА обновляем localStorage
@@ -219,21 +220,20 @@ const SimpleTAMASystem = {
                 }
             }
 
-            // Обновляем в базе данных (БЕЗ TAMA поля)
+            // Обновляем в базе данных (С TAMA полем)
             if (this.CONFIG.USE_DATABASE && window.Database && window.Database.supabase) {
                 const { error } = await window.Database.supabase
                     .from('leaderboard')
-                    .upsert({
-                        wallet_address: walletAddress,
+                    .update({
+                        tama: newBalance,
                         updated_at: new Date().toISOString()
-                    }, {
-                        onConflict: 'wallet_address'
-                    });
+                    })
+                    .eq('wallet_address', walletAddress);
 
                 if (error) {
                     console.error('❌ Database error:', error);
                 } else {
-                    console.log(`✅ Database updated (without TAMA field)`);
+                    console.log(`✅ Database updated with TAMA balance: ${newBalance}`);
                 }
             }
             
