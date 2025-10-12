@@ -31,15 +31,20 @@ const SimpleTAMASystem = {
                     .eq('wallet_address', walletAddress)
                     .single();
 
-                if (!error && data) {
+                if (!error && data && data.tama !== null) {
+                    console.log(`💰 Balance from database: ${data.tama} TAMA`);
                     return data.tama || 0;
+                } else {
+                    console.log('⚠️ No database balance, using localStorage');
                 }
             }
 
             // Fallback к localStorage
             if (this.CONFIG.FALLBACK_TO_LOCAL) {
                 const localBalance = localStorage.getItem(`tama_balance_${walletAddress}`);
-                return localBalance ? parseFloat(localBalance) : 0;
+                const balance = localBalance ? parseFloat(localBalance) : 0;
+                console.log(`💰 Balance from localStorage: ${balance} TAMA`);
+                return balance;
             }
 
             return 0;

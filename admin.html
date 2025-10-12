@@ -771,29 +771,42 @@
         
         async function loadLeaderboard() {
             try {
-                const response = await fetch(`${API_URL}/leaderboard.php?limit=50`);
-                const result = await response.json();
+                console.log('🔄 Loading leaderboard from Supabase...');
                 
-                if (result.success) {
-                    const tbody = document.getElementById('leaderboard-body');
-                    tbody.innerHTML = '';
-                    
-                    result.data.forEach(player => {
+                const { data: players, error } = await supabase
+                    .from('leaderboard')
+                    .select('*')
+                    .order('tama', { ascending: false })
+                    .limit(50);
+
+                if (error) throw error;
+
+                const tbody = document.getElementById('leaderboard-body');
+                tbody.innerHTML = '';
+                
+                if (players && players.length > 0) {
+                    players.forEach((player, index) => {
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
-                            <td>${player.rank}</td>
-                            <td style="font-family: monospace;">${player.wallet.slice(0, 8)}...${player.wallet.slice(-4)}</td>
-                            <td>${player.petName || 'Unknown'}</td>
-                            <td>${player.level}</td>
-                            <td>${player.xp.toLocaleString()}</td>
-                            <td>${player.petType || '-'}</td>
-                            <td>${player.rarity || 'common'}</td>
+                            <td>${index + 1}</td>
+                            <td style="font-family: monospace;">${player.wallet_address.slice(0, 8)}...${player.wallet_address.slice(-4)}</td>
+                            <td>${player.pet_name || 'Unknown'}</td>
+                            <td>${player.level || 1}</td>
+                            <td>${(player.xp || 0).toLocaleString()}</td>
+                            <td>${player.pet_type || '-'}</td>
+                            <td>${player.pet_rarity || 'common'}</td>
                         `;
                         tbody.appendChild(tr);
                     });
+                    console.log('✅ Leaderboard loaded:', players.length, 'players');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="7">No players found</td></tr>';
+                    console.log('⚠️ No players in leaderboard');
                 }
             } catch (error) {
-                console.error('Failed to load leaderboard:', error);
+                console.error('❌ Error loading leaderboard:', error);
+                const tbody = document.getElementById('leaderboard-body');
+                tbody.innerHTML = '<tr><td colspan="7">Error loading leaderboard</td></tr>';
             }
         }
         
@@ -838,6 +851,15 @@
         
         // Auto refresh every 30 seconds
         setInterval(refreshStats, 30000);
+        
+        // Auto refresh Treasury balance every 5 seconds
+        setInterval(() => {
+            const treasuryBalance = localStorage.getItem('tama_balance_TREASURY_MAIN_ACCOUNT') || '0';
+            const treasuryElement = document.getElementById('treasury-balance');
+            if (treasuryElement) {
+                treasuryElement.textContent = parseInt(treasuryBalance).toLocaleString() + ' TAMA';
+            }
+        }, 5000);
         
         // Initialize Supabase
         const supabaseUrl = 'https://zfrazyupameidxpjihrh.supabase.co';
@@ -1139,7 +1161,8 @@
             try {
                 // Treasury Balance
                 const treasuryBalance = localStorage.getItem('tama_balance_TREASURY_MAIN_ACCOUNT') || '0';
-                document.getElementById('treasury-balance').textContent = parseInt(treasuryBalance).toLocaleString();
+                document.getElementById('treasury-balance').textContent = parseInt(treasuryBalance).toLocaleString() + ' TAMA';
+                console.log('🏦 Treasury Balance loaded:', treasuryBalance);
                 
                 // Total TAMA in circulation
                 const { data: totalData, error: totalError } = await supabase
