@@ -114,7 +114,7 @@ const SimpleTAMASystem = {
         }
     },
 
-    // Добавить TAMA (БЕЗ Treasury - для бесплатных наград)
+    // Добавить TAMA (ИЗ Treasury - для всех наград)
     async addTAMA(walletAddress, amount, reason = 'Unknown') {
         try {
             if (!walletAddress || !amount || amount <= 0) {
@@ -122,9 +122,37 @@ const SimpleTAMASystem = {
                 return false;
             }
 
-            console.log(`💰 Adding ${amount} TAMA (FREE REWARD) for: ${reason} to wallet: ${walletAddress}`);
+            console.log(`💰 Adding ${amount} TAMA for: ${reason} to wallet: ${walletAddress}`);
 
-            // НЕ уменьшаем Treasury - это бесплатная награда за игру!
+            // УМЕНЬШАЕМ TREASURY при любых наградах (фиксированный supply!)
+            const treasuryBalance = parseInt(localStorage.getItem('tama_balance_TREASURY_MAIN_ACCOUNT') || '0');
+            console.log(`🏦 Current Treasury balance: ${treasuryBalance} TAMA`);
+            if (treasuryBalance >= amount) {
+                const newTreasuryBalance = treasuryBalance - amount;
+                localStorage.setItem('tama_balance_TREASURY_MAIN_ACCOUNT', newTreasuryBalance.toString());
+                console.log(`🏦 Treasury decreased: ${treasuryBalance} → ${newTreasuryBalance} TAMA`);
+                
+                // Синхронизируем Treasury в базе данных
+                if (this.CONFIG.USE_DATABASE && window.Database && window.Database.supabase) {
+                    const { error } = await window.Database.supabase
+                        .from('leaderboard')
+                        .update({
+                            tama: newTreasuryBalance,
+                            updated_at: new Date().toISOString()
+                        })
+                        .eq('wallet_address', 'TREASURY_MAIN_ACCOUNT');
+                    
+                    if (error) {
+                        console.error('❌ Treasury sync error:', error);
+                    } else {
+                        console.log(`✅ Treasury synced to database: ${newTreasuryBalance} TAMA`);
+                    }
+                }
+            } else {
+                console.warn('⚠️ Treasury insufficient funds!');
+                return false;
+            }
+
             const currentBalance = await this.getBalance(walletAddress);
             const newBalance = currentBalance + amount;
             console.log(`💰 User balance: ${currentBalance} → ${newBalance} TAMA`);
@@ -186,6 +214,32 @@ const SimpleTAMASystem = {
                 // Используем localStorage
                 localStorage.setItem(`tama_balance_${walletAddress}`, newBalance.toString());
                 console.log(`✅ TAMA added via localStorage: ${newBalance}`);
+            }
+
+            // Записываем транзакцию в базу данных
+            if (this.CONFIG.USE_DATABASE && window.Database && window.Database.supabase) {
+                try {
+                    const { error: txError } = await window.Database.supabase
+                        .from('tama_transactions')
+                        .insert({
+                            wallet_address: walletAddress,
+                            amount: amount,
+                            type: reason,
+                            balance_before: currentBalance,
+                            balance_after: newBalance,
+                            description: reason,
+                            entry_type: 'DEBIT',
+                            created_at: new Date().toISOString()
+                        });
+                    
+                    if (txError) {
+                        console.error('❌ Error logging transaction:', txError);
+                    } else {
+                        console.log('✅ Transaction logged to database');
+                    }
+                } catch (error) {
+                    console.error('❌ Transaction logging error:', error);
+                }
             }
 
             // Обновляем UI
@@ -260,6 +314,32 @@ const SimpleTAMASystem = {
             // ВСЕГДА обновляем localStorage
             localStorage.setItem(`tama_balance_${walletAddress}`, newBalance.toString());
             console.log(`✅ TAMA spent via localStorage: ${newBalance}`);
+
+            // Записываем транзакцию в базу данных
+            if (this.CONFIG.USE_DATABASE && window.Database && window.Database.supabase) {
+                try {
+                    const { error: txError } = await window.Database.supabase
+                        .from('tama_transactions')
+                        .insert({
+                            wallet_address: walletAddress,
+                            amount: -amount,
+                            type: reason,
+                            balance_before: currentBalance,
+                            balance_after: newBalance,
+                            description: reason,
+                            entry_type: 'CREDIT',
+                            created_at: new Date().toISOString()
+                        });
+                    
+                    if (txError) {
+                        console.error('❌ Error logging transaction:', txError);
+                    } else {
+                        console.log('✅ Transaction logged to database');
+                    }
+                } catch (error) {
+                    console.error('❌ Transaction logging error:', error);
+                }
+            }
 
             // Обновляем UI
             this.updateUIBalance(newBalance);
