@@ -236,6 +236,15 @@ const TAMAShop = {
         
         // Создаем модальное окно магазина
         this.createShopModal();
+        
+        // Загружаем баланс и товары
+        this.loadShopBalance();
+        this.loadShopItems('food');
+        
+        // Обновляем баланс каждые 2 секунды
+        this.balanceInterval = setInterval(() => {
+            this.refreshBalance();
+        }, 2000);
     },
     
     // Создать модальное окно магазина
@@ -251,7 +260,7 @@ const TAMAShop = {
             <div class="shop-modal-content">
                 <div class="shop-header">
                     <h2>🛒 TAMA SHOP</h2>
-                    <span class="shop-close" onclick="document.getElementById('shop-modal').remove()">&times;</span>
+                    <span class="shop-close" onclick="window.TAMAShop.closeShop()">&times;</span>
                 </div>
                 
                 <div class="shop-balance">
@@ -302,20 +311,50 @@ const TAMAShop = {
             
             let balance = 0;
             
-            // Получаем баланс из TAMA Module
+            // Получаем баланс из TAMA Module или Database
+            const walletAddress = window.WalletManager?.publicKey?.toString();
+            
             if (window.TAMAModule) {
-                balance = await window.TAMAModule.getBalance(window.WalletManager.publicKey.toString());
-            } else if (window.Database) {
-                const walletAddress = window.WalletManager?.publicKey?.toString();
                 balance = await window.TAMAModule.getBalance(walletAddress);
+            } else if (window.Database) {
+                // Получаем баланс из leaderboard таблицы
+                const { data } = await window.Database.supabase
+                    .from('leaderboard')
+                    .select('tama')
+                    .eq('wallet_address', walletAddress)
+                    .single();
+                
+                balance = data?.tama || 0;
             }
             
             const balanceElement = document.getElementById('shop-balance');
             if (balanceElement) {
                 balanceElement.textContent = `${balance} TAMA`;
             }
+            
+            console.log('🛒 Shop balance loaded:', balance, 'TAMA');
         } catch (error) {
             console.error('❌ Error loading shop balance:', error);
+        }
+    },
+    
+    // Обновить баланс в реальном времени
+    async refreshBalance() {
+        await this.loadShopBalance();
+    },
+    
+    // Закрыть магазин
+    closeShop() {
+        // Очищаем интервал обновления баланса
+        if (this.balanceInterval) {
+            clearInterval(this.balanceInterval);
+            this.balanceInterval = null;
+        }
+        
+        // Удаляем модальное окно
+        const modal = document.getElementById('shop-modal');
+        if (modal) {
+            modal.remove();
         }
     },
     
@@ -378,11 +417,19 @@ const TAMAShop = {
             
             // Проверяем баланс
             let balance = 0;
+            const walletAddress = window.WalletManager.publicKey.toString();
+            
             if (window.TAMAModule) {
-                balance = await window.TAMAModule.getBalance(window.WalletManager.publicKey.toString());
+                balance = await window.TAMAModule.getBalance(walletAddress);
             } else if (window.Database) {
-                const playerData = await window.Database.loadPlayerData(window.WalletManager.publicKey.toString());
-                balance = playerData?.tama_balance || 0;
+                // Получаем баланс из leaderboard таблицы
+                const { data } = await window.Database.supabase
+                    .from('leaderboard')
+                    .select('tama')
+                    .eq('wallet_address', walletAddress)
+                    .single();
+                
+                balance = data?.tama || 0;
             }
             
             if (balance < item.price) {
