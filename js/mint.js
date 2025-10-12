@@ -162,7 +162,7 @@ const MintPage = {
         // Enable mint button
         const mintBtn = document.getElementById('mint-btn');
         mintBtn.disabled = false;
-        mintBtn.querySelector('.btn-text').textContent = `MINT NOW - ${this.getCurrentPrice()} SOL`;
+        mintBtn.querySelector('.btn-text').textContent = `MINT NOW - ${await this.getCurrentPriceFromDB()} SOL`;
         
         // Show faucet link (devnet only)
         const faucetLink = document.getElementById('faucet-link');
@@ -298,6 +298,30 @@ const MintPage = {
         return this.phases.length - 1;
     },
     
+    // Get current price from database
+    async getCurrentPriceFromDB() {
+        try {
+            if (window.Database && window.Database.supabase) {
+                const { data } = await window.Database.supabase
+                    .from('game_settings')
+                    .select('value')
+                    .eq('key', 'nft_price')
+                    .single();
+                
+                if (data) {
+                    return parseFloat(data.value);
+                }
+            }
+        } catch (error) {
+            console.warn('Could not get price from database, using fallback');
+        }
+        
+        // Fallback to phase price
+        const phaseIndex = await this.getCurrentPhase();
+        const phase = this.phases[phaseIndex];
+        return phase.price;
+    },
+    
     async updateMintProgress() {
         const phaseIndex = await this.getCurrentPhase();
         const phase = this.phases[phaseIndex];
@@ -334,8 +358,10 @@ const MintPage = {
         }
         
         if (mintPrice) {
-            mintPrice.textContent = `${phase.price} SOL`;
-            console.log('✅ Mint price updated to:', `${phase.price} SOL`);
+            // Get price from database instead of phase array
+            const dbPrice = await this.getCurrentPriceFromDB();
+            mintPrice.textContent = `${dbPrice} SOL`;
+            console.log('✅ Mint price updated to:', `${dbPrice} SOL`);
         } else {
             console.warn('⚠️ Mint price element not found');
         }
@@ -369,7 +395,7 @@ const MintPage = {
         try {
             // Check balance first
             const balance = await this.connection.getBalance(this.publicKey);
-            const price = this.getCurrentPrice();
+            const price = await this.getCurrentPriceFromDB();
             const lamports = price * solanaWeb3.LAMPORTS_PER_SOL;
             
             // Check if insufficient balance
@@ -378,7 +404,7 @@ const MintPage = {
                 
                 this.isMinting = false;
                 mintBtn.disabled = false;
-                mintBtn.querySelector('.btn-text').textContent = `MINT NOW - ${this.getCurrentPrice()} SOL`;
+                mintBtn.querySelector('.btn-text').textContent = `MINT NOW - ${await this.getCurrentPriceFromDB()} SOL`;
                 return;
             }
             
@@ -450,7 +476,7 @@ const MintPage = {
             // Reset flag
             this.isMinting = false;
             mintBtn.disabled = false;
-            mintBtn.querySelector('.btn-text').textContent = `MINT NOW - ${this.getCurrentPrice()} SOL`;
+            mintBtn.querySelector('.btn-text').textContent = `MINT NOW - ${await this.getCurrentPriceFromDB()} SOL`;
             
         } catch (error) {
             console.error('Mint failed:', error);
@@ -468,7 +494,7 @@ const MintPage = {
             
             this.isMinting = false;
             mintBtn.disabled = false;
-            mintBtn.querySelector('.btn-text').textContent = `MINT NOW - ${this.getCurrentPrice()} SOL`;
+            mintBtn.querySelector('.btn-text').textContent = `MINT NOW - ${await this.getCurrentPriceFromDB()} SOL`;
         }
     },
     
@@ -502,8 +528,8 @@ const MintPage = {
             this.saveNFTData(nft);
             
             // Записываем минт в базу данных
-            const phaseIndex = this.getCurrentPhase();
-            const price = this.getCurrentPrice();
+            const phaseIndex = await this.getCurrentPhase();
+            const price = await this.getCurrentPriceFromDB();
             
             if (window.Database && window.Database.recordMint) {
                 console.log('💾 Recording NFT mint to database...', nft);
