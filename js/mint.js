@@ -623,7 +623,7 @@ const MintPage = {
         localStorage.setItem('playerData', JSON.stringify(playerData));
     },
     
-    showSuccessModal(nft) {
+    async showSuccessModal(nft) {
         const modal = document.getElementById('success-modal');
         document.getElementById('minted-pet').textContent = nft.emoji;
         document.getElementById('minted-rarity').textContent = nft.rarity.toUpperCase();
@@ -631,7 +631,7 @@ const MintPage = {
         modal.classList.remove('hidden');
         
         // Auto-create pet in game after mint
-        this.createPetAfterMint(nft);
+        await this.createPetAfterMint(nft);
         
         // Auto-redirect to game after 3 seconds
         setTimeout(() => {
@@ -639,7 +639,7 @@ const MintPage = {
         }, 3000);
     },
     
-    createPetAfterMint(nft) {
+    async createPetAfterMint(nft) {
         // ИСПРАВЛЕНО: Используем правильную систему создания питомца
         let petData;
         

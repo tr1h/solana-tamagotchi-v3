@@ -24,7 +24,7 @@ const SimpleTAMASystem = {
             }
 
             // Пробуем получить из базы данных
-            if (this.CONFIG.USE_DATABASE && window.Database) {
+            if (this.CONFIG.USE_DATABASE && window.Database && window.Database.supabase) {
                 const { data, error } = await window.Database.supabase
                     .from('leaderboard')
                     .select('tama')
@@ -63,7 +63,7 @@ const SimpleTAMASystem = {
             const newBalance = currentBalance + amount;
 
             // Обновляем в базе данных
-            if (this.CONFIG.USE_DATABASE && window.Database) {
+            if (this.CONFIG.USE_DATABASE && window.Database && window.Database.supabase) {
                 const { error } = await window.Database.supabase
                     .from('leaderboard')
                     .upsert({
@@ -117,7 +117,7 @@ const SimpleTAMASystem = {
             const newBalance = currentBalance - amount;
 
             // Обновляем в базе данных
-            if (this.CONFIG.USE_DATABASE && window.Database) {
+            if (this.CONFIG.USE_DATABASE && window.Database && window.Database.supabase) {
                 const { error } = await window.Database.supabase
                     .from('leaderboard')
                     .upsert({
@@ -162,7 +162,7 @@ const SimpleTAMASystem = {
             console.log(`💰 Setting TAMA balance to ${amount} for: ${walletAddress}`);
 
             // Обновляем в базе данных
-            if (this.CONFIG.USE_DATABASE && window.Database) {
+            if (this.CONFIG.USE_DATABASE && window.Database && window.Database.supabase) {
                 const { error } = await window.Database.supabase
                     .from('leaderboard')
                     .upsert({
