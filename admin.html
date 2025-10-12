@@ -526,6 +526,7 @@
                     <h4>🏦 Treasury Balance</h4>
                     <div class="stat-value" id="treasury-balance">0</div>
                     <div class="stat-label">Main Treasury Account</div>
+                    <button class="btn" onclick="createTreasury()" style="margin-top: 10px; font-size: 12px; padding: 5px 10px;">🏦 Create Treasury (1B TAMA)</button>
                 </div>
                 <div class="stat-card">
                     <h4>Total TAMA in Circulation</h4>
@@ -1154,6 +1155,50 @@
                 document.getElementById('bulk-operation-type').value = '';
                 document.getElementById('bulk-amount').value = '';
                 document.getElementById('bulk-reason').value = '';
+            }
+        }
+        
+        // Create Treasury
+        async function createTreasury() {
+            if (!confirm('⚠️ Create Treasury with 1,000,000,000 TAMA?\n\nThis should only be done ONCE by the admin!')) {
+                return;
+            }
+            
+            try {
+                // Создаем Treasury в базе данных
+                const { error } = await supabase
+                    .from('leaderboard')
+                    .upsert({
+                        wallet_address: 'TREASURY_MAIN_ACCOUNT',
+                        pet_name: 'Treasury',
+                        level: 1,
+                        xp: 0,
+                        tama: 1000000000,
+                        pet_type: 'Treasury',
+                        pet_rarity: 'legendary',
+                        created_at: new Date().toISOString(),
+                        updated_at: new Date().toISOString()
+                    }, {
+                        onConflict: 'wallet_address'
+                    });
+                
+                if (error) {
+                    alert('❌ Error creating Treasury: ' + error.message);
+                    console.error('Treasury creation error:', error);
+                    return;
+                }
+                
+                // Сохраняем в localStorage
+                localStorage.setItem('tama_balance_TREASURY_MAIN_ACCOUNT', '1000000000');
+                
+                alert('✅ Treasury created successfully with 1,000,000,000 TAMA!');
+                
+                // Обновляем статистику
+                await loadTAMAStatistics();
+                
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+                console.error('Treasury creation error:', error);
             }
         }
         
