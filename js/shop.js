@@ -441,9 +441,15 @@ const TAMAShop = {
                 return;
             }
             
-            // Тратим TAMA
+            // Тратим TAMA через SimpleTAMASystem
             let spent = false;
-            if (window.TAMAModule) {
+            if (window.SimpleTAMASystem) {
+                spent = await window.SimpleTAMASystem.spendTAMA(
+                    window.WalletManager.publicKey.toString(),
+                    item.price,
+                    `Shop: ${item.name}`
+                );
+            } else if (window.TAMAModule) {
                 spent = await window.TAMAModule.spendTAMA(
                     window.WalletManager.publicKey.toString(),
                     item.price,
@@ -519,8 +525,29 @@ const TAMAShop = {
                 window.Utils.saveLocal('petData', window.Game.pet);
             }
             
-            // Обновляем UI
-            if (window.Game.updatePetDisplay) {
+            // Сохраняем в базу данных
+            if (window.Database && window.Database.supabase && window.WalletManager && window.WalletManager.publicKey) {
+                try {
+                    const { error } = await window.Database.supabase
+                        .from('nft_mints')
+                        .update({
+                            pet_data: window.Game.pet,
+                            updated_at: new Date().toISOString()
+                        })
+                        .eq('wallet_address', window.WalletManager.publicKey.toString());
+                    
+                    if (error) {
+                        console.error('❌ Error saving pet data to database:', error);
+                    } else {
+                        console.log('✅ Pet data saved to database after shop purchase');
+                    }
+                } catch (error) {
+                    console.error('❌ Error updating pet data:', error);
+                }
+            }
+            
+            // Обновляем UI питомца
+            if (window.Game && window.Game.updatePetDisplay) {
                 window.Game.updatePetDisplay();
             }
             
