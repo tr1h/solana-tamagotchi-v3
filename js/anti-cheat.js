@@ -7,7 +7,7 @@ const AntiCheat = {
     // Конфигурация
     CONFIG: {
         MAX_XP_PER_ACTION: 100,          // Максимум XP за одно действие
-        MAX_TAMA_PER_ACTION: 100,        // Максимум TAMA за одно действие
+        MAX_TAMA_PER_ACTION: 1000,       // Максимум TAMA за одно действие (1000 для минта!)
         MIN_ACTION_INTERVAL: 1000,       // Минимум 1 секунда между действиями
         MAX_LEVEL_PER_SESSION: 10,       // Максимум 10 левелов за сессию
         SESSION_DURATION: 3600000,       // 1 час = 1 сессия
