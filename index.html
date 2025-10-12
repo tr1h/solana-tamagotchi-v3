@@ -753,7 +753,7 @@
     <script src="js/referral-system.js?v=2"></script>
     <script src="js/achievements.js?v=3"></script>
     <script src="js/minigame.js?v=2"></script>
-    <script src="js/lottery-game.js?v=1"></script>
+    <script src="js/simple-lottery.js?v=1"></script>
     <script src="js/ui.js?v=2"></script>
     
     <script>
@@ -941,8 +941,8 @@
             const lotteryBtn = document.getElementById('lottery-btn');
             if (lotteryBtn) {
                 lotteryBtn.addEventListener('click', () => {
-                    if (window.TAMALottery) {
-                        const lottery = new window.TAMALottery();
+                    if (window.SimpleTAMALottery) {
+                        const lottery = new window.SimpleTAMALottery();
                         lottery.show();
                     }
                 });
