@@ -106,9 +106,9 @@
                     <div class="price-card">
                         <div class="price-main">
                             <span class="price-label">MINT PRICE</span>
-                            <span class="price-value" id="mint-price">0.3 SOL</span>
+                            <span class="price-value" id="mint-price">Loading...</span>
                         </div>
-                        <div class="price-usd" id="price-usd">≈ $45 USD</div>
+                        <div class="price-usd" id="price-usd">≈ Loading USD</div>
                     </div>
 
                     <div class="mint-stats">
@@ -281,6 +281,66 @@
         console.log('Candy Machine:', typeof window['@metaplex-foundation/mpl-candy-machine']);
         console.log('Solana Web3:', typeof window.solanaWeb3);
         console.log('Supabase:', typeof window.supabase);
+        
+        // Load current price from database
+        async function loadCurrentPrice() {
+            try {
+                if (window.Database && window.Database.supabase) {
+                    const { data } = await window.Database.supabase
+                        .from('game_settings')
+                        .select('value')
+                        .eq('key', 'nft_price')
+                        .single();
+                    
+                    if (data) {
+                        const price = parseFloat(data.value);
+                        document.getElementById('mint-price').textContent = `${price} SOL`;
+                        document.getElementById('price-usd').textContent = `≈ $${(price * 150).toFixed(0)} USD`;
+                        
+                        // Update mint button
+                        const mintBtn = document.getElementById('mint-btn');
+                        if (mintBtn) {
+                            mintBtn.querySelector('.btn-text').textContent = `MINT NOW - ${price} SOL`;
+                        }
+                        
+                        console.log('✅ Price loaded from database:', price, 'SOL');
+                        return price;
+                    }
+                }
+            } catch (error) {
+                console.warn('Could not load price from database, using fallback');
+            }
+            
+            // Fallback
+            const fallbackPrice = 0.1;
+            document.getElementById('mint-price').textContent = `${fallbackPrice} SOL`;
+            document.getElementById('price-usd').textContent = `≈ $${(fallbackPrice * 150).toFixed(0)} USD`;
+            
+            const mintBtn = document.getElementById('mint-btn');
+            if (mintBtn) {
+                mintBtn.querySelector('.btn-text').textContent = `MINT NOW - ${fallbackPrice} SOL`;
+            }
+            
+            return fallbackPrice;
+        }
+        
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎨 Mint page loaded');
+            
+            // Load current price
+            loadCurrentPrice();
+            
+            // Initialize wallet connection
+            if (window.WalletManager) {
+                WalletManager.init();
+            }
+            
+            // Initialize mint page
+            if (window.MintPage) {
+                MintPage.init();
+            }
+        });
         
         // Check if all required objects are available
         setTimeout(() => {

@@ -89,7 +89,7 @@ const MetaplexMint = {
             
             // Create NFT with Metaplex and send SOL to treasury
             const treasuryPublicKey = new solanaWeb3.PublicKey(this.TREASURY_ADDRESS);
-            const mintPrice = 0.1; // 0.1 SOL
+            const mintPrice = await this.getCurrentPrice(); // Get price from database
             
             // First, send SOL to treasury
             const transferTransaction = new solanaWeb3.Transaction().add(
@@ -136,6 +136,28 @@ const MetaplexMint = {
                 error: error.message
             };
         }
+    },
+    
+    // Get current price from database
+    async getCurrentPrice() {
+        try {
+            if (window.Database && window.Database.supabase) {
+                const { data } = await window.Database.supabase
+                    .from('game_settings')
+                    .select('value')
+                    .eq('key', 'nft_price')
+                    .single();
+                
+                if (data) {
+                    return parseFloat(data.value);
+                }
+            }
+        } catch (error) {
+            console.warn('Could not get price from database, using fallback');
+        }
+        
+        // Fallback
+        return 0.1;
     },
     
     generateNFTData(customName) {
