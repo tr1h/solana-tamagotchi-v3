@@ -16,8 +16,8 @@ const TreasurySystem = {
     async init() {
         console.log('🏦 Initializing Treasury System...');
         
-        // Создаем Treasury кошелек если не существует
-        await this.ensureTreasuryExists();
+        // НЕ создаем Treasury автоматически - ТОЛЬКО ЧЕРЕЗ АДМИНКУ!
+        // await this.ensureTreasuryExists();
         
         console.log('🏦 Treasury System initialized');
         return this;

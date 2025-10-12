@@ -679,13 +679,12 @@ const MintPage = {
         localStorage.setItem('currentPet', JSON.stringify(petData));
         localStorage.setItem('hasPetFromMint', 'true');
         
-        // Награждаем TAMA за минт через Treasury
-        if (window.TreasurySystem && this.publicKey) {
-            await window.TreasurySystem.awardMintReward(this.publicKey.toString());
-        } else if (window.SimpleTAMASystem && this.publicKey) {
-            // Используем addTAMAFromTreasury для правильного учета Treasury
-            await window.SimpleTAMASystem.addTAMAFromTreasury(this.publicKey.toString(), 1000, 'NFT Mint Reward');
-        }
+        // TAMA награда начисляется в processMintResult() - НЕ ДУБЛИРУЕМ!
+        // if (window.TreasurySystem && this.publicKey) {
+        //     await window.TreasurySystem.awardMintReward(this.publicKey.toString());
+        // } else if (window.SimpleTAMASystem && this.publicKey) {
+        //     await window.SimpleTAMASystem.addTAMAFromTreasury(this.publicKey.toString(), 1000, 'NFT Mint Reward');
+        // }
         
         // Save to database
         this.savePetToDB(petData);
@@ -715,7 +714,7 @@ const MintPage = {
                         level: petData.level,
                         xp: petData.xp,
                         total_xp: petData.total_xp || 0,
-                        tama: parseInt(this.phases[this.getCurrentPhase()].tamaBonus) || 1000, // Bonus from mint
+                        tama: 0, // TAMA начисляется отдельно через SimpleTAMASystem
                         pet_data: petData,
                         created_at: new Date().toISOString(),
                         updated_at: new Date().toISOString()
