@@ -224,7 +224,7 @@ const SimpleTAMASystem = {
                         .insert({
                             wallet_address: walletAddress,
                             amount: amount,
-                            type: reason,
+                            operation_type: reason,
                             balance_before: currentBalance,
                             balance_after: newBalance,
                             description: reason,
@@ -323,7 +323,7 @@ const SimpleTAMASystem = {
                         .insert({
                             wallet_address: walletAddress,
                             amount: -amount,
-                            type: reason,
+                            operation_type: reason,
                             balance_before: currentBalance,
                             balance_after: newBalance,
                             description: reason,
