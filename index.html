@@ -936,9 +936,7 @@
             const tamaBalance = document.querySelector('.balance-tama');
             if (tamaBalance) {
                 tamaBalance.addEventListener('click', function() {
-                    if (window.WalletManager && window.WalletManager.publicKey) {
-                        window.TAMAModule.showTAMADetails(window.WalletManager.publicKey.toString());
-                    }
+                    showTAMADetails();
                 });
             }
             const balanceTama = document.querySelector('.balance-tama');

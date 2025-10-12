@@ -84,13 +84,45 @@ const SimpleTAMASystem = {
 
             // Обновляем в базе данных
             if (this.CONFIG.USE_DATABASE && window.Database && window.Database.supabase) {
+                // Сначала получаем текущие данные
+                const { data: existingData, error: fetchError } = await window.Database.supabase
+                    .from('leaderboard')
+                    .select('*')
+                    .eq('wallet_address', walletAddress)
+                    .single();
+
+                if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 = no rows found
+                    console.error('❌ Error fetching existing data:', fetchError);
+                }
+
+                // Подготавливаем данные для upsert
+                const upsertData = {
+                    wallet_address: walletAddress,
+                    tama: newBalance,
+                    updated_at: new Date().toISOString()
+                };
+
+                // Если запись существует, сохраняем остальные поля
+                if (existingData) {
+                    upsertData.pet_name = existingData.pet_name || 'Unknown';
+                    upsertData.level = existingData.level || 1;
+                    upsertData.xp = existingData.xp || 0;
+                    upsertData.pet_type = existingData.pet_type || 'Unknown';
+                    upsertData.pet_rarity = existingData.pet_rarity || 'common';
+                    upsertData.created_at = existingData.created_at || new Date().toISOString();
+                } else {
+                    // Новая запись
+                    upsertData.pet_name = 'Unknown';
+                    upsertData.level = 1;
+                    upsertData.xp = 0;
+                    upsertData.pet_type = 'Unknown';
+                    upsertData.pet_rarity = 'common';
+                    upsertData.created_at = new Date().toISOString();
+                }
+
                 const { error } = await window.Database.supabase
                     .from('leaderboard')
-                    .upsert({
-                        wallet_address: walletAddress,
-                        tama: newBalance,
-                        updated_at: new Date().toISOString()
-                    }, {
+                    .upsert(upsertData, {
                         onConflict: 'wallet_address'
                     });
 
