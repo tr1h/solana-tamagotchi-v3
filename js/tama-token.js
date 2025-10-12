@@ -138,27 +138,10 @@ const TAMAToken = {
         return 0;
     },
     
-    // Award tokens (with history tracking)
+    // Award tokens (with history tracking) - DISABLED, using SimpleTAMASystem
     async award(walletAddress, amount, reason) {
-        if (!walletAddress || amount <= 0) {
-            console.warn('Invalid award parameters');
-            return false;
-        }
-        
-        try {
-            console.log(`💰 Awarding ${amount} TAMA to ${walletAddress.slice(0, 8)}... for: ${reason}`);
-            
-            if (this.CONFIG.USE_SPL_TOKEN) {
-                // Future: Transfer SPL tokens
-                return await this.transferSPL(walletAddress, amount, reason);
-            } else {
-                // Current: Update database balance
-                return await this.updateDatabaseBalance(walletAddress, amount, reason);
-            }
-        } catch (error) {
-            console.error('Failed to award TAMA:', error);
-            return false;
-        }
+        console.log(`⚠️ TAMAToken.award() disabled - using SimpleTAMASystem instead`);
+        return false;
     },
     
     // Update database balance

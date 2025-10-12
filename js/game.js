@@ -360,14 +360,8 @@ const Game = {
         const feedingCost = 10; // 10 TAMA за кормление
         
         // Проверяем баланс TAMA
-        if (window.TAMAAccounting) {
-            const canAfford = await window.TAMAAccounting.canAfford(WalletManager.getAddress(), feedingCost);
-            if (!canAfford) {
-                Utils.showNotification(`❌ Not enough TAMA! Need: ${feedingCost} TAMA`);
-                return;
-            }
-        } else if (window.TAMAModule) {
-            const balance = await window.TAMAModule.getBalance(WalletManager.getAddress());
+        if (window.SimpleTAMASystem) {
+            const balance = await window.SimpleTAMASystem.getBalance(WalletManager.getAddress());
             if (balance < feedingCost) {
                 Utils.showNotification(`❌ Not enough TAMA! Need: ${feedingCost} TAMA`);
                 return;
@@ -385,8 +379,6 @@ const Game = {
                 if (!success) {
                     throw new Error('Failed to spend TAMA for feeding');
                 }
-            } else if (window.TAMAModule) {
-                await window.TAMAModule.spendTAMA(WalletManager.getAddress(), feedingCost, 'Pet Feeding');
             }
             
             this.pet.stats.hunger = Math.min(100, this.pet.stats.hunger + 25);
@@ -429,8 +421,8 @@ const Game = {
         this.addXP(15);
         
         // Award TAMA for playing
-        if (window.TAMASystem && WalletManager.isConnected()) {
-            await TAMASystem.awardPlaying(WalletManager.getAddress());
+        if (window.SimpleTAMASystem && WalletManager.isConnected()) {
+            await window.SimpleTAMASystem.addTAMA(WalletManager.getAddress(), 10, 'Playing with Pet');
         }
         
         this.updatePetDisplay();
@@ -487,14 +479,8 @@ const Game = {
         const healingCost = 15; // 15 TAMA за лечение
         
         // Проверяем баланс TAMA
-        if (window.TAMAAccounting) {
-            const canAfford = await window.TAMAAccounting.canAfford(WalletManager.getAddress(), healingCost);
-            if (!canAfford) {
-                Utils.showNotification(`❌ Not enough TAMA! Need: ${healingCost} TAMA`);
-                return;
-            }
-        } else if (window.TAMAModule) {
-            const balance = await window.TAMAModule.getBalance(WalletManager.getAddress());
+        if (window.SimpleTAMASystem) {
+            const balance = await window.SimpleTAMASystem.getBalance(WalletManager.getAddress());
             if (balance < healingCost) {
                 Utils.showNotification(`❌ Not enough TAMA! Need: ${healingCost} TAMA`);
                 return;
@@ -512,8 +498,6 @@ const Game = {
                 if (!success) {
                     throw new Error('Failed to spend TAMA for healing');
                 }
-            } else if (window.TAMAModule) {
-                await window.TAMAModule.spendTAMA(WalletManager.getAddress(), healingCost, 'Pet Healing');
             }
             
             this.pet.stats.health = 100;
@@ -600,8 +584,8 @@ const Game = {
         Utils.showNotification(`🎉 Level Up! Now level ${this.pet.level}`);
         
         // Award TAMA for level up
-        if (window.TAMASystem && WalletManager.isConnected()) {
-            await TAMASystem.awardLevelUp(WalletManager.getAddress(), this.pet.level);
+        if (window.SimpleTAMASystem && WalletManager.isConnected()) {
+            await window.SimpleTAMASystem.addTAMA(WalletManager.getAddress(), 50, 'Level Up');
         }
         
         // Update leaderboard
@@ -894,8 +878,8 @@ const Game = {
         }
         
         // Award TAMA for daily login
-        if (window.TAMASystem && WalletManager.isConnected()) {
-            await TAMASystem.awardDailyLogin(WalletManager.getAddress());
+        if (window.SimpleTAMASystem && WalletManager.isConnected()) {
+            await window.SimpleTAMASystem.addTAMA(WalletManager.getAddress(), 25, 'Daily Login');
         }
         
         // Give reward through unified TAMA system
@@ -909,10 +893,6 @@ const Game = {
             await window.TreasurySystem.awardDailyReward(WalletManager.getAddress());
         } else if (window.SimpleTAMASystem && WalletManager.isConnected()) {
             await window.SimpleTAMASystem.addTAMA(WalletManager.getAddress(), reward, 'Daily Login');
-        } else if (window.TAMAModule && WalletManager.isConnected()) {
-            await window.TAMAModule.earnTAMA(WalletManager.getAddress(), reward, 'Daily Login');
-        } else if (window.Database && WalletManager.isConnected()) {
-            await window.Database.updateTAMA(WalletManager.getAddress(), reward, 'Daily Login');
         }
         
         await WalletManager.updateBalanceDisplay();
