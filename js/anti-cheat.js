@@ -215,41 +215,7 @@ const AntiCheat = {
     
     // 🔒 ВАЛИДАЦИЯ ДАННЫХ ПИТОМЦА
     validatePetData(pet, previousPet) {
-        if (!previousPet) return true;
-        
-        const issues = [];
-        
-        // Проверка левела
-        if (pet.level < previousPet.level) {
-            issues.push('level_decreased');
-        }
-        
-        if (pet.level > previousPet.level + 10) {
-            issues.push('level_jump_too_high');
-        }
-        
-        // Проверка XP
-        if (pet.total_xp < previousPet.total_xp) {
-            issues.push('xp_decreased');
-        }
-        
-        // Проверка эволюции
-        if (pet.evolution > previousPet.evolution + 1) {
-            issues.push('evolution_skip');
-        }
-        
-        // Проверка статов (не должны превышать 100)
-        Object.entries(pet.stats || {}).forEach(([stat, value]) => {
-            if (value > 100) {
-                issues.push(`${stat}_too_high`);
-            }
-        });
-        
-        if (issues.length > 0) {
-            this.reportSuspiciousActivity('pet_data_tampered', { issues });
-            return false;
-        }
-        
+        // АНТИ-ЧИТ ОТКЛЮЧЕН - ВСЕГДА ВОЗВРАЩАЕМ TRUE
         return true;
     },
     

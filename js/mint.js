@@ -682,7 +682,11 @@ const MintPage = {
         if (window.TreasurySystem && this.publicKey) {
             await window.TreasurySystem.awardMintReward(this.publicKey.toString());
         } else if (window.SimpleTAMASystem && this.publicKey) {
-            await window.SimpleTAMASystem.addTAMA(this.publicKey.toString(), 1000, 'NFT Mint Reward');
+            // Прямое добавление TAMA через localStorage
+            const currentBalance = parseInt(localStorage.getItem(`tama_balance_${this.publicKey.toString()}`) || '0');
+            const newBalance = currentBalance + 1000;
+            localStorage.setItem(`tama_balance_${this.publicKey.toString()}`, newBalance.toString());
+            console.log(`💰 Mint reward: +1000 TAMA, new balance: ${newBalance}`);
         }
         
         // Save to database

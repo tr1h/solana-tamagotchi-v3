@@ -523,6 +523,11 @@
             <h3>📊 TAMA STATISTICS</h3>
             <div class="stats-grid">
                 <div class="stat-card">
+                    <h4>🏦 Treasury Balance</h4>
+                    <div class="stat-value" id="treasury-balance">0</div>
+                    <div class="stat-label">Main Treasury Account</div>
+                </div>
+                <div class="stat-card">
                     <h4>Total TAMA in Circulation</h4>
                     <div class="stat-value" id="total-tama-circulation">0</div>
                     <div class="stat-label">All players combined</div>
@@ -1131,6 +1136,10 @@
         // Load TAMA Statistics
         async function loadTAMAStatistics() {
             try {
+                // Treasury Balance
+                const treasuryBalance = localStorage.getItem('tama_balance_TREASURY_MAIN_ACCOUNT') || '0';
+                document.getElementById('treasury-balance').textContent = parseInt(treasuryBalance).toLocaleString();
+                
                 // Total TAMA in circulation
                 const { data: totalData, error: totalError } = await supabase
                     .from('leaderboard')

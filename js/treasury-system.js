@@ -32,7 +32,8 @@ const TreasurySystem = {
                 
                 if (!treasuryExists) {
                     console.log('🏦 Creating Treasury with initial supply (FIRST TIME ONLY)...');
-                    await window.SimpleTAMASystem.setBalance(this.CONFIG.TREASURY_WALLET, this.CONFIG.INITIAL_SUPPLY);
+                    // Создаем Treasury через localStorage (без Supabase)
+                    localStorage.setItem(`tama_balance_${this.CONFIG.TREASURY_WALLET}`, this.CONFIG.INITIAL_SUPPLY.toString());
                     console.log(`✅ Treasury created ONCE with ${this.CONFIG.INITIAL_SUPPLY} TAMA`);
                 } else {
                     const treasuryBalance = await window.SimpleTAMASystem.getBalance(this.CONFIG.TREASURY_WALLET);
