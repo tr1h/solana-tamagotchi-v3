@@ -87,10 +87,10 @@ const TreasurySystem = {
 
             console.log(`🏦 Awarding new user bonus to ${walletAddress}`);
 
-            // Проверяем что пользователь новый (нет TAMA в localStorage)
-            const existingBalance = localStorage.getItem(`tama_balance_${walletAddress}`);
-            if (existingBalance && parseInt(existingBalance) > 0) {
-                console.log('👤 User already has TAMA balance, skipping new user bonus');
+            // Проверяем что пользователь новый (не получал бонус ранее)
+            const bonusReceived = localStorage.getItem(`tama_new_user_bonus_${walletAddress}`);
+            if (bonusReceived === 'true') {
+                console.log('👤 User already received new user bonus');
                 return false;
             }
 
@@ -110,6 +110,8 @@ const TreasurySystem = {
                 );
                 
                 if (success) {
+                    // Отмечаем что бонус получен
+                    localStorage.setItem(`tama_new_user_bonus_${walletAddress}`, 'true');
                     console.log(`✅ New user bonus awarded: ${this.CONFIG.NEW_USER_BONUS} TAMA`);
                     return true;
                 }
@@ -132,10 +134,10 @@ const TreasurySystem = {
 
             console.log(`🏦 Awarding mint reward to ${walletAddress}`);
 
-            // Проверяем что пользователь новый (нет TAMA в localStorage)
-            const existingBalance = localStorage.getItem(`tama_balance_${walletAddress}`);
-            if (existingBalance && parseInt(existingBalance) > 0) {
-                console.log('👤 User already has TAMA balance, skipping mint reward (already got new user bonus)');
+            // Проверяем что не получал mint reward ранее
+            const mintRewardReceived = localStorage.getItem(`tama_mint_reward_${walletAddress}`);
+            if (mintRewardReceived === 'true') {
+                console.log('👤 User already received mint reward');
                 return false;
             }
 
@@ -143,10 +145,12 @@ const TreasurySystem = {
                 const success = await window.SimpleTAMASystem.addTAMA(
                     walletAddress, 
                     this.CONFIG.MINT_REWARD, 
-                    'NFT Mint Reward (New User)'
+                    'NFT Mint Reward'
                 );
                 
                 if (success) {
+                    // Отмечаем что mint reward получен
+                    localStorage.setItem(`tama_mint_reward_${walletAddress}`, 'true');
                     console.log(`✅ Mint reward awarded: ${this.CONFIG.MINT_REWARD} TAMA`);
                     return true;
                 }
