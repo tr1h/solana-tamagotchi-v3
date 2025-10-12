@@ -82,6 +82,30 @@ const SimpleTAMASystem = {
                     const newTreasuryBalance = treasuryBalance - amount;
                     localStorage.setItem('tama_balance_TREASURY_MAIN_ACCOUNT', newTreasuryBalance.toString());
                     console.log(`🏦 Treasury decreased: ${treasuryBalance} → ${newTreasuryBalance} TAMA`);
+                    
+                    // Синхронизируем Treasury в базе данных
+                    if (this.CONFIG.USE_DATABASE && window.Database && window.Database.supabase) {
+                        const { error } = await window.Database.supabase
+                            .from('leaderboard')
+                            .upsert({
+                                wallet_address: 'TREASURY_MAIN_ACCOUNT',
+                                pet_name: 'Treasury',
+                                level: 1,
+                                xp: 0,
+                                tama: newTreasuryBalance,
+                                pet_type: 'Treasury',
+                                pet_rarity: 'legendary',
+                                updated_at: new Date().toISOString()
+                            }, {
+                                onConflict: 'wallet_address'
+                            });
+                        
+                        if (error) {
+                            console.error('❌ Treasury sync error:', error);
+                        } else {
+                            console.log(`✅ Treasury synced to database: ${newTreasuryBalance} TAMA`);
+                        }
+                    }
                 } else {
                     console.warn('⚠️ Treasury insufficient funds!');
                     return false;
@@ -274,6 +298,41 @@ const SimpleTAMASystem = {
             console.log(`🎨 UI updated with balance: ${balance} TAMA`);
         } catch (error) {
             console.error('❌ Error updating UI balance:', error);
+        }
+    },
+
+    // Sync Treasury balance to database
+    async syncTreasuryToDatabase() {
+        try {
+            const treasuryBalance = parseInt(localStorage.getItem('tama_balance_TREASURY_MAIN_ACCOUNT') || '0');
+            
+            if (this.CONFIG.USE_DATABASE && window.Database && window.Database.supabase) {
+                const { error } = await window.Database.supabase
+                    .from('leaderboard')
+                    .upsert({
+                        wallet_address: 'TREASURY_MAIN_ACCOUNT',
+                        pet_name: 'Treasury',
+                        level: 1,
+                        xp: 0,
+                        tama: treasuryBalance,
+                        pet_type: 'Treasury',
+                        pet_rarity: 'legendary',
+                        updated_at: new Date().toISOString()
+                    }, {
+                        onConflict: 'wallet_address'
+                    });
+                
+                if (error) {
+                    console.error('❌ Treasury sync error:', error);
+                    return false;
+                } else {
+                    console.log(`✅ Treasury synced to database: ${treasuryBalance} TAMA`);
+                    return true;
+                }
+            }
+        } catch (error) {
+            console.error('❌ Treasury sync error:', error);
+            return false;
         }
     },
 
