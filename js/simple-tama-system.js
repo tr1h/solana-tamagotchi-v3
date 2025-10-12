@@ -23,7 +23,17 @@ const SimpleTAMASystem = {
                 return 0;
             }
 
-            // Пробуем получить из базы данных (кроме Treasury)
+            // СНАЧАЛА проверяем localStorage (более надежно)
+            if (this.CONFIG.FALLBACK_TO_LOCAL) {
+                const localBalance = localStorage.getItem(`tama_balance_${walletAddress}`);
+                if (localBalance && parseFloat(localBalance) > 0) {
+                    const balance = parseFloat(localBalance);
+                    console.log(`💰 Balance from localStorage: ${balance} TAMA`);
+                    return balance;
+                }
+            }
+
+            // Потом пробуем получить из базы данных (кроме Treasury)
             if (this.CONFIG.USE_DATABASE && window.Database && window.Database.supabase && walletAddress !== 'TREASURY_MAIN_ACCOUNT') {
                 const { data, error } = await window.Database.supabase
                     .from('leaderboard')
@@ -31,19 +41,19 @@ const SimpleTAMASystem = {
                     .eq('wallet_address', walletAddress)
                     .single();
 
-                if (!error && data && data.tama !== null) {
+                if (!error && data && data.tama !== null && data.tama > 0) {
                     console.log(`💰 Balance from database: ${data.tama} TAMA`);
                     return data.tama || 0;
                 } else {
-                    console.log('⚠️ No database balance, using localStorage');
+                    console.log('⚠️ No valid database balance, using localStorage fallback');
                 }
             }
 
-            // Fallback к localStorage
+            // Финальный fallback к localStorage
             if (this.CONFIG.FALLBACK_TO_LOCAL) {
                 const localBalance = localStorage.getItem(`tama_balance_${walletAddress}`);
                 const balance = localBalance ? parseFloat(localBalance) : 0;
-                console.log(`💰 Balance from localStorage: ${balance} TAMA`);
+                console.log(`💰 Final fallback from localStorage: ${balance} TAMA`);
                 return balance;
             }
 
@@ -95,10 +105,9 @@ const SimpleTAMASystem = {
                     console.error('❌ Error fetching existing data:', fetchError);
                 }
 
-                // Подготавливаем данные для upsert
+                // Подготавливаем данные для upsert (БЕЗ TAMA - только для создания записи)
                 const upsertData = {
                     wallet_address: walletAddress,
-                    tama: newBalance,
                     updated_at: new Date().toISOString()
                 };
 
@@ -128,11 +137,13 @@ const SimpleTAMASystem = {
 
                 if (error) {
                     console.error('❌ Database error, using local storage:', error);
-                    // Fallback к localStorage
-                    localStorage.setItem(`tama_balance_${walletAddress}`, newBalance.toString());
                 } else {
-                    console.log(`✅ TAMA added via database: ${newBalance}`);
+                    console.log(`✅ Database updated (without TAMA field)`);
                 }
+                
+                // ВСЕГДА обновляем localStorage
+                localStorage.setItem(`tama_balance_${walletAddress}`, newBalance.toString());
+                console.log(`✅ TAMA added via localStorage: ${newBalance}`);
             } else {
                 // Используем localStorage
                 localStorage.setItem(`tama_balance_${walletAddress}`, newBalance.toString());
@@ -168,30 +179,27 @@ const SimpleTAMASystem = {
 
             const newBalance = currentBalance - amount;
 
-            // Обновляем в базе данных
+            // Обновляем в базе данных (БЕЗ TAMA поля)
             if (this.CONFIG.USE_DATABASE && window.Database && window.Database.supabase) {
                 const { error } = await window.Database.supabase
                     .from('leaderboard')
                     .upsert({
                         wallet_address: walletAddress,
-                        tama: newBalance,
                         updated_at: new Date().toISOString()
                     }, {
                         onConflict: 'wallet_address'
                     });
 
                 if (error) {
-                    console.error('❌ Database error, using local storage:', error);
-                    // Fallback к localStorage
-                    localStorage.setItem(`tama_balance_${walletAddress}`, newBalance.toString());
+                    console.error('❌ Database error:', error);
                 } else {
-                    console.log(`✅ TAMA spent via database: ${newBalance}`);
+                    console.log(`✅ Database updated (without TAMA field)`);
                 }
-            } else {
-                // Используем localStorage
-                localStorage.setItem(`tama_balance_${walletAddress}`, newBalance.toString());
-                console.log(`✅ TAMA spent via localStorage: ${newBalance}`);
             }
+            
+            // ВСЕГДА обновляем localStorage
+            localStorage.setItem(`tama_balance_${walletAddress}`, newBalance.toString());
+            console.log(`✅ TAMA spent via localStorage: ${newBalance}`);
 
             // Обновляем UI
             this.updateUIBalance(newBalance);
