@@ -263,12 +263,30 @@
             <p>Your NFT has been minted!</p>
             <div class="modal-buttons">
                 <button onclick="window.location.href='index.html'" class="btn-play">Play Now</button>
-                <button onclick="closeModal()" class="btn-close">View on Explorer</button>
+                <button onclick="viewOnExplorer()" class="btn-close">View on Explorer</button>
             </div>
         </div>
     </div>
 
     <script src="js/utils.js?v=5"></script>
+    
+    <script>
+        // Function to view NFT on blockchain explorer
+        function viewOnExplorer() {
+            // Get the minted NFT data
+            const nftData = JSON.parse(localStorage.getItem('nftData') || '{}');
+            
+            if (nftData.mintAddress) {
+                // Open Solscan explorer for the mint address
+                const explorerUrl = `https://solscan.io/token/${nftData.mintAddress}?cluster=devnet`;
+                window.open(explorerUrl, '_blank');
+            } else {
+                // Fallback to general Solscan devnet
+                const explorerUrl = 'https://solscan.io/?cluster=devnet';
+                window.open(explorerUrl, '_blank');
+            }
+        }
+    </script>
     <script src="js/database-supabase.js?v=5"></script>
     <script src="js/simple-nft-mint.js?v=5"></script>
     <script src="js/mint.js?v=11"></script>
