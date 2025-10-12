@@ -525,24 +525,27 @@ const TAMAShop = {
                 window.Utils.saveLocal('petData', window.Game.pet);
             }
             
-            // Сохраняем в базу данных
+            // Сохраняем в базу данных (обновляем hunger, happiness, health, energy)
             if (window.Database && window.Database.supabase && window.WalletManager && window.WalletManager.publicKey) {
                 try {
                     const { error } = await window.Database.supabase
                         .from('nft_mints')
                         .update({
-                            pet_data: window.Game.pet,
+                            hunger: window.Game.pet.hunger || 100,
+                            happiness: window.Game.pet.happiness || 100,
+                            health: window.Game.pet.health || 100,
+                            energy: window.Game.pet.energy || 100,
                             updated_at: new Date().toISOString()
                         })
                         .eq('wallet_address', window.WalletManager.publicKey.toString());
                     
                     if (error) {
-                        console.error('❌ Error saving pet data to database:', error);
+                        console.error('❌ Error saving pet stats to database:', error);
                     } else {
-                        console.log('✅ Pet data saved to database after shop purchase');
+                        console.log('✅ Pet stats saved to database after shop purchase');
                     }
                 } catch (error) {
-                    console.error('❌ Error updating pet data:', error);
+                    console.error('❌ Error updating pet stats:', error);
                 }
             }
             

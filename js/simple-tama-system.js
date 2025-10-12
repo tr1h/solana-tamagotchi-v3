@@ -83,22 +83,15 @@ const SimpleTAMASystem = {
                     localStorage.setItem('tama_balance_TREASURY_MAIN_ACCOUNT', newTreasuryBalance.toString());
                     console.log(`🏦 Treasury decreased: ${treasuryBalance} → ${newTreasuryBalance} TAMA`);
                     
-                    // Синхронизируем Treasury в базе данных
+                    // Синхронизируем Treasury в базе данных (UPDATE ONLY)
                     if (this.CONFIG.USE_DATABASE && window.Database && window.Database.supabase) {
                         const { error } = await window.Database.supabase
                             .from('leaderboard')
-                            .upsert({
-                                wallet_address: 'TREASURY_MAIN_ACCOUNT',
-                                pet_name: 'Treasury',
-                                level: 1,
-                                xp: 0,
+                            .update({
                                 tama: newTreasuryBalance,
-                                pet_type: 'Treasury',
-                                pet_rarity: 'legendary',
                                 updated_at: new Date().toISOString()
-                            }, {
-                                onConflict: 'wallet_address'
-                            });
+                            })
+                            .eq('wallet_address', 'TREASURY_MAIN_ACCOUNT');
                         
                         if (error) {
                             console.error('❌ Treasury sync error:', error);
@@ -209,22 +202,15 @@ const SimpleTAMASystem = {
             localStorage.setItem('tama_balance_TREASURY_MAIN_ACCOUNT', newTreasuryBalance.toString());
             console.log(`🏦 Treasury increased: ${treasuryBalance} → ${newTreasuryBalance} TAMA (returned from spending)`);
 
-            // Синхронизируем Treasury в базе данных
+            // Синхронизируем Treasury в базе данных (UPDATE ONLY)
             if (this.CONFIG.USE_DATABASE && window.Database && window.Database.supabase) {
                 const { error: treasuryError } = await window.Database.supabase
                     .from('leaderboard')
-                    .upsert({
-                        wallet_address: 'TREASURY_MAIN_ACCOUNT',
-                        pet_name: 'Treasury',
-                        level: 1,
-                        xp: 0,
+                    .update({
                         tama: newTreasuryBalance,
-                        pet_type: 'Treasury',
-                        pet_rarity: 'legendary',
                         updated_at: new Date().toISOString()
-                    }, {
-                        onConflict: 'wallet_address'
-                    });
+                    })
+                    .eq('wallet_address', 'TREASURY_MAIN_ACCOUNT');
                 
                 if (treasuryError) {
                     console.error('❌ Treasury sync error:', treasuryError);
