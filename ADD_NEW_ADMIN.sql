@@ -1,13 +1,12 @@
--- ============================================
--- 🔐 ADD NEW ADMIN WALLET
--- ============================================
+-- 👤 ADD NEW ADMIN WALLET
+-- Добавляем новый админский кошелек в базу данных
 
--- Добавляем новый админский кошелек
+-- Добавляем нового админа
 INSERT INTO admins (wallet_address, role, permissions, created_at, updated_at)
 VALUES (
-    'G8vpUg12KQUXkv7JfRxfSxYPUDwW9jtZ8CiL8KB5aXK2',
+    '94Bb9DHFrLgJqv9jAYYoMNHGjH4KJNjk86vFDYUvWowr',
     'admin',
-    '["read", "write", "delete", "admin"]',
+    '{"tama_operations": true, "nft_management": true, "price_control": true, "user_management": true}',
     NOW(),
     NOW()
 )
@@ -16,7 +15,19 @@ ON CONFLICT (wallet_address) DO UPDATE SET
     permissions = EXCLUDED.permissions,
     updated_at = NOW();
 
--- Проверяем что добавилось
-SELECT * FROM admins WHERE wallet_address = 'G8vpUg12KQUXkv7JfRxfSxYPUDwW9jtZ8CiL8KB5aXK2';
+-- Проверяем что админ добавлен
+SELECT 
+    wallet_address,
+    role,
+    permissions,
+    created_at
+FROM admins 
+WHERE wallet_address = '94Bb9DHFrLgJqv9jAYYoMNHGjH4KJNjk86vFDYUvWowr';
 
--- ✅ Новый админ добавлен!
+-- Показываем всех админов
+SELECT 
+    wallet_address,
+    role,
+    created_at
+FROM admins 
+ORDER BY created_at DESC;
