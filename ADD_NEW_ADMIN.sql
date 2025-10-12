@@ -1,6 +1,16 @@
 -- 👤 ADD NEW ADMIN WALLET
 -- Добавляем новый админский кошелек в базу данных
 
+-- Сначала создаем таблицу если её нет
+CREATE TABLE IF NOT EXISTS admins (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    wallet_address TEXT UNIQUE NOT NULL,
+    role TEXT NOT NULL DEFAULT 'admin',
+    permissions JSONB DEFAULT '{"tama_operations": true, "nft_management": true, "price_control": true, "user_management": true}',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- Добавляем нового админа
 INSERT INTO admins (wallet_address, role, permissions, created_at, updated_at)
 VALUES (
