@@ -761,16 +761,75 @@ def send_mint(message):
 
 @bot.message_handler(commands=['leaderboard', 'top'], func=lambda message: message.chat.type in ['group', 'supergroup'])
 def send_leaderboard(message):
-    text = """
-🏆 *Leaderboard:*
+    try:
+        # Get referral leaderboard - top referrers by total referrals
+        referral_stats = []
+        
+        # Get all users with their referral counts
+        users_response = supabase.table('leaderboard').select('pet_name, telegram_username, telegram_id, wallet_address').execute()
+        
+        for user in users_response.data:
+            wallet_address = user.get('wallet_address')
+            telegram_id = user.get('telegram_id')
+            
+            if wallet_address and telegram_id:
+                # Count active referrals (with wallets)
+                active_refs = supabase.table('referrals').select('*', count='exact').eq('referrer_address', wallet_address).execute()
+                active_count = active_refs.count or 0
+                
+                # Count pending referrals (without wallets yet)
+                pending_refs = supabase.table('pending_referrals').select('*', count='exact').eq('referrer_telegram_id', str(telegram_id)).eq('status', 'pending').execute()
+                pending_count = pending_refs.count or 0
+                
+                total_referrals = active_count + pending_count
+                
+                if total_referrals > 0:  # Only show users with referrals
+                    referral_stats.append({
+                        'name': user.get('pet_name', user.get('telegram_username', 'Anonymous')) or 'Anonymous',
+                        'active': active_count,
+                        'pending': pending_count,
+                        'total': total_referrals
+                    })
+        
+        # Sort by total referrals
+        referral_stats.sort(key=lambda x: x['total'], reverse=True)
+        
+        # Build referral leaderboard
+        referral_text = ""
+        if referral_stats:
+            for i, user in enumerate(referral_stats[:5], 1):  # Top 5 for groups
+                medal = "🥇" if i == 1 else "🥈" if i == 2 else "🥉" if i == 3 else f"{i}."
+                name = user['name']
+                total = user['total']
+                active = user['active']
+                pending = user['pending']
+                
+                if pending > 0:
+                    referral_text += f"{medal} {name} - {total} total ({active} active, {pending} pending)\n"
+                else:
+                    referral_text += f"{medal} {name} - {total} referrals\n"
+        else:
+            referral_text = "No referrals yet!\n\n🔗 Start referring friends!"
+        
+        text = f"""
+🏆 *Referral Leaderboard:*
 
-*Top Players by XP:*
-1. 🥇 Player1 - Level 15
-2. 🥈 Player2 - Level 12
-3. 🥉 Player3 - Level 10
+*Top Referrers:*
+{referral_text}
 
-🎮 *Play more to climb the ranks!*
-    """
+💡 *Get your link:* /ref
+        """
+        
+    except Exception as e:
+        print(f"Error getting referral leaderboard: {e}")
+        text = """
+🏆 *Referral Leaderboard:*
+
+❌ *Error loading leaderboard*
+
+Please try again later!
+        """
+    
     bot.reply_to(message, text, parse_mode='Markdown')
 
 @bot.message_handler(commands=['info'], func=lambda message: message.chat.type in ['group', 'supergroup'])
@@ -1131,53 +1190,73 @@ To start playing and tracking your stats:
     
     elif call.data == "leaderboard":
         try:
-            # Debug: Check all data in leaderboard table
-            debug_response = supabase.table('leaderboard').select('*').execute()
-            print(f"DEBUG: Found {len(debug_response.data)} players in database")
-            print(f"DEBUG: Data: {debug_response.data}")
+            # Get referral leaderboard - top referrers by total referrals
+            referral_stats = []
             
-            # Get top players by TAMA from Supabase
-            tama_response = supabase.table('leaderboard').select('pet_name, tama, level, pet_type').order('tama', desc=True).limit(5).execute()
+            # Get all users with their referral counts
+            users_response = supabase.table('leaderboard').select('pet_name, telegram_username, telegram_id, wallet_address').execute()
             
-            # Get top players by level from Supabase
-            level_response = supabase.table('leaderboard').select('pet_name, level, tama, pet_type').order('level', desc=True).limit(5).execute()
+            for user in users_response.data:
+                wallet_address = user.get('wallet_address')
+                telegram_id = user.get('telegram_id')
+                
+                if wallet_address and telegram_id:
+                    # Count active referrals (with wallets)
+                    active_refs = supabase.table('referrals').select('*', count='exact').eq('referrer_address', wallet_address).execute()
+                    active_count = active_refs.count or 0
+                    
+                    # Count pending referrals (without wallets yet)
+                    pending_refs = supabase.table('pending_referrals').select('*', count='exact').eq('referrer_telegram_id', str(telegram_id)).eq('status', 'pending').execute()
+                    pending_count = pending_refs.count or 0
+                    
+                    total_referrals = active_count + pending_count
+                    
+                    if total_referrals > 0:  # Only show users with referrals
+                        referral_stats.append({
+                            'name': user.get('pet_name', user.get('telegram_username', 'Anonymous')) or 'Anonymous',
+                            'active': active_count,
+                            'pending': pending_count,
+                            'total': total_referrals
+                        })
             
-            # Build TAMA leaderboard
-            tama_text = ""
-            if tama_response.data:
-                for i, player in enumerate(tama_response.data, 1):
+            # Sort by total referrals
+            referral_stats.sort(key=lambda x: x['total'], reverse=True)
+            
+            # Build referral leaderboard
+            referral_text = ""
+            if referral_stats:
+                for i, user in enumerate(referral_stats[:10], 1):  # Top 10
                     medal = "🥇" if i == 1 else "🥈" if i == 2 else "🥉" if i == 3 else f"{i}."
-                    name = player.get('pet_name', 'Anonymous') or 'Anonymous'
-                    tama = player.get('tama', 0) or 0
-                    pet_type = player.get('pet_type', 'Unknown') or 'Unknown'
-                    tama_text += f"{medal} {name} ({pet_type}) - {tama:,} TAMA\n"
+                    name = user['name']
+                    total = user['total']
+                    active = user['active']
+                    pending = user['pending']
+                    
+                    if pending > 0:
+                        referral_text += f"{medal} {name} - {total} total ({active} active, {pending} pending)\n"
+                    else:
+                        referral_text += f"{medal} {name} - {total} referrals\n"
             else:
-                tama_text = "No players yet!\n"
-            
-            # Build Level leaderboard
-            level_text = ""
-            if level_response.data:
-                for i, player in enumerate(level_response.data, 1):
-                    medal = "🥇" if i == 1 else "🥈" if i == 2 else "🥉" if i == 3 else f"{i}."
-                    name = player.get('pet_name', 'Anonymous') or 'Anonymous'
-                    level = player.get('level', 1) or 1
-                    pet_type = player.get('pet_type', 'Unknown') or 'Unknown'
-                    level_text += f"{medal} {name} ({pet_type}) - Level {level}\n"
-            else:
-                level_text = "No players yet!\n"
+                referral_text = "No referrals yet!\n\n🔗 Start referring friends to climb the ranks!"
             
             text = f"""
-🏆 *Live Leaderboard:*
+🏆 *Referral Leaderboard:*
 
-*Top Players by XP:*
-{level_text}
-🎮 *Play more to climb the ranks!*
+*Top Referrers:*
+{referral_text}
+
+💡 *How to earn:*
+• Share your referral link
+• Get 100 TAMA per friend
+• Milestone bonuses available!
+
+🎯 *Get your link:* /ref
             """
             
         except Exception as e:
-            print(f"Error getting leaderboard: {e}")
+            print(f"Error getting referral leaderboard: {e}")
             text = """
-🏆 *Leaderboard:*
+🏆 *Referral Leaderboard:*
 
 ❌ *Error loading leaderboard*
 
