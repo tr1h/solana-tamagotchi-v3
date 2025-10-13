@@ -69,7 +69,13 @@ def generate_referral_code(wallet_address, user_id):
 def find_wallet_by_referral_code(ref_code):
     """Find wallet address by beautiful referral code"""
     try:
-        # Get all users and check their codes
+        # Try to find by referral_code in leaderboard (fast lookup)
+        response = supabase.table('leaderboard').select('wallet_address').eq('referral_code', ref_code).execute()
+        
+        if response.data and len(response.data) > 0:
+            return response.data[0]['wallet_address']
+        
+        # Fallback: Generate codes for all users and find match (slow, but works for old users)
         response = supabase.table('leaderboard').select('wallet_address, telegram_id').execute()
         
         for user in response.data:
@@ -77,6 +83,10 @@ def find_wallet_by_referral_code(ref_code):
                 # Generate code for this user
                 generated_code = generate_referral_code(user['wallet_address'], user['telegram_id'])
                 if generated_code == ref_code:
+                    # Save the code for next time (optimization)
+                    supabase.table('leaderboard').update({
+                        'referral_code': ref_code
+                    }).eq('wallet_address', user['wallet_address']).execute()
                     return user['wallet_address']
         
         return None
@@ -581,6 +591,14 @@ def send_referral(message):
     telegram_link = f"https://t.me/solana_tamagotchi_v3_bot?start=ref{ref_code}"
     game_link = f"{GAME_URL}?ref={wallet_address}&tg_id={user_id}&tg_username={username}"
     short_link = f"https://tama.game/ref/{ref_code}"
+    
+    # Save referral code to database for fast lookup
+    try:
+        supabase.table('leaderboard').update({
+            'referral_code': ref_code
+        }).eq('wallet_address', wallet_address).execute()
+    except Exception as e:
+        print(f"Error saving referral code: {e}")
     
     # Get referral stats
     try:
