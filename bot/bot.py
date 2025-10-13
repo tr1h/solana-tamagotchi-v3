@@ -643,12 +643,8 @@ def send_referral(message):
     short_link = f"https://tr1h.github.io/solana-tamagotchi/s.html/{ref_code}"
     
     text = f"""
-🔗 *Your Personal Referral Links:*
+🔗 *Your Personal Referral Link:*
 
-📱 *Direct Bot Link:*
-`{telegram_link}`
-
-🌐 *Beautiful Link (with preview):*
 `{short_link}`
 
 📊 *Your Stats:*
@@ -667,17 +663,13 @@ def send_referral(message):
 • 50 referrals → +30,000 TAMA
 • 100 referrals → +100,000 TAMA + Legendary Badge!
 
-💡 *Tip: Use the beautiful link for better sharing!*
+📤 *Share with friends and start earning!*
     """
     
     keyboard = types.InlineKeyboardMarkup()
     keyboard.row(
         types.InlineKeyboardButton("🎮 Visit Site", url=game_link),
-        types.InlineKeyboardButton("📤 Share Beautiful Link", url=f"https://t.me/share/url?url={short_link}&text=🎮 Join me in Solana Tamagotchi! Get 100 TAMA bonus! No wallet needed!")
-    )
-    keyboard.row(
-        types.InlineKeyboardButton("📋 Copy Bot Link", callback_data=f"copy_bot_link_{ref_code}"),
-        types.InlineKeyboardButton("📋 Copy Beautiful Link", callback_data=f"copy_beautiful_link_{ref_code}")
+        types.InlineKeyboardButton("📤 Share Link", url=f"https://t.me/share/url?url={short_link}&text=🎮 Join me in Solana Tamagotchi! Get 100 TAMA bonus! No wallet needed!")
     )
     
     bot.reply_to(message, text, parse_mode='Markdown', reply_markup=keyboard)
@@ -1061,20 +1053,6 @@ def echo_message(message):
 # Callback handlers
 @bot.callback_query_handler(func=lambda call: True)
 def handle_callback(call):
-    # Handle copy bot link
-    if call.data.startswith("copy_bot_link_"):
-        ref_code = call.data.replace("copy_bot_link_", "")
-        bot_link = f"https://t.me/solana_tamagotchi_v3_bot?start=ref{ref_code}"
-        bot.answer_callback_query(call.id, f"Bot link copied! 📋\n\n{bot_link}", show_alert=True)
-        return
-    
-    # Handle copy beautiful link
-    if call.data.startswith("copy_beautiful_link_"):
-        ref_code = call.data.replace("copy_beautiful_link_", "")
-        beautiful_link = f"https://tr1h.github.io/solana-tamagotchi/s.html/{ref_code}"
-        bot.answer_callback_query(call.id, f"Beautiful link copied! 📋\n\n{beautiful_link}", show_alert=True)
-        return
-    
     if call.data == "get_referral":
         # Generate referral link with Telegram auto-linking
         user_id = call.from_user.id
