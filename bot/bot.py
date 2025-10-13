@@ -639,8 +639,8 @@ def send_referral(message):
         total_earnings = 0
         pending_count = 0
     
-    # Create super short beautiful referral link with preview
-    short_link = f"https://tr1h.github.io/solana-tamagotchi/s.html/{ref_code}"
+    # Create super short beautiful referral link with preview (using query parameters for GitHub Pages)
+    short_link = f"https://tr1h.github.io/solana-tamagotchi/s.html?ref={ref_code}"
     
     text = f"""
 🔗 *Your Personal Referral Link:*
