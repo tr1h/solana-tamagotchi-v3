@@ -208,13 +208,37 @@ def handle_start(message):
                 user_id = message.from_user.id
                 username = message.from_user.username or message.from_user.first_name
                 
-                # Save to database or send to game
-                referral_data = {
-                    'referrer_wallet': wallet_address,
-                    'telegram_id': user_id,
-                    'telegram_username': username,
-                    'timestamp': datetime.now().isoformat()
-                }
+                # Find referrer telegram_id by wallet or code
+                try:
+                    # Try to find referrer by wallet address
+                    referrer_response = supabase.table('leaderboard').select('telegram_id, telegram_username').eq('wallet_address', wallet_address).execute()
+                    
+                    if referrer_response.data and len(referrer_response.data) > 0:
+                        referrer_telegram_id = referrer_response.data[0].get('telegram_id')
+                        referrer_username = referrer_response.data[0].get('telegram_username', 'Friend')
+                    else:
+                        # Try to find by referral code
+                        referrer_by_code = supabase.table('leaderboard').select('telegram_id, telegram_username').eq('referral_code', ref_code).execute()
+                        if referrer_by_code.data and len(referrer_by_code.data) > 0:
+                            referrer_telegram_id = referrer_by_code.data[0].get('telegram_id')
+                            referrer_username = referrer_by_code.data[0].get('telegram_username', 'Friend')
+                        else:
+                            referrer_telegram_id = None
+                            referrer_username = 'Friend'
+                    
+                    # Save pending referral to database
+                    if referrer_telegram_id:
+                        supabase.table('pending_referrals').insert({
+                            'referrer_telegram_id': str(referrer_telegram_id),
+                            'referred_telegram_id': str(user_id),
+                            'referrer_username': referrer_username,
+                            'referred_username': username,
+                            'referral_code': ref_code,
+                            'status': 'pending'
+                        }).execute()
+                        print(f"✅ Saved pending referral: {referrer_telegram_id} -> {user_id}")
+                except Exception as e:
+                    print(f"Error saving pending referral: {e}")
                 
                 # Send welcome with referral info
                 welcome_text = f"""
@@ -311,12 +335,16 @@ def send_stats(message):
         if response.data:
             player = response.data[0]
             
-            # Get referral stats
+            # Get referral stats (active referrals with wallets)
             ref_l1_response = supabase.table('referrals').select('*', count='exact').eq('referrer_address', player['wallet_address']).eq('level', 1).execute()
             ref_l2_response = supabase.table('referrals').select('*', count='exact').eq('referrer_address', player['wallet_address']).eq('level', 2).execute()
             
             level1_count = ref_l1_response.count or 0
             level2_count = ref_l2_response.count or 0
+            
+            # Get pending referrals (not connected wallet yet)
+            pending_response = supabase.table('pending_referrals').select('*', count='exact').eq('referrer_telegram_id', telegram_id).eq('status', 'pending').execute()
+            pending_count = pending_response.count or 0
             
             # Calculate total earned from referrals
             level1_earned = sum([r.get('signup_reward', 0) for r in ref_l1_response.data]) if ref_l1_response.data else 0
@@ -339,10 +367,11 @@ def send_stats(message):
 • TAMA Tokens: {player.get('tama', 0)}
 
 🔗 *Your Referrals:*
-• Level 1 Direct: {level1_count} ({level1_earned} TAMA)
-• Level 2 Indirect: {level2_count} ({level2_earned} TAMA)
-• Total Referrals: {total_referrals}
-• Total Earned: {total_earned} TAMA
+• ⏳ Pending: {pending_count} (waiting for wallet)
+• ✅ Level 1 Direct: {level1_count} ({level1_earned} TAMA)
+• ✅ Level 2 Indirect: {level2_count} ({level2_earned} TAMA)
+• 📊 Total Active: {total_referrals}
+• 💰 Total Earned: {total_earned} TAMA
 
 👛 *Wallet:*
 • `{player['wallet_address'][:8]}...{player['wallet_address'][-8:]}`
@@ -350,17 +379,30 @@ def send_stats(message):
 *Keep playing and referring friends to earn more!* 🚀
             """
         else:
-            # No wallet linked yet
+            # No wallet linked yet - but show pending referrals!
             game_link = f"{GAME_URL}?tg_id={telegram_id}&tg_username={username}"
+            
+            # Get pending referrals even without wallet
+            try:
+                pending_response = supabase.table('pending_referrals').select('*', count='exact').eq('referrer_telegram_id', telegram_id).eq('status', 'pending').execute()
+                pending_count = pending_response.count or 0
+            except:
+                pending_count = 0
+            
             text = f"""
 📊 *Your Personal Stats:*
 
 ❌ *No wallet linked yet!*
 
+🔗 *Your Referrals:*
+• ⏳ Pending: {pending_count} friends waiting!
+• 💰 Potential Earnings: {pending_count * 100} TAMA
+
 To start playing and tracking your stats:
 1️⃣ Click the button below
 2️⃣ Connect your Phantom wallet
 3️⃣ Your progress will be automatically saved!
+4️⃣ All pending referrals will be activated!
 
 🎮 *Ready to start?*
             """
