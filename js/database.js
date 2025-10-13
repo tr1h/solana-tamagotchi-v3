@@ -6,8 +6,8 @@ const Database = {
     db: null,
     initialized: false,
     useSupabase: true, // Use Supabase instead of MySQL/Firebase
-    supabaseUrl: 'https://zfrazyupameidxpjihrh.supabase.co',
-    supabaseKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpmcmF6eXVwYW1laWR4cGppaHJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5Mzc1NTAsImV4cCI6MjA3NTUxMzU1MH0.1EkMDqCNJoAjcJDh3Dd3yPfus-JpdcwE--z2dhjh7wU',
+    supabaseUrl: window.SUPABASE_URL || 'https://your-project.supabase.co',
+    supabaseKey: window.SUPABASE_KEY || 'your-anon-key-here',
     apiURL: 'https://nitric-ara-unsuperlative.ngrok-free.dev/solana-tamagotchi/api',
     
     // Initialize Firebase

@@ -17,11 +17,10 @@ const Database = {
                 return false;
             }
             
-            // Use the global supabase.createClient
-            this.supabase = window.supabase.createClient(
-                'https://zfrazyupameidxpjihrh.supabase.co',
-                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpmcmF6eXVwYW1laWR4cGppaHJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5Mzc1NTAsImV4cCI6MjA3NTUxMzU1MH0.1EkMDqCNJoAjcJDh3Dd3yPfus-JpdcwE--z2dhjh7wU'
-            );
+            // Use environment variables for Supabase configuration
+            const supabaseUrl = window.SUPABASE_URL || 'https://your-project.supabase.co';
+            const supabaseKey = window.SUPABASE_KEY || 'your-anon-key-here';
+            this.supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
             
             if (!this.supabase) {
                 console.error('❌ Failed to create Supabase client');

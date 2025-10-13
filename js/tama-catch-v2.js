@@ -621,3 +621,4 @@ class TAMACatchGameV2 {
 
 // Экспортируем класс
 window.TAMACatchGameV2 = TAMACatchGameV2;
+
