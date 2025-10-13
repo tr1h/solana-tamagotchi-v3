@@ -237,6 +237,39 @@ def handle_start(message):
                             'status': 'pending'
                         }).execute()
                         print(f"✅ Saved pending referral: {referrer_telegram_id} -> {user_id}")
+                        
+                        # IMMEDIATE TAMA REWARD - начисляем TAMA сразу!
+                        try:
+                            # Найти реферера в leaderboard
+                            referrer_data = supabase.table('leaderboard').select('*').eq('telegram_id', str(referrer_telegram_id)).execute()
+                            
+                            if referrer_data.data and len(referrer_data.data) > 0:
+                                referrer = referrer_data.data[0]
+                                current_tama = referrer.get('tama', 0) or 0
+                                new_tama = current_tama + 100  # 100 TAMA за реферала
+                                
+                                # Обновить TAMA баланс
+                                supabase.table('leaderboard').update({
+                                    'tama': new_tama
+                                }).eq('telegram_id', str(referrer_telegram_id)).execute()
+                                
+                                print(f"💰 Awarded 100 TAMA to {referrer_telegram_id} (new balance: {new_tama})")
+                                
+                                # Создать запись в referrals для отслеживания
+                                supabase.table('referrals').insert({
+                                    'referrer_address': referrer['wallet_address'],
+                                    'referred_address': f'telegram_{user_id}',  # Временный адрес
+                                    'referral_code': ref_code,
+                                    'level': 1,
+                                    'signup_reward': 100
+                                }).execute()
+                                
+                                print(f"✅ Created referral record for {referrer_telegram_id}")
+                            else:
+                                print(f"❌ Referrer {referrer_telegram_id} not found in leaderboard")
+                                
+                        except Exception as tama_error:
+                            print(f"Error awarding TAMA: {tama_error}")
                 except Exception as e:
                     print(f"Error saving pending referral: {e}")
                 
