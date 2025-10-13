@@ -279,8 +279,8 @@ You were invited by a friend! 🎉
                 
                 keyboard = types.InlineKeyboardMarkup()
                 keyboard.row(
-                    types.InlineKeyboardButton("🎮 Play Game", url=f"{GAME_URL}?ref={wallet_address}&tg_id={user_id}&tg_username={username}"),
-                    types.InlineKeyboardButton("🎨 Mint NFT", url=f"{MINT_URL}?ref={wallet_address}&tg_id={user_id}&tg_username={username}")
+                    types.InlineKeyboardButton("🎮 Play Game", url=f"{GAME_URL}?tg_id={user_id}&tg_username={username}"),
+                    types.InlineKeyboardButton("🎨 Mint NFT", url=f"{MINT_URL}?tg_id={user_id}&tg_username={username}")
                 )
                 
                 bot.reply_to(message, welcome_text, parse_mode='Markdown', reply_markup=keyboard)
@@ -357,8 +357,8 @@ def send_stats(message):
             player = response.data[0]
             
             # Get referral stats (active referrals with wallets)
-            ref_l1_response = supabase.table('referrals').select('*', count='exact').eq('referrer_address', player['wallet_address']).eq('level', 1).execute()
-            ref_l2_response = supabase.table('referrals').select('*', count='exact').eq('referrer_address', player['wallet_address']).eq('level', 2).execute()
+            ref_l1_response = supabase.table('referrals').select('*', count='exact').eq('referrer_telegram_id', telegram_id).eq('level', 1).execute()
+            ref_l2_response = supabase.table('referrals').select('*', count='exact').eq('referrer_telegram_id', telegram_id).eq('level', 2).execute()
             
             level1_count = ref_l1_response.count or 0
             level2_count = ref_l2_response.count or 0
@@ -388,10 +388,9 @@ def send_stats(message):
 • TAMA Tokens: {player.get('tama', 0)}
 
 🔗 *Your Referrals:*
-• ⏳ Pending: {pending_count} (waiting for wallet)
+• 👥 Total Referrals: {total_referrals + pending_count}
 • ✅ Level 1 Direct: {level1_count} ({level1_earned} TAMA)
 • ✅ Level 2 Indirect: {level2_count} ({level2_earned} TAMA)
-• 📊 Total Active: {total_referrals}
 • 💰 Total Earned: {total_earned} TAMA
 
 👛 *Wallet:*
@@ -416,8 +415,8 @@ def send_stats(message):
 ❌ *No wallet linked yet!*
 
 🔗 *Your Referrals:*
-• ⏳ Pending: {pending_count} friends waiting!
-• 💰 Potential Earnings: {pending_count * 100} TAMA
+• 👥 Total Referrals: {pending_count}
+• 💰 Total Earned: {pending_count * 100} TAMA
 
 To start playing and tracking your stats:
 1️⃣ Click the button below
@@ -640,14 +639,20 @@ def send_referral(message):
         total_earnings = 0
         pending_count = 0
     
+    # Create super short beautiful referral link with preview
+    short_link = f"https://tr1h.github.io/solana-tamagotchi/s.html/{ref_code}"
+    
     text = f"""
-🔗 *Your Personal Referral Link:*
+🔗 *Your Personal Referral Links:*
 
+📱 *Direct Bot Link:*
 `{telegram_link}`
 
+🌐 *Beautiful Link (with preview):*
+`{short_link}`
+
 📊 *Your Stats:*
-• ✅ Active Referrals: {total_referrals}
-• ⏳ Pending: {pending_count}
+• 👥 Total Referrals: {total_referrals + pending_count}
 • 💰 Total Earned: {total_earnings} TAMA
 
 💰 *Earn instantly (NO WALLET NEEDED!):*
@@ -662,13 +667,17 @@ def send_referral(message):
 • 50 referrals → +30,000 TAMA
 • 100 referrals → +100,000 TAMA + Legendary Badge!
 
-📤 *Share with friends and start earning!*
+💡 *Tip: Use the beautiful link for better sharing!*
     """
     
     keyboard = types.InlineKeyboardMarkup()
     keyboard.row(
         types.InlineKeyboardButton("🎮 Visit Site", url=game_link),
-        types.InlineKeyboardButton("📤 Share Link", url=f"https://t.me/share/url?url={telegram_link}&text=🎮 Join me in Solana Tamagotchi! Get 100 TAMA bonus! No wallet needed!")
+        types.InlineKeyboardButton("📤 Share Beautiful Link", url=f"https://t.me/share/url?url={short_link}&text=🎮 Join me in Solana Tamagotchi! Get 100 TAMA bonus! No wallet needed!")
+    )
+    keyboard.row(
+        types.InlineKeyboardButton("📋 Copy Bot Link", callback_data=f"copy_bot_link_{ref_code}"),
+        types.InlineKeyboardButton("📋 Copy Beautiful Link", callback_data=f"copy_beautiful_link_{ref_code}")
     )
     
     bot.reply_to(message, text, parse_mode='Markdown', reply_markup=keyboard)
@@ -747,7 +756,7 @@ def send_leaderboard(message):
             
             if wallet_address and telegram_id:
                 # Count active referrals (with wallets)
-                active_refs = supabase.table('referrals').select('*', count='exact').eq('referrer_address', wallet_address).execute()
+                active_refs = supabase.table('referrals').select('*', count='exact').eq('referrer_telegram_id', str(telegram_id)).execute()
                 active_count = active_refs.count or 0
                 
                 # Count pending referrals (without wallets yet)
@@ -777,10 +786,7 @@ def send_leaderboard(message):
                 active = user['active']
                 pending = user['pending']
                 
-                if pending > 0:
-                    referral_text += f"{medal} {name} - {total} total ({active} active, {pending} pending)\n"
-                else:
-                    referral_text += f"{medal} {name} - {total} referrals\n"
+                referral_text += f"{medal} {name} - {total} referrals\n"
         else:
             referral_text = "No referrals yet!\n\n🔗 Start referring friends!"
         
@@ -1055,6 +1061,20 @@ def echo_message(message):
 # Callback handlers
 @bot.callback_query_handler(func=lambda call: True)
 def handle_callback(call):
+    # Handle copy bot link
+    if call.data.startswith("copy_bot_link_"):
+        ref_code = call.data.replace("copy_bot_link_", "")
+        bot_link = f"https://t.me/solana_tamagotchi_v3_bot?start=ref{ref_code}"
+        bot.answer_callback_query(call.id, f"Bot link copied! 📋\n\n{bot_link}", show_alert=True)
+        return
+    
+    # Handle copy beautiful link
+    if call.data.startswith("copy_beautiful_link_"):
+        ref_code = call.data.replace("copy_beautiful_link_", "")
+        beautiful_link = f"https://tr1h.github.io/solana-tamagotchi/s.html/{ref_code}"
+        bot.answer_callback_query(call.id, f"Beautiful link copied! 📋\n\n{beautiful_link}", show_alert=True)
+        return
+    
     if call.data == "get_referral":
         # Generate referral link with Telegram auto-linking
         user_id = call.from_user.id
@@ -1175,7 +1195,7 @@ To start playing and tracking your stats:
                 
                 if wallet_address and telegram_id:
                     # Count active referrals (with wallets)
-                    active_refs = supabase.table('referrals').select('*', count='exact').eq('referrer_address', wallet_address).execute()
+                    active_refs = supabase.table('referrals').select('*', count='exact').eq('referrer_telegram_id', str(telegram_id)).execute()
                     active_count = active_refs.count or 0
                     
                     # Count pending referrals (without wallets yet)
@@ -1205,10 +1225,7 @@ To start playing and tracking your stats:
                     active = user['active']
                     pending = user['pending']
                     
-                    if pending > 0:
-                        referral_text += f"{medal} {name} - {total} total ({active} active, {pending} pending)\n"
-                    else:
-                        referral_text += f"{medal} {name} - {total} referrals\n"
+                    referral_text += f"{medal} {name} - {total} referrals\n"
             else:
                 referral_text = "No referrals yet!\n\n🔗 Start referring friends to climb the ranks!"
             
