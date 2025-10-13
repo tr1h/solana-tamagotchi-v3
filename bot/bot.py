@@ -48,50 +48,47 @@ BANNED_WORDS = ['spam', 'scam', 'http://', 'https://']  # Add more
 muted_users = {}
 
 # Generate beautiful referral code
-def generate_referral_code(wallet_address, user_id):
-    """Generate a beautiful referral code like TAMA123, GOTCHI456"""
-    import hashlib
+def generate_referral_code(telegram_id):
+    """Generate a beautiful referral code from Telegram ID only - NO WALLET NEEDED!"""
+    # Simple hash function (same as website)
+    hash_val = 0
+    for char in str(telegram_id):
+        hash_val = ((hash_val << 5) - hash_val) + ord(char)
+        hash_val = hash_val & hash_val  # Convert to 32bit integer
     
-    # Create hash from wallet + user_id
-    data = f"{wallet_address}{user_id}".encode()
-    hash_obj = hashlib.md5(data).hexdigest()
+    # Convert to base36 and format
+    base36 = abs(hash_val) % (36 ** 6)  # Limit to 6 characters
+    code_part = format(base36, 'X').zfill(6)[:6]
     
-    # Take first 6 characters and make them uppercase
-    code_part = hash_obj[:6].upper()
-    
-    # Add prefix based on user_id (for variety)
-    prefixes = ['TAMA', 'GOTCHI', 'SOL', 'PET', 'NFT', 'GAME', 'PLAY', 'EARN']
-    prefix = prefixes[user_id % len(prefixes)]
-    
-    return f"{prefix}{code_part}"
+    return f"TAMA{code_part}"
 
-# Find wallet by referral code
-def find_wallet_by_referral_code(ref_code):
-    """Find wallet address by beautiful referral code"""
+# Find telegram_id by referral code (NO WALLET NEEDED!)
+def find_telegram_by_referral_code(ref_code):
+    """Find Telegram ID by referral code - NO WALLET NEEDED!"""
     try:
         # Try to find by referral_code in leaderboard (fast lookup)
-        response = supabase.table('leaderboard').select('wallet_address').eq('referral_code', ref_code).execute()
+        response = supabase.table('leaderboard').select('telegram_id').eq('referral_code', ref_code).execute()
         
         if response.data and len(response.data) > 0:
-            return response.data[0]['wallet_address']
+            return response.data[0]['telegram_id']
         
-        # Fallback: Generate codes for all users and find match (slow, but works for old users)
-        response = supabase.table('leaderboard').select('wallet_address, telegram_id').execute()
+        # Fallback: Generate codes for all users and find match
+        response = supabase.table('leaderboard').select('telegram_id').execute()
         
         for user in response.data:
             if user.get('telegram_id'):
                 # Generate code for this user
-                generated_code = generate_referral_code(user['wallet_address'], user['telegram_id'])
+                generated_code = generate_referral_code(user['telegram_id'])
                 if generated_code == ref_code:
                     # Save the code for next time (optimization)
                     supabase.table('leaderboard').update({
                         'referral_code': ref_code
-                    }).eq('wallet_address', user['wallet_address']).execute()
-                    return user['wallet_address']
+                    }).eq('telegram_id', user['telegram_id']).execute()
+                    return user['telegram_id']
         
         return None
     except Exception as e:
-        print(f"Error finding wallet by code: {e}")
+        print(f"Error finding telegram_id by code: {e}")
         return None
 
 # Get stats from MySQL
@@ -191,40 +188,22 @@ def handle_start(message):
             # Extract referral code
             ref_code = ref_param[3:]  # Remove 'ref' prefix
             try:
-                # Check if it's a beautiful code (like TAMA123) or old base64
-                if len(ref_code) > 8 and ref_code.isalnum():
-                    # Beautiful code - need to find wallet by code
-                    wallet_address = find_wallet_by_referral_code(ref_code)
-                    if not wallet_address:
-                        # Fallback to old system
-                        ref_code_padded = ref_code + '=' * (4 - len(ref_code) % 4)
-                        wallet_address = base64.b64decode(ref_code_padded).decode()
-                else:
-                    # Old base64 code
-                    ref_code_padded = ref_code + '=' * (4 - len(ref_code) % 4)
-                    wallet_address = base64.b64decode(ref_code_padded).decode()
-                
-                # Store referral info for when user connects wallet
+                # Store referral info
                 user_id = message.from_user.id
                 username = message.from_user.username or message.from_user.first_name
                 
-                # Find referrer telegram_id by wallet or code
+                # Find referrer telegram_id by code (NO WALLET NEEDED!)
                 try:
-                    # Try to find referrer by wallet address
-                    referrer_response = supabase.table('leaderboard').select('telegram_id, telegram_username').eq('wallet_address', wallet_address).execute()
+                    # Find by referral code directly
+                    referrer_telegram_id = find_telegram_by_referral_code(ref_code)
                     
-                    if referrer_response.data and len(referrer_response.data) > 0:
-                        referrer_telegram_id = referrer_response.data[0].get('telegram_id')
-                        referrer_username = referrer_response.data[0].get('telegram_username', 'Friend')
+                    if referrer_telegram_id:
+                        # Get username
+                        referrer_response = supabase.table('leaderboard').select('telegram_username').eq('telegram_id', str(referrer_telegram_id)).execute()
+                        referrer_username = referrer_response.data[0].get('telegram_username', 'Friend') if referrer_response.data else 'Friend'
                     else:
-                        # Try to find by referral code
-                        referrer_by_code = supabase.table('leaderboard').select('telegram_id, telegram_username').eq('referral_code', ref_code).execute()
-                        if referrer_by_code.data and len(referrer_by_code.data) > 0:
-                            referrer_telegram_id = referrer_by_code.data[0].get('telegram_id')
-                            referrer_username = referrer_by_code.data[0].get('telegram_username', 'Friend')
-                        else:
-                            referrer_telegram_id = None
-                            referrer_username = 'Friend'
+                        referrer_telegram_id = None
+                        referrer_username = 'Friend'
                     
                     # Save pending referral to database
                     if referrer_telegram_id:
@@ -238,9 +217,9 @@ def handle_start(message):
                         }).execute()
                         print(f"✅ Saved pending referral: {referrer_telegram_id} -> {user_id}")
                         
-                        # IMMEDIATE TAMA REWARD - начисляем TAMA сразу!
+                        # IMMEDIATE TAMA REWARD - начисляем TAMA сразу! (NO WALLET NEEDED!)
                         try:
-                            # Найти реферера в leaderboard
+                            # Найти или создать реферера в leaderboard
                             referrer_data = supabase.table('leaderboard').select('*').eq('telegram_id', str(referrer_telegram_id)).execute()
                             
                             if referrer_data.data and len(referrer_data.data) > 0:
@@ -254,19 +233,28 @@ def handle_start(message):
                                 }).eq('telegram_id', str(referrer_telegram_id)).execute()
                                 
                                 print(f"💰 Awarded 100 TAMA to {referrer_telegram_id} (new balance: {new_tama})")
-                                
-                                # Создать запись в referrals для отслеживания
-                                supabase.table('referrals').insert({
-                                    'referrer_address': referrer['wallet_address'],
-                                    'referred_address': f'telegram_{user_id}',  # Временный адрес
-                                    'referral_code': ref_code,
-                                    'level': 1,
-                                    'signup_reward': 100
-                                }).execute()
-                                
-                                print(f"✅ Created referral record for {referrer_telegram_id}")
                             else:
-                                print(f"❌ Referrer {referrer_telegram_id} not found in leaderboard")
+                                # Создать нового пользователя если его нет
+                                referrer_ref_code = generate_referral_code(referrer_telegram_id)
+                                supabase.table('leaderboard').insert({
+                                    'telegram_id': str(referrer_telegram_id),
+                                    'telegram_username': referrer_username,
+                                    'wallet_address': f'telegram_{referrer_telegram_id}',  # Placeholder
+                                    'tama': 100,
+                                    'referral_code': referrer_ref_code
+                                }).execute()
+                                print(f"💰 Created new user and awarded 100 TAMA to {referrer_telegram_id}")
+                            
+                            # Создать запись в referrals для отслеживания (NO WALLET!)
+                            supabase.table('referrals').insert({
+                                'referrer_telegram_id': str(referrer_telegram_id),
+                                'referred_telegram_id': str(user_id),
+                                'referral_code': ref_code,
+                                'level': 1,
+                                'signup_reward': 100
+                            }).execute()
+                            
+                            print(f"✅ Created referral record for {referrer_telegram_id} -> {user_id}")
                                 
                         except Exception as tama_error:
                             print(f"Error awarding TAMA: {tama_error}")
@@ -612,123 +600,75 @@ def save_pet_progress(message):
 def send_referral(message):
     user_id = message.from_user.id
     username = message.from_user.username or message.from_user.first_name
-    
-    # Get wallet address from database
     telegram_id = str(user_id)
-    wallet_address = get_wallet_by_telegram(telegram_id)
     
-    if not wallet_address:
-        # Create referral link using Telegram ID as fallback
-        user_id = message.from_user.id
-        username = message.from_user.username or message.from_user.first_name
-        telegram_ref_code = base64.b64encode(str(user_id).encode()).decode()[:8]
-        telegram_link = f"https://t.me/solana_tamagotchi_v3_bot?start=ref{telegram_ref_code}"
-        game_link = f"{GAME_URL}?tg_id={user_id}&tg_username={username}"
-        
-        text = f"""
-🔗 *Your Personal Referral Link:*
-
-`{telegram_link}`
-
-✨ *This link will:*
-• Automatically link your Telegram to your wallet
-• Track your referrals perfectly
-• Give you bonus rewards
-
-💰 *Earn rewards:*
-• 100 TAMA for each friend (Level 1)
-• 50 TAMA for Level 2 referrals  
-• 15% of their earnings forever!
-
-🎁 *Milestone Bonuses:*
-• 5 referrals → +1000 TAMA
-• 10 referrals → +3000 TAMA
-• 25 referrals → +10000 TAMA
-• 50 referrals → +30000 TAMA
-• 100 referrals → +100000 TAMA + Legendary Badge!
-
-📤 *Share with friends and earn!*
-
-💡 *Note:* Connect your wallet to get full referral tracking!
-        """
-        
-        keyboard = types.InlineKeyboardMarkup()
-        keyboard.row(
-            types.InlineKeyboardButton("🎮 Play Game", url=game_link),
-            types.InlineKeyboardButton("📤 Share Link", url=f"https://t.me/share/url?url={telegram_link}&text=🎮 Join me in Solana Tamagotchi! Earn TAMA tokens!")
-        )
-        
-        bot.reply_to(message, text, parse_mode='Markdown', reply_markup=keyboard)
-        return
-    
-    # Create beautiful referral code
-    ref_code = generate_referral_code(wallet_address, user_id)
+    # Generate referral code from Telegram ID only (NO WALLET NEEDED!)
+    ref_code = generate_referral_code(telegram_id)
     telegram_link = f"https://t.me/solana_tamagotchi_v3_bot?start=ref{ref_code}"
-    game_link = f"{GAME_URL}?ref={wallet_address}&tg_id={user_id}&tg_username={username}"
-    short_link = f"https://tama.game/ref/{ref_code}"
+    game_link = f"{GAME_URL}?tg_id={user_id}&tg_username={username}"
     
     # Save referral code to database for fast lookup
     try:
-        supabase.table('leaderboard').update({
-            'referral_code': ref_code
-        }).eq('wallet_address', wallet_address).execute()
+        existing = supabase.table('leaderboard').select('*').eq('telegram_id', telegram_id).execute()
+        
+        if existing.data:
+            supabase.table('leaderboard').update({
+                'referral_code': ref_code,
+                'telegram_username': username
+            }).eq('telegram_id', telegram_id).execute()
+        else:
+            supabase.table('leaderboard').insert({
+                'telegram_id': telegram_id,
+                'telegram_username': username,
+                'wallet_address': f'telegram_{telegram_id}',
+                'tama': 0,
+                'referral_code': ref_code
+            }).execute()
     except Exception as e:
         print(f"Error saving referral code: {e}")
     
     # Get referral stats
     try:
-        response = supabase.table('referrals').select('*', count='exact').eq('referrer_address', wallet_address).execute()
+        response = supabase.table('referrals').select('*', count='exact').eq('referrer_telegram_id', telegram_id).execute()
         total_referrals = response.count or 0
-        
-        level1_count = len([r for r in response.data if r.get('level') == 1]) if response.data else 0
-        level2_count = len([r for r in response.data if r.get('level') == 2]) if response.data else 0
-        
         total_earnings = sum([r.get('signup_reward', 0) for r in response.data]) if response.data else 0
+        
+        pending_response = supabase.table('pending_referrals').select('*', count='exact').eq('referrer_telegram_id', telegram_id).eq('status', 'pending').execute()
+        pending_count = pending_response.count or 0
     except:
         total_referrals = 0
-        level1_count = 0
-        level2_count = 0
         total_earnings = 0
+        pending_count = 0
     
     text = f"""
-🔗 *Your Personal Referral Code:*
+🔗 *Your Personal Referral Link:*
 
-`{ref_code}`
-
-🔗 *Your Links:*
-• Telegram: `{telegram_link}`
-• Game: `{game_link}`
-• Short: `{short_link}`
+`{telegram_link}`
 
 📊 *Your Stats:*
-• Total Referrals: {total_referrals}
-• Level 1: {level1_count}
-• Level 2: {level2_count}
-• Total Earned: {total_earnings} TAMA
+• ✅ Active Referrals: {total_referrals}
+• ⏳ Pending: {pending_count}
+• 💰 Total Earned: {total_earnings} TAMA
 
-💰 *Earn rewards:*
-• 100 TAMA for each friend (Level 1)
-• 50 TAMA for Level 2 referrals  
-• 15% of their earnings forever!
+💰 *Earn instantly (NO WALLET NEEDED!):*
+• 100 TAMA for each friend instantly!
+• Just share your link and earn!
+• TAMA accumulates in your account
 
 🎁 *Milestone Bonuses:*
-• 5 referrals → +1000 TAMA
-• 10 referrals → +3000 TAMA
-• 25 referrals → +10000 TAMA
-• 50 referrals → +30000 TAMA
-• 100 referrals → +100000 TAMA + Legendary Badge!
+• 5 referrals → +1,000 TAMA
+• 10 referrals → +3,000 TAMA
+• 25 referrals → +10,000 TAMA
+• 50 referrals → +30,000 TAMA
+• 100 referrals → +100,000 TAMA + Legendary Badge!
 
-📤 *Share your code: {ref_code}*
+📤 *Share with friends and start earning!*
     """
     
     keyboard = types.InlineKeyboardMarkup()
     keyboard.row(
-        types.InlineKeyboardButton("🎮 Play Game", url=game_link),
-        types.InlineKeyboardButton("📤 Share Link", url=f"https://t.me/share/url?url={telegram_link}&text=🎮 Join me in Solana Tamagotchi! Earn TAMA tokens!")
-    )
-    keyboard.row(
-        types.InlineKeyboardButton("📊 View Stats", callback_data="referral_stats"),
-        types.InlineKeyboardButton("🏆 Milestones", callback_data="referral_milestones")
+        types.InlineKeyboardButton("🎮 Visit Site", url=game_link),
+        types.InlineKeyboardButton("📤 Share Link", url=f"https://t.me/share/url?url={telegram_link}&text=🎮 Join me in Solana Tamagotchi! Get 100 TAMA bonus! No wallet needed!")
     )
     
     bot.reply_to(message, text, parse_mode='Markdown', reply_markup=keyboard)
