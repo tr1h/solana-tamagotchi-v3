@@ -255,8 +255,11 @@ def handle_group_message(message):
     user_id = message.from_user.id
     chat_id = message.chat.id
     
-    # Debug: log group messages
-    print(f"Group message: {message.chat.title} (ID: {chat_id}) from {message.from_user.first_name}")
+    # Debug: log group messages (safely handle unicode)
+    try:
+        print(f"Group message: {message.chat.title} (ID: {chat_id}) from {message.from_user.first_name}")
+    except UnicodeEncodeError:
+        print(f"Group message from user {user_id} in chat {chat_id}")
     
     # Skip if admin - no anti-spam for admins
     if is_admin(user_id):
