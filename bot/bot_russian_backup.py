@@ -8,7 +8,6 @@ import os
 import io
 import logging
 import random
-import json
 from datetime import datetime, timedelta
 from collections import defaultdict
 from supabase import create_client, Client
@@ -585,20 +584,9 @@ def send_welcome(message):
         types.InlineKeyboardButton("⭐ My Rank", callback_data="view_rank")
     )
     
-    # Row 5: Mini Game (DEV ONLY) & Leaderboard
-    # Only show game button for developer (Alex)
-    if telegram_id == "7401131043":  # Your Telegram ID
-        keyboard.row(
-            types.InlineKeyboardButton("🎮 DEV: Play Game", web_app=types.WebAppInfo(url="https://tr1h.github.io/solana-tamagotchi/tamagotchi-game.html")),
-            types.InlineKeyboardButton("🏆 Leaderboard", callback_data="leaderboard")
-        )
-    else:
-        keyboard.row(
-            types.InlineKeyboardButton("🏆 Leaderboard", callback_data="leaderboard")
-        )
-    
-    # Row 6: Community
+    # Row 5: Leaderboard & Community
     keyboard.row(
+        types.InlineKeyboardButton("🏆 Leaderboard", callback_data="leaderboard"),
         types.InlineKeyboardButton("👥 Community", url="https://t.me/gotchigamechat")
     )
     
@@ -1514,11 +1502,11 @@ def claim_daily_reward(message):
             # Check for streak milestones
             milestone_text = ""
             if streak_days == 7:
-                milestone_text = "\n\n🎉 **WEEK MILESTONE!** 7 days in a row!"
+                milestone_text = "\n\n🎉 **WEEK MILESTONE!** 7 дней подряд!"
             elif streak_days == 14:
-                milestone_text = "\n\n🔥 **2 WEEKS!** Incredible streak!"
+                milestone_text = "\n\n🔥 **2 WEEKS!** Невероятный стрик!"
             elif streak_days == 30:
-                milestone_text = "\n\n👑 **MONTH!** You're a legend!"
+                milestone_text = "\n\n👑 **МЕСЯЦ!** Ты легенда!"
             
             text = f"""
 ✅ **Daily Reward Claimed!**
@@ -1607,27 +1595,27 @@ def show_user_badges(message):
         if user_badges:
             badges_text = "\n".join([f"{b['name']} - {b['desc']}" for b in user_badges])
         else:
-            badges_text = "No badges yet. Play and invite friends!"
+            badges_text = "Пока нет значков. Играй и приглашай друзей!"
         
         text = f"""
-🏅 **Your Badges**
+🏅 **Твои Значки**
 
 {badges_text}
 
-💡 **How to earn more:**
-• 🐦 Early Bird - Be in first 100 users
-• 🔥 Streak Master - 30 days streak
-• 👑 Referral King - 50+ referrals
-• 💎 Generous - 100+ referrals
-• 🎮 Gamer - 100 mini-games
-• 🍀 Lucky - Wheel jackpot
+💡 **Как получить больше:**
+• 🐦 Early Bird - Будь в первых 100
+• 🔥 Streak Master - 30 дней подряд
+• 👑 Referral King - 50+ рефералов
+• 💎 Generous - 100+ рефералов
+• 🎮 Gamer - 100 мини-игр
+• 🍀 Lucky - Джекпот в рулетке
         """
         
         bot.reply_to(message, text, parse_mode='Markdown')
         
     except Exception as e:
         print(f"Error showing badges: {e}")
-        bot.reply_to(message, "❌ Error loading badges")
+        bot.reply_to(message, "❌ Ошибка загрузки значков")
 
 @bot.message_handler(commands=['rank'], func=lambda message: message.chat.type == 'private')
 def show_user_rank(message):
@@ -1654,28 +1642,28 @@ def show_user_rank(message):
         progress_bar = "▰" * (total_refs % 5) + "▱" * (5 - (total_refs % 5))
         
         text = f"""
-{rank_data['emoji']} **Your Rank: {rank_data['name']}**
+{rank_data['emoji']} **Твой Ранг: {rank_data['name']}**
 
-📊 **Stats:**
-• Referrals: {total_refs}
-• Progress: {progress_bar}
+📊 **Статистика:**
+• Рефералы: {total_refs}
+• Прогресс: {progress_bar}
         """
         
         if next_rank:
             refs_needed = next_rank[1]['min_refs'] - total_refs
             text += f"""
 
-🎯 **Next rank:** {next_rank[1]['name']}
-📈 **Needed:** {refs_needed} referrals
+🎯 **Следующий ранг:** {next_rank[1]['name']}
+📈 **Осталось:** {refs_needed} рефералов
         """
         else:
-            text += "\n\n👑 **Maximum rank achieved!**"
+            text += "\n\n👑 **Максимальный ранг достигнут!**"
         
         bot.reply_to(message, text, parse_mode='Markdown')
         
     except Exception as e:
         print(f"Error showing rank: {e}")
-        bot.reply_to(message, "❌ Error loading rank")
+        bot.reply_to(message, "❌ Ошибка загрузки ранга")
 
 @bot.message_handler(commands=['quests'], func=lambda message: message.chat.type == 'private')
 def show_quests(message):
@@ -1692,7 +1680,7 @@ def show_quests(message):
         # Check quests
         completed_quests = quest_system.check_quests(telegram_id, total_refs)
         
-        text = "🎯 **Referral Quests**\n\n"
+        text = "🎯 **Квесты Рефералов**\n\n"
         
         for quest_id, quest_data in QUESTS.items():
             progress = min(total_refs, quest_data['target'])
@@ -1705,15 +1693,15 @@ def show_quests(message):
             
             text += f"{status} **{quest_data['name']}**\n"
             text += f"   {quest_data['desc']}\n"
-            text += f"   Reward: {quest_data['reward']:,} TAMA\n\n"
+            text += f"   Награда: {quest_data['reward']:,} TAMA\n\n"
         
-        text += "💡 **Invite friends to complete quests!**"
+        text += "💡 **Приглашай друзей для выполнения квестов!**"
         
         bot.reply_to(message, text, parse_mode='Markdown')
         
     except Exception as e:
         print(f"Error showing quests: {e}")
-        bot.reply_to(message, "❌ Error loading quests")
+        bot.reply_to(message, "❌ Ошибка загрузки квестов")
 
 # Welcome new members
 @bot.message_handler(content_types=['new_chat_members'])
@@ -1796,78 +1784,6 @@ def run_schedule():
     while True:
         schedule.run_pending()
         time.sleep(60)
-
-# Handle Mini App data
-@bot.message_handler(content_types=['web_app_data'])
-def handle_web_app_data(message):
-    """Handle data from Telegram Mini App"""
-    try:
-        data = json.loads(message.web_app_data.data)
-        telegram_id = str(message.from_user.id)
-        
-        print(f"📱 Received Mini App data from {telegram_id}: {data}")
-        
-        if data.get('action') == 'save_game_state' or data.get('action') == 'auto_save':
-            # Save game state to database
-            game_data = data.get('data', {})
-            
-            # Get current stats from leaderboard
-            leaderboard = supabase.table('leaderboard').select('*').eq('telegram_id', telegram_id).execute()
-            
-            if leaderboard.data:
-                # User exists - update TAMA
-                current_tama = leaderboard.data[0].get('tama', 0)
-                game_tama = game_data.get('tama', 0)
-                
-                # Calculate new TAMA (don't overwrite, add difference)
-                if game_tama > current_tama:
-                    tama_earned = game_tama - current_tama
-                    
-                    supabase.table('leaderboard').update({
-                        'tama': game_tama,
-                        'level': game_data.get('level', 1)
-                    }).eq('telegram_id', telegram_id).execute()
-                    
-                    # Only show message for manual save (not auto-save)
-                    if data.get('action') == 'save_game_state':
-                        bot.reply_to(message, f"💾 Game saved!\n💰 Total TAMA: {game_tama:,}\n⭐ Level: {game_data.get('level', 1)}\n🎮 Total Clicks: {game_data.get('totalClicks', 0)}")
-                else:
-                    if data.get('action') == 'save_game_state':
-                        bot.reply_to(message, f"💾 Progress saved!\n💰 TAMA: {current_tama:,}\n⭐ Level: {game_data.get('level', 1)}")
-            else:
-                # Create new user entry
-                supabase.table('leaderboard').insert({
-                    'telegram_id': telegram_id,
-                    'wallet_address': f'telegram_{telegram_id}',
-                    'tama': game_data.get('tama', 0),
-                    'level': game_data.get('level', 1),
-                    'referral_code': None
-                }).execute()
-                
-                if data.get('action') == 'save_game_state':
-                    bot.reply_to(message, f"🎉 First save!\n💰 TAMA: {game_data.get('tama', 0):,}\n⭐ Level: {game_data.get('level', 1)}")
-        
-        elif data.get('action') == 'level_up':
-            level = data.get('level', 1)
-            bot.reply_to(message, f"🎉 Congratulations! Your pet reached level {level}!")
-            
-            # Award bonus TAMA for level up
-            bonus_tama = level * 10
-            leaderboard = supabase.table('leaderboard').select('tama').eq('telegram_id', telegram_id).execute()
-            current_tama = leaderboard.data[0].get('tama', 0) if leaderboard.data else 0
-            
-            supabase.table('leaderboard').update({
-                'tama': current_tama + bonus_tama
-            }).eq('telegram_id', telegram_id).execute()
-            
-            bot.send_message(message.chat.id, f"🎁 Level up bonus: +{bonus_tama} TAMA!")
-        
-        else:
-            bot.reply_to(message, "🎮 Game data received! Keep playing to earn more TAMA!")
-            
-    except Exception as e:
-        print(f"❌ Error handling Mini App data: {e}")
-        bot.reply_to(message, "❌ Error processing game data. Please try again.")
 
 # Handle unknown commands in private chat only
 @bot.message_handler(func=lambda message: message.chat.type == 'private')
@@ -2218,20 +2134,20 @@ Please try again later!
         if success:
             milestone_text = ""
             if streak_days == 7:
-                milestone_text = "\n\n🎉 **WEEK MILESTONE!** 7 days in a row!"
+                milestone_text = "\n\n🎉 **WEEK MILESTONE!** 7 дней подряд!"
             elif streak_days == 14:
-                milestone_text = "\n\n🔥 **2 WEEKS!** Incredible streak!"
+                milestone_text = "\n\n🔥 **2 WEEKS!** Невероятный стрик!"
             elif streak_days == 30:
-                milestone_text = "\n\n👑 **MONTH!** You're a legend!"
+                milestone_text = "\n\n👑 **МЕСЯЦ!** Ты легенда!"
             
             text = f"""
 ✅ **Daily Reward Claimed!**
 
-💰 **Reward:** +{reward_amount:,} TAMA
-🔥 **Streak:** {streak_days} days in a row
-📅 **Next:** in 24 hours{milestone_text}
+💰 **Награда:** +{reward_amount:,} TAMA
+🔥 **Стрик:** {streak_days} дней подряд
+📅 **Следующая:** через 24 часа{milestone_text}
 
-💡 **Come back every day for bigger rewards!**
+💡 **Возвращайся каждый день для больших наград!**
             """
             
             if streak_days == 7:
@@ -2243,14 +2159,14 @@ Please try again later!
             text = f"""
 ⏰ **Already Claimed Today!**
 
-🔥 **Current Streak:** {current_streak} days
-📅 **Come back tomorrow** for next reward!
+🔥 **Current Streak:** {current_streak} дней
+📅 **Вернись завтра** для следующей награды!
 
-💡 **Don't miss a day to keep your streak!**
+💡 **Не пропусти день, чтобы не сбросить стрик!**
             """
         
         keyboard = types.InlineKeyboardMarkup()
-        keyboard.row(types.InlineKeyboardButton("🔙 Back", callback_data="back_to_menu"))
+        keyboard.row(types.InlineKeyboardButton("🔙 Назад", callback_data="back_to_menu"))
         
         bot.edit_message_text(text, call.message.chat.id, call.message.message_id,
                             parse_mode='Markdown', reply_markup=keyboard)
@@ -2262,30 +2178,30 @@ Please try again later!
         games_left = 3 - games_played
         
         text = f"""
-🎮 **Mini-Games**
+🎮 **Мини-Игры**
 
-💰 **Play and earn TAMA!**
+💰 **Играй и зарабатывай TAMA!**
 
-🎯 **Available games:**
-• Guess Number (1-100) - up to 500 TAMA
-• Solana Quiz - 100 TAMA
-• Fortune Wheel - up to 500 TAMA
+🎯 **Доступные игры:**
+• Угадай Число (1-100) - до 500 TAMA
+• Solana Викторина - 100 TAMA
+• Колесо Фортуны - до 500 TAMA
 
-📊 **Limit:** {games_left}/3 games left today
+📊 **Лимит:** {games_left}/3 игр осталось сегодня
 
-💡 **Choose a game:**
+💡 **Выбери игру:**
         """
         
         keyboard = types.InlineKeyboardMarkup()
         if can_play:
             keyboard.row(
-                types.InlineKeyboardButton("🎯 Guess Number", callback_data="game_guess"),
-                types.InlineKeyboardButton("❓ Quiz", callback_data="game_trivia")
+                types.InlineKeyboardButton("🎯 Угадай Число", callback_data="game_guess"),
+                types.InlineKeyboardButton("❓ Викторина", callback_data="game_trivia")
             )
             keyboard.row(
-                types.InlineKeyboardButton("🎰 Fortune Wheel", callback_data="game_wheel")
+                types.InlineKeyboardButton("🎰 Колесо Фортуны", callback_data="game_wheel")
             )
-        keyboard.row(types.InlineKeyboardButton("🔙 Back", callback_data="back_to_menu"))
+        keyboard.row(types.InlineKeyboardButton("🔙 Назад", callback_data="back_to_menu"))
         
         bot.edit_message_text(text, call.message.chat.id, call.message.message_id,
                             parse_mode='Markdown', reply_markup=keyboard)
@@ -2298,24 +2214,24 @@ Please try again later!
         if user_badges:
             badges_text = "\n".join([f"• {b['name']} - {b['desc']}" for b in user_badges])
         else:
-            badges_text = "No badges yet. Play and invite friends!"
+            badges_text = "Пока нет значков. Играй и приглашай друзей!"
         
         text = f"""
-🏅 **Your Badges**
+🏅 **Твои Значки**
 
 {badges_text}
 
-💡 **How to earn more:**
-• 🐦 Early Bird - Be in first 100 users
-• 🔥 Streak Master - 30 days streak
-• 👑 Referral King - 50+ referrals
-• 💎 Generous - 100+ referrals
-• 🎮 Gamer - 100 mini-games
-• 🍀 Lucky - Wheel jackpot
+💡 **Как получить больше:**
+• 🐦 Early Bird - Будь в первых 100
+• 🔥 Streak Master - 30 дней подряд
+• 👑 Referral King - 50+ рефералов
+• 💎 Generous - 100+ рефералов
+• 🎮 Gamer - 100 мини-игр
+• 🍀 Lucky - Джекпот в рулетке
         """
         
         keyboard = types.InlineKeyboardMarkup()
-        keyboard.row(types.InlineKeyboardButton("🔙 Back", callback_data="back_to_menu"))
+        keyboard.row(types.InlineKeyboardButton("🔙 Назад", callback_data="back_to_menu"))
         
         bot.edit_message_text(text, call.message.chat.id, call.message.message_id,
                             parse_mode='Markdown', reply_markup=keyboard)
@@ -2339,25 +2255,25 @@ Please try again later!
         progress_bar = "▰" * min(total_refs % 5, 5) + "▱" * max(5 - (total_refs % 5), 0)
         
         text = f"""
-{rank_data['emoji']} **Your Rank: {rank_data['name']}**
+{rank_data['emoji']} **Твой Ранг: {rank_data['name']}**
 
-📊 **Stats:**
-• Referrals: {total_refs}
-• Progress: {progress_bar}
+📊 **Статистика:**
+• Рефералы: {total_refs}
+• Прогресс: {progress_bar}
         """
         
         if next_rank:
             refs_needed = next_rank[1]['min_refs'] - total_refs
             text += f"""
 
-🎯 **Next rank:** {next_rank[1]['name']}
-📈 **Needed:** {refs_needed} referrals
+🎯 **Следующий ранг:** {next_rank[1]['name']}
+📈 **Осталось:** {refs_needed} рефералов
         """
         else:
-            text += "\n\n👑 **Maximum rank achieved!**"
+            text += "\n\n👑 **Максимальный ранг достигнут!**"
         
         keyboard = types.InlineKeyboardMarkup()
-        keyboard.row(types.InlineKeyboardButton("🔙 Back", callback_data="back_to_menu"))
+        keyboard.row(types.InlineKeyboardButton("🔙 Назад", callback_data="back_to_menu"))
         
         bot.edit_message_text(text, call.message.chat.id, call.message.message_id,
                             parse_mode='Markdown', reply_markup=keyboard)
@@ -2372,7 +2288,7 @@ Please try again later!
         total_refs = (ref_response.count or 0) + (pending_response.count or 0)
         quest_system.check_quests(telegram_id, total_refs)
         
-        text = "🎯 **Referral Quests**\n\n"
+        text = "🎯 **Квесты Рефералов**\n\n"
         
         for quest_id, quest_data in QUESTS.items():
             progress = min(total_refs, quest_data['target'])
@@ -2384,12 +2300,12 @@ Please try again later!
             
             text += f"{status} **{quest_data['name']}**\n"
             text += f"   {quest_data['desc']}\n"
-            text += f"   Reward: {quest_data['reward']:,} TAMA\n\n"
+            text += f"   Награда: {quest_data['reward']:,} TAMA\n\n"
         
-        text += "💡 **Invite friends to complete quests!**"
+        text += "💡 **Приглашай друзей для выполнения квестов!**"
         
         keyboard = types.InlineKeyboardMarkup()
-        keyboard.row(types.InlineKeyboardButton("🔙 Back", callback_data="back_to_menu"))
+        keyboard.row(types.InlineKeyboardButton("🔙 Назад", callback_data="back_to_menu"))
         
         bot.edit_message_text(text, call.message.chat.id, call.message.message_id,
                             parse_mode='Markdown', reply_markup=keyboard)
@@ -2413,32 +2329,32 @@ Please try again later!
         badges_count = len(user_badges)
         
         text = f"""
-📊 **Your Full Stats**
+📊 **Твоя Полная Статистика**
 
-💰 **TAMA Balance:** {total_tama:,}
-{rank_data['emoji']} **Rank:** {rank_data['name']}
+💰 **TAMA Баланс:** {total_tama:,}
+{rank_data['emoji']} **Ранг:** {rank_data['name']}
 
-👥 **Referrals:**
-• Total invited: {total_refs}
-• Active: {ref_response.count or 0}
-• Pending: {pending_response.count or 0}
+👥 **Рефералы:**
+• Всего приглашено: {total_refs}
+• Активные: {ref_response.count or 0}
+• В ожидании: {pending_response.count or 0}
 
-🔥 **Activity:**
-• Login streak: {streak_days} days
-• Badges earned: {badges_count}
+🔥 **Активность:**
+• Стрик входов: {streak_days} дней
+• Заработано значков: {badges_count}
 
-📈 **Progress:**
+📈 **Прогресс:**
 {"▰" * min(total_refs % 10, 10)}{"▱" * max(10 - (total_refs % 10), 0)}
 
-💡 **Keep playing and inviting friends!**
+💡 **Продолжай играть и приглашать друзей!**
         """
         
         keyboard = types.InlineKeyboardMarkup()
         keyboard.row(
-            types.InlineKeyboardButton("🔗 Referral", callback_data="get_referral"),
-            types.InlineKeyboardButton("🎮 Games", callback_data="mini_games")
+            types.InlineKeyboardButton("🔗 Реферал", callback_data="get_referral"),
+            types.InlineKeyboardButton("🎮 Игры", callback_data="mini_games")
         )
-        keyboard.row(types.InlineKeyboardButton("🔙 Back", callback_data="back_to_menu"))
+        keyboard.row(types.InlineKeyboardButton("🔙 Назад", callback_data="back_to_menu"))
         
         bot.edit_message_text(text, call.message.chat.id, call.message.message_id,
                             parse_mode='Markdown', reply_markup=keyboard)
@@ -2451,25 +2367,25 @@ Please try again later!
         can_play, games_played = mini_games.can_play(telegram_id)
         
         if not can_play:
-            bot.answer_callback_query(call.id, "Daily game limit reached!")
+            bot.answer_callback_query(call.id, "Лимит игр на сегодня!")
             return
         
         text = """
-🎯 **Guess Number (1-100)**
+🎯 **Угадай Число (1-100)**
 
-💰 **Rewards:**
-• Exact match: 500 TAMA
+💰 **Награды:**
+• Точное попадание: 500 TAMA
 • ±5: 200 TAMA  
 • ±10: 100 TAMA
 • ±20: 50 TAMA
-• Other: 25 TAMA
+• Остальное: 25 TAMA
 
-**Enter number from 1 to 100:**
+**Введи число от 1 до 100:**
         """
         
         keyboard = types.InlineKeyboardMarkup()
         keyboard.row(
-            types.InlineKeyboardButton("🔙 Back", callback_data="back_to_menu")
+            types.InlineKeyboardButton("🔙 Назад", callback_data="back_to_menu")
         )
         
         bot.edit_message_text(text, call.message.chat.id, call.message.message_id,
@@ -2484,28 +2400,28 @@ Please try again later!
         can_play, games_played = mini_games.can_play(telegram_id)
         
         if not can_play:
-            bot.answer_callback_query(call.id, "Daily game limit reached!")
+            bot.answer_callback_query(call.id, "Лимит игр на сегодня!")
             return
         
         # Random trivia question
         questions = [
             {
-                "q": "What language is used for Solana smart contracts?",
+                "q": "Какой язык используется для Solana смарт-контрактов?",
                 "options": ["Rust", "Python", "JavaScript", "Solidity"],
                 "correct": "Rust"
             },
             {
-                "q": "How many TPS can Solana handle?",
+                "q": "Сколько TPS может обрабатывать Solana?",
                 "options": ["1,000", "10,000", "50,000+", "100"],
                 "correct": "50,000+"
             },
             {
-                "q": "Who is the creator of Solana?",
+                "q": "Кто создатель Solana?",
                 "options": ["Anatoly Yakovenko", "Vitalik Buterin", "Changpeng Zhao", "Sam Bankman-Fried"],
                 "correct": "Anatoly Yakovenko"
             },
             {
-                "q": "What consensus does Solana use?",
+                "q": "Какой консенсус использует Solana?",
                 "options": ["Proof of Work", "Proof of Stake", "Proof of History + PoS", "Delegated PoS"],
                 "correct": "Proof of History + PoS"
             },
@@ -2514,11 +2430,11 @@ Please try again later!
         question = random.choice(questions)
         
         text = f"""
-❓ **Solana Quiz**
+❓ **Solana Викторина**
 
 **{question['q']}**
 
-💰 **Reward:** 100 TAMA for correct answer
+💰 **Награда:** 100 TAMA за правильный ответ
         """
         
         keyboard = types.InlineKeyboardMarkup()
@@ -2527,7 +2443,7 @@ Please try again later!
                 types.InlineKeyboardButton(option, callback_data=f"trivia_{option}_{question['correct']}")
             )
         keyboard.row(
-            types.InlineKeyboardButton("🔙 Back", callback_data="back_to_menu")
+            types.InlineKeyboardButton("🔙 Назад", callback_data="back_to_menu")
         )
         
         bot.edit_message_text(text, call.message.chat.id, call.message.message_id,
@@ -2546,14 +2462,14 @@ Please try again later!
             text = f"""
 {result_text}
 
-💰 **Earned:** +{reward} TAMA
+💰 **Заработано:** +{reward} TAMA
 
-Play again tomorrow! 🎮
+Играй еще завтра! 🎮
             """
             
             keyboard = types.InlineKeyboardMarkup()
             keyboard.row(
-                types.InlineKeyboardButton("🔙 Menu", callback_data="back_to_menu")
+                types.InlineKeyboardButton("🔙 Меню", callback_data="back_to_menu")
             )
             
             bot.edit_message_text(text, call.message.chat.id, call.message.message_id,
@@ -2569,19 +2485,19 @@ Play again tomorrow! 🎮
         
         if success:
             text = f"""
-🎰 **Fortune Wheel**
+🎰 **Колесо Фортуны**
 
 {result_text}
 
-💰 **Earned:** +{reward} TAMA
+💰 **Заработано:** +{reward} TAMA
 
-🎮 **Come back tomorrow for new games!**
+🎮 **Приходи завтра за новыми играми!**
             """
             
             keyboard = types.InlineKeyboardMarkup()
             keyboard.row(
-                types.InlineKeyboardButton("🔄 Spin Again", callback_data="game_wheel"),
-                types.InlineKeyboardButton("🔙 Menu", callback_data="back_to_menu")
+                types.InlineKeyboardButton("🔄 Крутить еще", callback_data="game_wheel"),
+                types.InlineKeyboardButton("🔙 Меню", callback_data="back_to_menu")
             )
             
             bot.edit_message_text(text, call.message.chat.id, call.message.message_id,
@@ -2601,7 +2517,7 @@ def process_guess_number(message):
     try:
         guess = int(message.text)
         if guess < 1 or guess > 100:
-            bot.reply_to(message, "❌ Number must be from 1 to 100!")
+            bot.reply_to(message, "❌ Число должно быть от 1 до 100!")
             return
         
         success, reward, result_text = mini_games.play_guess_number(telegram_id, guess)
@@ -2610,14 +2526,14 @@ def process_guess_number(message):
             text = f"""
 {result_text}
 
-💰 **Earned:** +{reward} TAMA
+💰 **Заработано:** +{reward} TAMA
 
-🎮 **Come back tomorrow for new games!**
+🎮 **Приходи завтра за новыми играми!**
             """
             
             keyboard = types.InlineKeyboardMarkup()
             keyboard.row(
-                types.InlineKeyboardButton("🔙 Menu", callback_data="back_to_menu")
+                types.InlineKeyboardButton("🔙 Меню", callback_data="back_to_menu")
             )
             
             bot.reply_to(message, text, parse_mode='Markdown', reply_markup=keyboard)
@@ -2625,7 +2541,7 @@ def process_guess_number(message):
             bot.reply_to(message, f"❌ {result_text}")
             
     except ValueError:
-        bot.reply_to(message, "❌ Enter number from 1 to 100!")
+        bot.reply_to(message, "❌ Введи число от 1 до 100!")
 
 # Start bot
 if __name__ == '__main__':
